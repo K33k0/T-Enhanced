@@ -9,6 +9,24 @@ The new home to all my functions
 AhkDllPath := A_ScriptDir . "/Modules/Lib/AutoHotkeyMini.dll"
 hModule := DllCall("LoadLibrary","Str",AhkDllPath)
 
+
+SaveWinPos(title=""){
+	WinGetPos, Xpos, Ypos,,,%Title%
+	IniWrite, %Xpos%, %Config%,%Title%,Xpos
+	IniWrite, %Ypos%, %Config%,%Title%,Ypos
+	return
+}
+
+GetWinPosX(title=""){
+	IniRead, PosX,%Config%,%Title%,Xpos
+	Return PosX
+}
+
+GetWinPosY(title=""){
+	IniRead, PosY,%Config%,%Title%,Ypos
+		Return PosY
+}
+
 GetProductCode() {
 	If Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) {
 		frame := Pwb.document.all(10).contentWindow

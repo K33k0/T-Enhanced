@@ -1,5 +1,16 @@
 FormatTime,curDate,, yyyy-MM-dd
 
+	CurrentCallNo := ""
+	Engineer := ""
+	f6td1 := ""
+	fault := ""
+	FinishedTime := ""
+	JobType := ""
+	ProbCode := ""
+	ProdCode := "" 
+	RepOrdNo := ""
+	AdditionalInfo:= ""
+
 Create_EngineerNumber() {
 	IniRead,Engineer,%Config%,Engineer,Number
 	StringTrimRight,Engineer,Engineer,2
@@ -7,23 +18,29 @@ Create_EngineerNumber() {
 	return Engineer
 }
 
-
 Create_NavigateToPage() {
+	 If  Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion ) {
+			OutputDebug, [T-Enhanced] Supported page
+			return true
+		} else if  Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) {
 		try {
-		Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion)
-		frame := Pwb.document.all(9).contentWindow
-		if (frame.document.getElementsByTagName("LABEL")[1].innertext = "job create wizard") {
-			frame.document.getElementById("lblJobCreateWizard").click
-			OutputDebug, [T-Enhanced] Navigated automatically to Create Wizard
-			return TRUE
-		}else{
-			If Not Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion ) {
-				OutputDebug, [T-Enhanced] Unsupported page
-				return False
-			}
+			frame := Pwb.document.all(9).contentWindow
+			if (frame.document.getElementsByTagName("LABEL")[1].innertext = "job create wizard") {
+				frame.document.getElementById("lblJobCreateWizard").click
+				OutputDebug, [T-Enhanced] Navigated automatically to Create Wizard
+				return TRUE
 		}
-	}catch{
-		return false
+	}
+} else {
+	return false
+}
+}
+
+Create_KillPopup() {
+	if (A_IsCompiled = 1){
+		run,Modules\TZAltThread.exe
+	}else{
+		run,Modules\TZAltThread.ahk
 	}
 }
 
@@ -45,24 +62,32 @@ If not Create_NavigateToPage() {
 
 CreateGui:
 Gui, CreateGuint: Margin, 0, 0
-Gui, CreateGuint:Add, Text,center BackgroundTrans,Enter the Serial Number
+Gui, CreateGuint:Add, Text,center BackgroundTrans,Serial Number
 Gui, CreateGuint:Add, Edit, vSerialNumber,
-Gui, CreateGuint:Add, Text, center BackgroundTrans,Choose the Problem Code
+Gui, CreateGuint:Add, Text, center BackgroundTrans,Problem Code
 Gui, CreateGuint:Add, DropDownList,  sort vProbCode, Customer Damage|Distribution|Epos|Handheld|Printer|Self Checkout|Server
-Gui, CreateGuint:Add, Text,  center BackgroundTrans, Choose the Job Type
+Gui, CreateGuint:Add, Text,  center BackgroundTrans,Job Type
 Gui, CreateGuint:Add, DropDownList,  sort vJobType, Food|Healthcare|East Of England|Generic|Food Refurb|Scales|Farm|Distribution
 Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
 Gui, CreateGuint:Add, edit, vRepOrdNo
-Gui, CreateGuint:Add, Button,gCreateContinue, Continue
-Gui, CreateGuint:Add, Button,gCreateCancel -TabStop , Quit
-Gui, CreateGuint: +AlwaysOnTop +ToolWindow
-Gui, CreateGuint:Show, , T-Enhanced Create Job Window
+Gui, CreateGuint:Add, Button, x65 gCreateContinue, Continue
+Gui, CreateGuint: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
+
+X:=GetWinPosX("T-Enhanced Create Job Window")
+Y:=GetWinPosY("T-Enhanced Create Job Window")
+if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
+Gui, CreateGuint: Show, , T-Enhanced Create Job Window
+} else {
+Gui, CreateGuint: Show, X%x% Y%y%  , T-Enhanced Create Job Window
+}
+
 OutputDebug, [T-Enhanced] Created the Create GUI
 return
 CreateCancel:
 CreateGuintGuiClose:
 CreateGuintGuiEscape:
-Gui,CreateGuint:destroy
+SaveWinPos("T-Enhanced Create Job Window")
+gosub,Create_cancel
 OutputDebug, [T-Enhanced] Destroyed the gui
 return
 
@@ -70,38 +95,66 @@ return
 CreateContinue:
 StartTime := A_Now
 Gui,CreateGuint:Submit
-ProbCode := ((ProbCode = "Epos") ? ("HEP") :(((ProbCode = "HandHeld") ? ("HHT") : (((Probcode = "Printer") ? ("HPR") : (((Probcode = "Server") ? ("HSV") : (((Probcode = "Self Checkout") ? ("SCO") : (((ProbCode = "Customer Damage") ? ("CDAM") : (((ProbCode = "Distribution") ? ("RDC") : (return))))))))))))))
-JobType := ((JobType = "Food") ? ("W1F") : (((JobType = "Healthcare") ? ("W1H") : (((Jobtype = "East Of England") ? ("W1E") : (((Jobtype = "Generic") ? ("W1G") : (((JobType = "Food Refurb") ? ("FRN") : (((JobType = "Scales") ? ("WFS") : (((JobType = "Farm") ? ("WSF") : (((JobType = "Distribution") ? ("WSD") : (return))))))))))))))))
+SaveWinPos(" T-Enhanced Create Job Window")
+If (ProbCode = "Epos") {
+	ProbCode = HEP
+} Else if (ProbCode = "HandHeld") {
+	Probcode = HHT
+}Else if (ProbCode = "Printer") {
+	Probcode = HPR
+}Else if (ProbCode = "Server") {
+	Probcode = HSV
+}Else if (ProbCode = "Self Checkout") {
+	Probcode = SCO
+}Else if (ProbCode = "Customer Damage") {
+	Probcode = CDAM
+}Else if (ProbCode = "Distribution") {
+	Probcode = RDC
+}
+If (JobType = "Food"){
+	JobType = W1F
+} else if (JobType = "Healthcare") {
+	JobType = W1H
+} else if (JobType = "East Of England") {
+	JobType = W1E
+} else if (JobType = "Generic") {
+	JobType = W1G
+} else if (JobType = "Food Refurb") {
+	JobType = FRN
+} else if (JobType = "Scales") {
+	JobType = WFS
+} else if (JobType = "Farm") {
+	JobType = WSF
+}else if (JobType = "Distribution") {
+	JobType = WSD
+}
 
+Create_Page1:
 Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
 FormatTime, Times,, HH:mm
 Pwb.document.getElementsByTagName("INPUT")[4] .value := Times
-OutputDebug, [T-Enhanced] book in Time input [%TIMES%]
 Pwb.document.getElementsByTagName("INPUT")[8] .value := Times
-OutputDebug, [T-Enhanced] approve Time input [%TIMES%]
+OutputDebug, [T-Enhanced] book in Time input [%TIMES%]
 Pwb.document.getElementById("cboJobWorkshopSiteNum") .value := "STOWS"
 OutputDebug, [T-Enhanced] Workshop Site = Stows
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
+Create_KillPopup()
 Pwb.document.getElementsByTagName("IMG")[0] .click
 Pwb.document.getElementById("cmdNext") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 161]
 IELoad(Pwb)
 OutputDebug, [T-Enhanced] Page Load Success [ref 161]
 
+Create_Page2:
 Pwb.document.getElementById("cboCallSiteNum") .value := "ZULU"
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
+Create_KillPopup()
+Pwb.document.getElementsByTagName("IMG")[5] .click 
+while (Pwb.document.getElementById("txtCallSiteAddress") .value = "") {
+	sleep 100
 }
-Pwb.document.getElementsByTagName("IMG")[5] .click ;need to find the right number
 Pwb.document.getElementById("cmdNext") .click
 IELoad(Pwb)
 
+Create_Page3:
 Pwb.document.getElementById("cmdNext") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 166]
 IELoad(Pwb)
@@ -109,11 +162,7 @@ OutputDebug, [T-Enhanced] Page Load Success [ref 166]
 InsertSN:
 Pwb.document.getElementById("cboCallSerNum") .value := SerialNumber
 Pwb.document.getElementsByTagName("INPUT")[58] .click
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
+Create_KillPopup()
 Pwb.document.getElementsByTagName("IMG")[19] .click
 Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
 SerialNumber:= Pwb.document.getElementById("cboCallSerNum").value
@@ -133,104 +182,74 @@ return
 Pwb.document.getElementById("txtJobRef6") .value := RepOrdNo
 if (RepOrdNo = "") {
 	MsgBox,Requires Order Number
-	Pwb:=""
-	wb:=""
-	Gui,CreateGuint:destroy
-	Gui,CreateOTFinfo:destroy
+	gosub,Create_Cancel
 	return
 }
 Pwb.document.getElementById("cmdNext") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 198]
 IELoad(Pwb)
 OutputDebug, [T-Enhanced] Page Load Success [ref 198]
-SiteNumber:=Pwb.document.getElementById("cboCallSiteNum") .value
-IfInString,SiteNumber, VK
-{
-msgbox,,Stock Anomaly, Give to your Team Leader immediately
-Pwb:=""
-wb:=""
-Gui,CreateGuint:destroy
-Gui,CreateOTFinfo:destroy
-return
-}
 
-Pwb.document.getElementById("cmdNext") .click
-OutputDebug, [T-Enhanced] Page Load Initiated [ref 214]
-IELoad(Pwb)
-OutputDebug, [T-Enhanced] Page Load Success [ref 214]
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
-Pwb.document.getElementById("cmdNext") .click
-OutputDebug, [T-Enhanced] Page Load Initiated  [ref 237]
-IELoad(Pwb)
-OutputDebug, [T-Enhanced] Page Load Success  [ref 237]
-
+Create_Page4:
 Pwb.document.getElementById("cboCallCalTCode") .value := JobType
 OutputDebug, [T-Enhanced] Successfully inputted Job Type
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
+Create_KillPopup()
 Pwb.document.getElementsByTagName("IMG")[22] .click
+
+Pwb.document.getElementById("cboJobFlowCode") .value := "SWBENCH"
+OutputDebug, [T-Enhanced] Successfully inputted FlowCode
+Create_KillPopup()
+Pwb.document.getElementsByTagName("IMG")[23] .click
+
+Pwb.document.getElementById("cboCallAreaCode") .value := "BFCA1"
+OutputDebug, [T-Enhanced] Successfully inputted Area
+Create_KillPopup()
+Pwb.document.getElementsByTagName("IMG")[23] .click
 
 Pwb.document.getElementById("cboCallEmployNum") .value := Engineer
 OutputDebug, [T-Enhanced] Successfully inputted Engineer Number
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
+Create_KillPopup()
 Pwb.document.getElementsByTagName("IMG")[25] .click
 
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
+Create_KillPopup()
 Pwb.document.getElementById("cboCallProbCode") .value := ProbCode
 OutputDebug, [T-Enhanced] Successfully inputted Problem Code
 Pwb.document.getElementsByTagName("IMG")[26] .click
-
-if (Fault = ""){
-	Fault = No information available
+	while (fault = "") {
+		InputBox,Fault,Call Details, Input details of 
+		WinWaitClose,Call Details
 }
-if (ProdCode = "STOKVP"){
-	OutputDebug, [T-Enhanced] Waiting for user input
-	InputBox,Fault,Call Details, Input details of job
-	if (Fault = ""){
-		Fault = No Information given
-	}
-}
+	
 FinishedTime:=A_Now
 EnvSub,FinsihedTime,StartTime,Seconds
-Pwb.document.getElementsByTagName("TEXTAREA")[4] .value := Fault . "`n---------------[TG]---------------`n Job created in "FinsihedTime " Seconds"
+Pwb.document.getElementsByTagName("TEXTAREA")[4] .value := Fault . "`n---------------[T-Enhanced]---------------`n Job created in "FinsihedTime " Seconds"
 OutputDebug, [T-Enhanced] Successfully inputted customer fault
 FinsihedTime:=""
 StartTime:=""
-return
-ConfirmationGuiClose:
-No:
-OutputDebug, [T-Enhanced] Confirmation close [NO]
-TrayTip, Job Create Wizard,Terminated,
-Gui,CreateGuint:destroy
-Gui,CreateOTFinfo:destroy
-sleep, 2000
-TrayTip
-return
-yes:
-OutputDebug, [T-Enhanced] Confirmation closed [YES]
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
+msgbox,4,Creation Confirmation,Are you happy to continue. `nMistakes may lead to stock anomalies
+IfMsgBox, No
+	{
+	Gosub, Create_cancel
+	return
 }
+ifMsgbox, Abort
+		{
+	Gosub, Create_cancel
+	return
+}
+IfMsgBox, cancel
+		{
+	Gosub, Create_cancel
+	return
+}
+
+Create_Confirmed:
+Create_KillPopup()
 Pwb.document.getElementById("cmdFinish") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 534]
 IELoad(Pwb)
+
+Create_Page5:
 OutputDebug, [T-Enhanced] Page Load Success [ref 534]
 WinWaitClose, Message from webpage
 Pwb.document.getElementsByTagName("INPUT")[119] .click
@@ -238,52 +257,52 @@ Pwb.document.getElementById("cmdFinish") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 539]
 IELoad(Pwb) ;[ref 539]
 OutputDebug, [T-Enhanced] Page Load Success [ref 539]
-if (Precall = "")
-Precall = N/A
-try {
+
+Create_Page6:
 if not wb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
-MsgBox Error accessing page, click 'reload Tesseract Enhancned'
-Process,Close,TE_Create_msgbox.exe
-Process,Close,IEinterupt.exe
-Gui,CreateGuint:destroy
-Gui,CreateOTFinfo:destroy
+MsgBox Error accessing page, click 'reload T-Enhanced'
+gosub,Create_cancel
 return
-}else {
+}
 frame := Pwb.document.all(6).contentWindow
 f6td1 = <TD width="25`%"><DIV style="Color:Red; height:100`%; text-Align:center; font:20">Powered by <br>T-Enhanced</br></DIV></TD>
 frame.document.getElementsBytagName("td")[1].innerhtml := f6td1
 frame := wb.document.all(10).contentWindow
 if (JobType = "FRN"){
 call = IMAC
+frame.document.getElementById("txtJobApproveRef").value:= call
 }
-frame.document.getElementsByTagName("INPUT")[7].value := ((call = "0")?("Not Found"):(call))
 CurrentCallNo:=frame.document.getElementsByTagName("INPUT")[0].value
-frame.document.getElementsByTagName("INPUT")[87].value :=PreEngNo
-frame.document.getElementsByTagName("INPUT")[88].value :=SiteNo
-If (CLF = True){
-frame.document.getElementsByTagName("INPUT")[90].value :="Y"
-}Else{
-frame.document.getElementsByTagName("INPUT")[90].value :="N"
-}
 frame := wb.document.all(7).contentWindow
 frame.document.getElementById("cmdSubmit").click
 frame := wb.document.all(10).contentWindow
 frame.document.getElementById("cboCallUpdAreaCode").value := "WSB"
-if (A_IsCompiled = 1){
-run,Modules\TZAltThread.exe
-}else{
-run,Modules\TZAltThread.ahk
-}
+Create_KillPopup()
 frame := wb.document.all(7).contentWindow
 frame.document.getElementById("cmdSubmit").click
 WinWaitClose, Message from webpage
 
-}
-}catch e{
-MsgBox, Unable to access Page. Click 'reload teseract Zoanthropy '`n[3151]
-}
+Create_cancel:
+OutputDebug,[T-Enhanced]%A_thislabel% Started
 Pwb:=""
 wb:=""
+gosub,Create_VarCleanup
 Gui,CreateGuint:destroy
 Gui,CreateOTFinfo:destroy
+OutputDebug,[T-Enhanced]%A_thislabel% Finished
+return
+
+Create_VarCleanup:
+	OutputDebug,[T-Enhanced]%A_thislabel% Started
+	CurrentCallNo := ""
+	Engineer := ""
+	f6td1 := ""
+	fault := ""
+	FinishedTime := ""
+	JobType := ""
+	ProbCode := ""
+	ProdCode := "" 
+	RepOrdNo := ""
+	AdditionalInfo:= ""
+	OutputDebug,[T-Enhanced]%A_thislabel% Finsihed
 return

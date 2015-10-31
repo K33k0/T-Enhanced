@@ -69,7 +69,7 @@ SysTray Setup
 ###########
 Initialize the system tray menu
 */
-Menu,tray,Nostandard
+;~ Menu,tray,Nostandard
 Menu, Home, add, Config,config
 Menu, Home, add, Changelog,Changelog
 Menu, Workshop, add,Create Job,Create
@@ -113,7 +113,6 @@ GuiWidth := 267
 Height:=TaskBar(150)
 Guixpos := A_ScreenWidth - GuiWidth
 }
-gui,Master:Add, Picture, w-1 h10 x255 y0 gmovegui 0x4000000, Modules\Img\move.png
 Gui, Master: Margin, 0, 0
 Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Tools|Management
@@ -121,12 +120,10 @@ Gui, Master: Tab, Management
 Gui, Master: Add, Button, x92 y30 w80 h45 gPanic 0x8000, Reload T-Enhanced
 Gui, Master: Add, Button, x5 y85 w80 h45 gPrintFunction 0x8000, Print Labels
 Gui, Master: Add, Button, x92 y85 w80 h45 gBER 0x8000, Ber Item
-Gui, Master: Add, Button, x180 y85 w80 h45 gHide 0x8000, Hide
 Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
-Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced
+Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
 Gui, Master: Add, text, x40 y65 w150 h50  center ,By Kieran Wynne
-Gui,Master:add, picture, x180 w70 h-1 y25, Modules\img\tz.png
 Gui, Master: Font, s8 norm
 Gui, Master: add, Button , x20 y85 w112 h20 gChangelog 0x8000, Changelog
 Gui, Master: Add, Button, x20 y110 w225 h35  gConfig 0x8000, Configuration
@@ -137,23 +134,31 @@ Gui, Master: Add, Button, x92 y85 w80 h45 gPanic 0x8000, Reload T-Enhanced
 Gui, Master: Add, Button, x5 y85 w80 h45 gPrintFunction vPrint 0x8000, Print Labels
 Gui, Master: Add, Button, x180 y30 w80 h45 gShip vShipOut 0x8000, Ship Current Job
 Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
-Gui, Master: Add, Button, x180 y85 w80 h45 gHide 0x8000, Hide
-;~ Gui, Master: Add, Text, x5 y130 h20 w257 vMyLevel gMyProfile center, Welcome
 Gui, Master:Tab, Tools
-Gui, Master: Add, Button, x5 y30 w80 h45 gStockRequirements 0x8000 , Picakable Parts
-Gui, Master: Add, Button, x92 y30 w80 h45 gRequiredStock 0x8000, Required Stock
 Gui, Master: Add, Button, x180 y30 w80 h45 gStatRace 0x8000, Stats
 Gui, Master: Add, Button, x5 y85 w80 h45 gBenchkit, Check Benchkit
 Gui, Master: Add, Button, x92 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
-Gui, Master: -Caption +Border +AlwaysOnTop +ToolWindow +OwnDialogs
-Gui, Master: Show, x%Guixpos% y%height% ,T-Enhanced Master Window
+Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
+X:=GetWinPosX("T-Enhanced Master Window")
+Y:=GetWinPosY("T-Enhanced Master Window")
+if (X = "" OR Y = ""){
+Gui, Master: Show, ,T-Enhanced Master Window
+} else {
+Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window
+}
 if (ENG = "error" Or Eng = "" Or Site = "error" Or Site = ""){
 	OutputDebug,[T-Enhanced]  Failed to find settings
 	gosub, config
 }
 OutputDebug,[T-Enhanced]  Master Gui loaded
+WinGet,MasterWindow,ID,T-Enhanced Master Window
 return
 
+MasterGuiClose:
+MasterGuiEscape:
+SaveWinPos("T-Enhanced Master Window")
+gosub,Hide
+return
 
 /*
 ###########
@@ -164,6 +169,7 @@ Quits the master Gui
 Endit:
 try
 pwb := ""
+SaveWinPos("T-Enhanced Master Window")
 OutputDebug,[T-Enhanced]  Force quit
 Exitapp
 return
@@ -177,13 +183,6 @@ Opens up the Configuration Interface
 */
 config:
 Eng1:=""
-GuiWidthSetup := 267
-Iniread,Height,%Config%,T-Enhanced Master Window Position,GuiY
-Iniread,Guixpos,%Config%,T-Enhanced Master Window Position,GuiX
-if (height = "error" or GuiXpos = "error") {
-Height := Taskbar(150)
-Guixpos := A_ScreenWidth - GuiWidthSetup
-}
 Gui, Setup: Margin, 0, 0
 Gui, Setup:Font, s10
 Gui, Setup:Add, Text, x20 y2 w267 h50, T-Enhanced Configuration
@@ -199,13 +198,21 @@ Gui, Setup:Add, Text, x20 y85 w105 h15, Password
 Gui, Setup:Add, Edit, x20 y100 w65 h20 vPasswordIn Password,
 ;Gui, Setup:Add, Button, x20 y125 w43 h20 gEngSave, Save
 Gui, Setup:Add, Button, x216 y126 w43 h23 gDone, Submit
-Gui, Setup: -Caption +Border +AlwaysOnTop +ToolWindow
-Gui, Setup:Show, h150 w267 x%Guixpos% y%Height% , Setup
+Gui, Setup:  +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
+
+X:=GetWinPosX("Setup")
+Y:=GetWinPosY("Setup")
+if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
+Gui, Setup: Show, ,Setup
+} else {
+Gui, Setup: Show, X%x% Y%y%  ,Setup
+}
 return
 EngSave:
 return
 SetupGuiClose:
 SetupGuiEscape:
+SaveWinPos("Setup")
 Reload
 return
 Done:
@@ -226,6 +233,7 @@ IniWrite,%mySite%,%Config%,Site,Location
 OutputDebug,[T-Enhanced]  saved %mysite% to %config%
 Gui,Setup:Destroy
 OutputDebug,[T-Enhanced]  succesfull config
+SaveWinPos("Setup")
 reload
 return
 
@@ -247,19 +255,21 @@ Create:
 return
 
 Report:
-;#Include Modules/ServicePlease.ahk
+#Include Modules/ServicePlease.ahk
 return
 
 Ship:
-;#Include Modules/Sayonara.ahk
+#Include Modules/Sayonara.ahk
 return
 
 Panic:
+SaveWinPos("T-Enhanced Master Window")
 OutputDebug,[T-Enhanced]  Force Reload
 Reload
 return
 
 Hide:
+SaveWinPos("T-Enhanced Master Window")
 Gui,Master: Hide
 return
 
@@ -270,7 +280,7 @@ return
 
 
 PrintFunction:
-;#include Modules/ManualPrint.ahk
+#include Modules/ManualPrint.ahk
 return
 
 

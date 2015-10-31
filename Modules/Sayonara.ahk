@@ -8,7 +8,6 @@ GuiWidth := ""
 height := ""
 Guixpos := ""
 CustomerDamage := ""
-zulu:=false
 IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
 WinActivate,ahk_class IEFrame
 if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
@@ -22,7 +21,6 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	SerialNumber:= frame.document.getElementByID("cboCallSerNum").value
 	CustomerDamageCheck:= frame.document.getElementByID("cboCallProbCode").value
 	If (frame.document.getElementById("cboJobShipSiteNum").value = "ZULU") {
-		zulu:= True
 		goto ZuluShip
 		return
 }
@@ -70,7 +68,7 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	Gui, ShipoutGui:Font, s11
 	Gui, ShipoutGui:Add, Text, x65 y100 w130 cFF0000 Center, %CustomerDamage%
 	Gui, ShipoutGui:Font, s8
-	Gui, ShipoutGui:-Caption +Border +AlwaysOnTop +ToolWindow
+	Gui, ShipoutGui:-Caption +Border +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
 	Gui, ShipoutGui:Show, x%Guixpos% y%height% h150 w267, T-Enhanced Shipout Window
 	gosub, ConfirmGuiWait
 	return
@@ -171,8 +169,8 @@ frame := Pwb.document.all(6).contentWindow
 f6td1 = <TD width="25`%"><DIV style="Color:Red; height:100`%; text-Align:center; font:20">Powered by <br>T-Enhanced</br></DIV></TD>
 frame.document.getElementsBytagName("td")[1].innerhtml := f6td1
 frame := Pwb.document.all(10).contentWindow
-frame.document.getElementByID("cboJobFlowCode")[99].value:="ZULUAW"
-
+frame.document.getElementByID("cboJobFlowCode").value:="ZULUAW"
+frame.document.getElementByID("cboCallAreaCode").value:="WSF"
 
 sleep, 250
 frame := Pwb.document.all(7).contentWindow
