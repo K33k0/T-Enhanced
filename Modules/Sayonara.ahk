@@ -9,6 +9,29 @@ height := ""
 Guixpos := ""
 CustomerDamage := ""
 IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
+
+
+IniRead,Engineer,%Config%,Engineer,Number
+	StringTrimRight,Engineer,Engineer,2
+	OutputDebug, [T-Enhanced] Engineer var updated to - %Engineer%
+	
+	
+	if (Engineer = "405") {
+	msgbox,4,Please confirm,Jaymo`, are you sure this is what you to do`n I mean really sure.`n you're about to ship this you know?
+		IfMsgBox No 
+		{
+			return
+		}
+	} else {
+		msgbox,4,Please confirm,Are you sure you want to ship this?
+		IfMsgBox No 
+		{
+			return
+		}
+	}
+
+
+
 WinActivate,ahk_class IEFrame
 if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
 	MsgBox Error accessing page

@@ -86,7 +86,6 @@ return
 CreateCancel:
 CreateGuintGuiClose:
 CreateGuintGuiEscape:
-SaveWinPos("T-Enhanced Create Job Window")
 gosub,Create_cancel
 OutputDebug, [T-Enhanced] Destroyed the gui
 return
@@ -96,6 +95,14 @@ CreateContinue:
 StartTime := A_Now
 Gui,CreateGuint:Submit
 SaveWinPos(" T-Enhanced Create Job Window")
+if (Create_EngineerNumber() = "406"){
+	msgbox,4,Customer Damage Verification, Is there ANY sign of customer damage?
+	IfMsgBox,Yes
+	{
+		ProbCode = Customer Damage
+	}
+}
+		
 If (ProbCode = "Epos") {
 	ProbCode = HEP
 } Else if (ProbCode = "HandHeld") {
@@ -148,8 +155,14 @@ Create_Page2:
 Pwb.document.getElementById("cboCallSiteNum") .value := "ZULU"
 Create_KillPopup()
 Pwb.document.getElementsByTagName("IMG")[5] .click 
-while (Pwb.document.getElementById("txtCallSiteAddress") .value = "") {
-	sleep 100
+
+Loop {
+	try {
+	if  not Pwb.document.getElementById("txtCallSiteAddress") .value
+		sleep 100
+	else
+		break
+}
 }
 Pwb.document.getElementById("cmdNext") .click
 IELoad(Pwb)
@@ -182,6 +195,12 @@ return
 Pwb.document.getElementById("txtJobRef6") .value := RepOrdNo
 if (RepOrdNo = "") {
 	MsgBox,Requires Order Number
+	gosub,Create_Cancel
+	return
+}
+IfNotInString,RepOrdNo,480
+{
+	MsgBox,incorrect Order Number
 	gosub,Create_Cancel
 	return
 }

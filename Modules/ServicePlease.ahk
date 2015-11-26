@@ -227,9 +227,10 @@ frame := Pwb.document.all(8).contentWindow
 Service_KillPopup()
 frame.document.getElementById("cmdSubmit").click
 IELoad(PWb)
-if (ItemRepaired = 1 && JobType != "FRN" OR Rep = "BER" ) {
-	gosub, ChargeCodes
-}
+/* if (ItemRepaired = 1 && JobType != "FRN" OR Rep = "BER" ) {
+ * 	gosub, ChargeCodes
+ * }
+ */
 If (AddParts = 1){
 Gosub, AddParts
 goto,EndServiceReport
@@ -373,16 +374,14 @@ MsgBox Error accessing page
 Pwb:=""
 return
 }
-If (ItemRepaired = 1) {
-frame := Pwb.document.all(9).contentWindow
-frame.document.getElementById("lblServiceReportLineAdd").click
-} else {
+
 	frame := Pwb.document.all(10).contentWindow
 	frame.document.getElementById("lblServiceReportLines").click
-}
+
 IELoad(pwb)
-Gui,AddPartsGui:Submit
 SaveWinPos("Part Add")
+Gui,AddPartsGui:Submit
+
 I:=1
 LineNo-=1
 loop, %LineNo%{
@@ -442,7 +441,7 @@ Gui,AddPartsGui:destroy
 Pwb:=""
 return
 ReloadAddParts:
-SaveWinPos("Part Add")
+
 Gui,AddPartsGui:Destroy
 PartList:=""
 Goto, ReadPartsInStock
@@ -510,7 +509,7 @@ WinWaitClose, Message from webpage
 OutputDebug, [T-Enhanced] CLF function Ended
 return
 
-ChargeCodes:
+ChargeCodes: ; No call to here
 OutputDebug, [T-Enhanced] Begin Charge Code Function
 If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
 MsgBox Error accessing page
@@ -578,7 +577,7 @@ TimeSinceSP:=""
 TimeEnd:=""
 VarTime:=""
 TotalRecs:=""
-SaveWinPos("T-Enhanced Service Report Window")
+
 gui,ServiceReportGui:destroy
 gui,AddPartsGui:destroy
 return

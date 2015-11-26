@@ -106,13 +106,6 @@ Master GUI
 Launch the Main User Interface
 */
 SplashTextOff
-Iniread,Height,%Config%,T-Enhanced Master Window Position,GuiY
-Iniread,Guixpos,%Config%,T-Enhanced Master Window Position,GuiX
-if (height = "error" or GuiXpos = "error") {
-GuiWidth := 267
-Height:=TaskBar(150)
-Guixpos := A_ScreenWidth - GuiWidth
-}
 Gui, Master: Margin, 0, 0
 Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Tools|Management
@@ -362,7 +355,7 @@ BulkProcess:
 return
 
 LetsMoveSomeShit:
-;#include Modules/IWantToMoveIt.AHK
+#include Modules/IWantToMoveIt.AHK
 return
 
 
