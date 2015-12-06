@@ -192,12 +192,7 @@ goto, InsertSN
 TrayTip,Create Wizard,Failed!
 return
 }
-if not RO:=GetRO(SerialNumber,ProdCode){
-	msgbox, RO number not available, check manually
-	reload
-	return
-}
-Pwb.document.getElementById("txtJobRef6") .value := RO
+Pwb.document.getElementById("txtJobRef6") .value :=GetRO(SerialNumber,ProdCode)
 if (Pwb.document.getElementById("txtJobRef6") .value = "") {
 	MsgBox,Requires Order Number
 	gosub,Create_Cancel
@@ -234,6 +229,7 @@ Create_KillPopup()
 Pwb.document.getElementById("cboCallProbCode") .value := ProbCode
 OutputDebug, [T-Enhanced] Successfully inputted Problem Code
 Pwb.document.getElementsByTagName("IMG")[26] .click
+msgbox % "Your maximum budget is - £"  GetThreshold(ProdCode)
 	while (fault = "") {
 		InputBox,Fault,Call Details, Input details of 
 		WinWaitClose,Call Details

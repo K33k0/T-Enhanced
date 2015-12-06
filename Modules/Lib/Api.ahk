@@ -1,7 +1,13 @@
 ﻿#NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 
-;~ RO := getRO("41-fa516","1770049581")
-;~ MsgBox, %RO%
+;~ debug:=0
+;~ if debug {
+;~ #include Functions.ahk
+;~ global TesseractVersion:="5.40.14"
+;~ }
+
+;~ RO := 
+;~ MsgBox % getRO("41-fa516","1770049581")
 
 getRO(SerialNumber,ProductCode){
 	temp:=IEvGet(title)
@@ -27,3 +33,30 @@ getRO(SerialNumber,ProductCode){
 return RO	
 }
 
+;~ msgbox % GetThreshold("1770049581")
+
+GetThreshold(ProductCode){
+	temp:=IEvGet(title)
+	url = http://hypappbs005/SC5/SC_Part/aspx/Part_modify.aspx?PART_NUM=%ProductCode%
+	temp.Navigate2(url, 4096)
+	while (Charge = "") {
+		try {
+			temp := IEGet("Part_modify - " TesseractVersion )
+			Charge:=temp.document.getElementById("txtPartRepairEnd").value
+			OutputDebug, [TE] %RO% - we're are in here you know - %SerNum%
+		} catch {
+			OutputDebug, [TE] Failed to grab RO attempt %A_index%
+			attempts += 1
+			sleep, 100
+			if (attempts = 100) {
+				return Failed
+				break
+			}
+		}
+	}
+	temp.quit()
+	SetFormat,float,0.2
+	Threshold := Charge * 2
+	
+	return Threshold
+}
