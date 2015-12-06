@@ -68,7 +68,7 @@ Gui, CreateGuint:Add, Text, center BackgroundTrans,Problem Code
 Gui, CreateGuint:Add, DropDownList,  sort vProbCode, Customer Damage|Distribution|Epos|Handheld|Printer|Self Checkout|Server
 Gui, CreateGuint:Add, Text,  center BackgroundTrans,Job Type
 Gui, CreateGuint:Add, DropDownList,  sort vJobType, Food|Healthcare|East Of England|Generic|Food Refurb|Scales|Farm|Distribution
-Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
+;Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
 ;Gui, CreateGuint:Add, edit, vRepOrdNo
 Gui, CreateGuint:Add, Button, x65 gCreateContinue, Continue
 Gui, CreateGuint: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
@@ -192,7 +192,12 @@ goto, InsertSN
 TrayTip,Create Wizard,Failed!
 return
 }
-Pwb.document.getElementById("txtJobRef6") .value := GetRO(SerialNumber,ProdCode)
+if not RO:=GetRO(SerialNumber,ProdCode){
+	msgbox, RO number not available, check manually
+	reload
+	return
+}
+Pwb.document.getElementById("txtJobRef6") .value := RO
 if (Pwb.document.getElementById("txtJobRef6") .value = "") {
 	MsgBox,Requires Order Number
 	gosub,Create_Cancel
@@ -320,20 +325,3 @@ Create_VarCleanup:
 	AdditionalInfo:= ""
 	OutputDebug,[T-Enhanced]%A_thislabel% Finsihed
 return
-
-
-GetRO(SerialNumber="",ProductCode=""){
-	temp:=IEvGet(title)
-	url= http://hypappbs005/SC5/SC_SerProd/aspx/serprod_modify.aspx?SER_NUM=%SerialNumber%&PROD_NUM=%ProductCode%&SITE_NUM=ZULU
-	temp.Navigate2(url, 4096)
-	while (RO = "") {
-		try {
-			temp := IEGet("serprod_modify - " TesseractVersion )
-			RO:=temp.document.getElementById("txtSerReference2").value
-			SerNum := temp.document.getElementById("txtSerNum").value 
-			OutputDebug, [TE] %RO% - we're are in here you know - %SerNum%
-		}
-	}
-	temp.quit()
-return RO	
-}

@@ -8,6 +8,7 @@ if not A_isadmin {
 }
 
 #include Modules\Lib\Functions.ahk
+#include Modules\Lib\Api.ahk
 	
 
 A:=true
