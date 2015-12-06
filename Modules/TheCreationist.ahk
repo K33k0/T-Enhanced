@@ -8,7 +8,7 @@ FormatTime,curDate,, yyyy-MM-dd
 	JobType := ""
 	ProbCode := ""
 	ProdCode := "" 
-	RepOrdNo := ""
+	RO := ""
 	AdditionalInfo:= ""
 
 Create_EngineerNumber() {
@@ -69,7 +69,7 @@ Gui, CreateGuint:Add, DropDownList,  sort vProbCode, Customer Damage|Distributio
 Gui, CreateGuint:Add, Text,  center BackgroundTrans,Job Type
 Gui, CreateGuint:Add, DropDownList,  sort vJobType, Food|Healthcare|East Of England|Generic|Food Refurb|Scales|Farm|Distribution
 Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
-Gui, CreateGuint:Add, edit, vRepOrdNo
+;Gui, CreateGuint:Add, edit, vRepOrdNo
 Gui, CreateGuint:Add, Button, x65 gCreateContinue, Continue
 Gui, CreateGuint: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
 
@@ -192,18 +192,13 @@ goto, InsertSN
 TrayTip,Create Wizard,Failed!
 return
 }
-Pwb.document.getElementById("txtJobRef6") .value := RepOrdNo
-if (RepOrdNo = "") {
+Pwb.document.getElementById("txtJobRef6") .value := GetRO(SerialNumber,ProdCode)
+if (Pwb.document.getElementById("txtJobRef6") .value = "") {
 	MsgBox,Requires Order Number
 	gosub,Create_Cancel
 	return
 }
-IfNotInString,RepOrdNo,480
-{
-	MsgBox,incorrect Order Number
-	gosub,Create_Cancel
-	return
-}
+
 Pwb.document.getElementById("cmdNext") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 198]
 IELoad(Pwb)
@@ -325,3 +320,20 @@ Create_VarCleanup:
 	AdditionalInfo:= ""
 	OutputDebug,[T-Enhanced]%A_thislabel% Finsihed
 return
+
+
+GetRO(SerialNumber="",ProductCode=""){
+	temp:=IEvGet(title)
+	url= http://hypappbs005/SC5/SC_SerProd/aspx/serprod_modify.aspx?SER_NUM=%SerialNumber%&PROD_NUM=%ProductCode%&SITE_NUM=ZULU
+	temp.Navigate2(url, 4096)
+	while (RO = "") {
+		try {
+			temp := IEGet("serprod_modify - " TesseractVersion )
+			RO:=temp.document.getElementById("txtSerReference2").value
+			SerNum := temp.document.getElementById("txtSerNum").value 
+			OutputDebug, [TE] %RO% - we're are in here you know - %SerNum%
+		}
+	}
+	temp.quit()
+return RO	
+}
