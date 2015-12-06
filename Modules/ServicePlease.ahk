@@ -240,8 +240,8 @@ If ( ItemRepaired  != 1) {
 frame := Pwb.document.all(10).contentWindow
 frame.document.getElementById("lblRepairJob").click
 } else {
-	frame := Pwb.document.all(9).contentWindow
-	frame.document.getElementById("lblCallHandling").click
+	frame := Pwb.document.all(10).contentWindow
+	frame.document.getElementById("lblRepairJob").click
 }
 goto,EndServiceReport
 return
