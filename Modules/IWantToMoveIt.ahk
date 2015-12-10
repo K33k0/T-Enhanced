@@ -20,12 +20,9 @@ while	Partcode%i% != ""  {
 PartcodeCode%i% := ""
 I+=1
 }
-
-CurrentProduct := GetProductCode()
-if not currentproduct
-	currentproduct:= ""
-
-iniread,EligibleProducts,%PartsDatabase%,EligibleProducts,List
+global  PartsDatabase:="modules/database/PartsDataBase.ini"
+FileInstall,C:/Users/kieran.wynn/Projects/Git/T-Enhanced [ZULU]/InstallMe/PartsDataBase.ini,modules/database/PartsDataBase.ini,1
+iniread,EligibleProducts,modules/database/PartsDataBase.ini,EligibleProducts,List
 Authorized=406
 
 gui,ProductSelector:add,text,,product

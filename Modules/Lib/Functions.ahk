@@ -28,6 +28,7 @@ GetWinPosY(title=""){
 }
 
 GetProductCode() {
+	try{
 	If Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) {
 		frame := Pwb.document.all(10).contentWindow
 		If ProductCode:=frame.document.getElementById("cboJobPartNum").value ;Job Query
@@ -50,6 +51,7 @@ GetProductCode() {
 			return ProductCode
 	}
 		
+	}
 	}
 }
 

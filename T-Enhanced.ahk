@@ -46,7 +46,7 @@ OutputDebug,[T-Enhanced]  Dymo successfully Loaded
 ;{ ----Variables
 global Config:=A_ScriptDir "\Modules\Config.ini"
 OutputDebug,[T-Enhanced]  Config directory set to [ %config% ]
-global  PartsDatabase:="\\10.22.59.2\Workshop\PartsDatabase.ini"
+
 IniRead,Eng,%Config%,Engineer,Number
 OutputDebug, [T-Enhanced] Engineer Stock site = %Eng%
 Iniread,Site, %Config%,Site,Location
