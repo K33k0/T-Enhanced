@@ -67,7 +67,7 @@ Gui, CreateGuint:Add, Edit, vSerialNumber,
 Gui, CreateGuint:Add, Text, center BackgroundTrans,Problem Code
 Gui, CreateGuint:Add, DropDownList,  sort vProbCode, Customer Damage|Distribution|Epos|Handheld|Printer|Self Checkout|Server
 Gui, CreateGuint:Add, Text,  center BackgroundTrans,Job Type
-Gui, CreateGuint:Add, DropDownList,  sort vJobType, Food|Healthcare|East Of England|Generic|Food Refurb|Scales|Farm|Distribution
+Gui, CreateGuint:Add, DropDownList,  sort vJobType, Zulu Repair|Imac Refurb|Adhoc TCG|Consumables|Zulu VP
 ;Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
 ;Gui, CreateGuint:Add, edit, vRepOrdNo
 Gui, CreateGuint:Add, Button, x65 gCreateContinue, Continue
@@ -118,22 +118,16 @@ If (ProbCode = "Epos") {
 }Else if (ProbCode = "Distribution") {
 	Probcode = RDC
 }
-If (JobType = "Food"){
-	JobType = W1F
-} else if (JobType = "Healthcare") {
-	JobType = W1H
-} else if (JobType = "East Of England") {
-	JobType = W1E
-} else if (JobType = "Generic") {
-	JobType = W1G
-} else if (JobType = "Food Refurb") {
-	JobType = FRN
-} else if (JobType = "Scales") {
-	JobType = WFS
-} else if (JobType = "Farm") {
-	JobType = WSF
-}else if (JobType = "Distribution") {
-	JobType = WSD
+If (JobType = "Zulu Repair"){
+	JobType = ZR1
+} else if (JobType = "Imac Refurb") {
+	JobType = ZR2
+} else if (JobType = "Adhoc TCG") {
+	JobType = ZR3
+} else if (JobType = "Consumables") {
+	JobType = ZR4
+}else if (JobType = "Zulu VP") {
+	JobType = VP
 }
 
 Create_Page1:
@@ -152,10 +146,10 @@ IELoad(Pwb)
 OutputDebug, [T-Enhanced] Page Load Success [ref 161]
 
 Create_Page2:
+if (JobType = "ZR1") {
 Pwb.document.getElementById("cboCallSiteNum") .value := "ZULU"
 Create_KillPopup()
 Pwb.document.getElementsByTagName("IMG")[5] .click 
-
 Loop {
 	try {
 	if  not Pwb.document.getElementById("txtCallSiteAddress") .value
@@ -164,8 +158,21 @@ Loop {
 		break
 }
 }
+
 Pwb.document.getElementById("cmdNext") .click
 IELoad(Pwb)
+} else {
+	If (JobType = "VP") {
+		JobType=ZR1
+	}
+	#Include Modules/TheCreationistJudge.ahk
+	gosub,Create_Page4
+	return
+}
+
+
+
+
 
 Create_Page3:
 Pwb.document.getElementById("cmdNext") .click
@@ -192,11 +199,13 @@ goto, InsertSN
 TrayTip,Create Wizard,Failed!
 return
 }
+if  (JobType = "ZR1") {
 Pwb.document.getElementById("txtJobRef6") .value :=GetRO(SerialNumber,ProdCode)
 if (Pwb.document.getElementById("txtJobRef6") .value = "") {
 	MsgBox,Requires Order Number
 	gosub,Create_Cancel
 	return
+}
 }
 
 Pwb.document.getElementById("cmdNext") .click
@@ -229,12 +238,10 @@ Create_KillPopup()
 Pwb.document.getElementById("cboCallProbCode") .value := ProbCode
 OutputDebug, [T-Enhanced] Successfully inputted Problem Code
 Pwb.document.getElementsByTagName("IMG")[26] .click
+if (JobType = "ZR1"){
 msgbox % "Your maximum budget is - £"  GetThreshold(ProdCode)
-	while (fault = "") {
-		InputBox,Fault,Call Details, Input details of 
-		WinWaitClose,Call Details
+
 }
-	
 FinishedTime:=A_Now
 EnvSub,FinsihedTime,StartTime,Seconds
 Pwb.document.getElementsByTagName("TEXTAREA")[4] .value := Fault . "`n---------------[T-Enhanced]---------------`n Job created in "FinsihedTime " Seconds"
@@ -283,7 +290,7 @@ frame := Pwb.document.all(6).contentWindow
 f6td1 = <TD width="25`%"><DIV style="Color:Red; height:100`%; text-Align:center; font:20">Powered by <br>T-Enhanced</br></DIV></TD>
 frame.document.getElementsBytagName("td")[1].innerhtml := f6td1
 frame := wb.document.all(10).contentWindow
-if (JobType = "FRN"){
+if (JobType = "ZR2"){
 call = IMAC
 frame.document.getElementById("txtJobApproveRef").value:= call
 }

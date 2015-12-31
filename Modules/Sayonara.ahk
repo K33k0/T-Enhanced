@@ -16,19 +16,7 @@ IniRead,Engineer,%Config%,Engineer,Number
 	OutputDebug, [T-Enhanced] Engineer var updated to - %Engineer%
 	
 	
-	if (Engineer = "405") {
-	msgbox,4,Please confirm,Jaymo`, are you sure this is what you to do`n I mean really sure.`n you're about to ship this you know?
-		IfMsgBox No 
-		{
-			return
-		}
-	} else {
-		msgbox,4,Please confirm,Are you sure you want to ship this?
-		IfMsgBox No 
-		{
-			return
-		}
-	}
+
 
 
 
@@ -66,14 +54,6 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	IELoad(Pwb)
 	Pwb.document.getElementsByTagName("INPUT")[48] .click
 
-	Iniread,Height,%config%,T-Enhanced Shipout Window Position,GuiY
-	Iniread,Guixpos,%config%,T-Enhanced Shipout Window Position,GuiX
-	if (height = "error" or GuiXpos = "error") {
-		GuiWidth := 534
-		Height := Taskbar(150)
-		Guixpos := A_ScreenWidth - GuiWidth
-	}
-	gui,ShipoutGui:Add, Picture,y0 x247 h10 w-1 gmovegui 0x4000000, Modules\Img\move.png
 	Gui, ShipoutGui:Font, s11
 	gui,ShipoutGui:Add, Text, x0 y0 w247 center, Shipping %CallNum% to %ShipSite%
 	Gui, ShipoutGui:Font, s8
@@ -91,35 +71,27 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	Gui, ShipoutGui:Font, s11
 	Gui, ShipoutGui:Add, Text, x65 y100 w130 cFF0000 Center, %CustomerDamage%
 	Gui, ShipoutGui:Font, s8
-	Gui, ShipoutGui:-Caption +Border +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
-	Gui, ShipoutGui:Show, x%Guixpos% y%height% h150 w267, T-Enhanced Shipout Window
+	Gui, ShipoutGui: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
+	
+	X:=GetWinPosX("T-Enhanced Shipout Window")
+Y:=GetWinPosY("T-Enhanced Shipout Window")
+if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
+Gui, CreateGuint: Show, ,T-Enhanced Shipout Window
+} else {
+Gui, CreateGuint: Show, X%x% Y%y%  ,T-Enhanced Shipout Window
+}
 	gosub, ConfirmGuiWait
 	return
 	ConfirmGuiWait:
-	IniRead,russ,%Config%,Engineer,Number
-	If (russ = "430BK"){
-		if (shipsite != "STOKGOODS") {
-			ComObjCreate("SAPI.SpVoice").Speak("You are not shipping to Stoke Goods")
-		}
-	}
-	sleep, 3000
 	GuiControl,ShipoutGui:Enabled,ShipOutGuiNext
 	return
 	Next:
+	SaveWinPos(" T-Enhanced Create Job Window")
 	gui,ShipoutGui:submit
 	SerialNumber:=""
 	ProdCode:=""
 	SerialNumber:=Pwb.document.getElementbyID("cbaListCallSerNumLineArray").value
 	ProdCode:=Pwb.document.getElementbyID("cbaListJobPartNumLineArray").value
-	if(Prodcode = "STOKVP"){
-	}else{
-		If (strLen(SerialNumber)>15 Or strlen(Prodcode) > 13){
-			DymoAddIn.Open("Modules\Workshop Codes Large.label")
-		MsgBox,48 , Workshop Labels,Insert Large labels. `nclick continue once inserted
-		}else{
-			DymoAddIn.Open("Modules\Workshop Codes.label")
-		}
-	}
 	Pwb.document.getElementById("cmdFinish") .click
 	if (A_IsCompiled = 1){
 		run,Modules\TZAltThread.exe
@@ -130,21 +102,6 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	Pwb.document.getElementsByTagName("INPUT")[40] .click
 	Pwb.document.getElementById("cmdFinish") .click
 	pwb:=""
-	if(Prodcode != "STOKVP"){
-		DymoAddin.StartPrintJob()
-		DymoLabel.SetField( 1, SerialNumber )
-		DymoLabel.SetField( 2, ProdCode )
-		DymoLabel.SetField( 3, Notes )
-		DymoAddIn.Print( 2, TRUE )
-		DymoAddin.EndPrintJob()
-	If (strLen(SerialNumber)>15 Or strlen(Prodcode) > 13){
-		msgbox,48,Workshop Labels, Reinsert small labels
-	}
-	Gui,ShipoutGui:Destroy
-	;~ gosub, UpdateCheck
-	pwb:=""
-	return
-	}
 	Gui,ShipoutGui:Destroy
 	;~ gosub, UpdateCheck
 	pwb:=""
