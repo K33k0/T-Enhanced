@@ -28,6 +28,10 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	frame := Pwb.document.all(10).contentWindow
 	CallNum:= frame.document.getElementsByTagName("INPUT")[0] .value
 	sleep, 250
+	if (frame.document.getElementByID("cboJobFlowCode").value = "ZULUAW"){
+		msgbox, This has already been shipped
+		return
+	}
 	ProdCode:= frame.document.getElementByID("cboJobPartNum").value
 	SerialNumber:= frame.document.getElementByID("cboCallSerNum").value
 	CustomerDamageCheck:= frame.document.getElementByID("cboCallProbCode").value
@@ -54,37 +58,37 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	IELoad(Pwb)
 	Pwb.document.getElementsByTagName("INPUT")[48] .click
 
-	Gui, ShipoutGui:Font, s11
-	gui,ShipoutGui:Add, Text, x0 y0 w247 center, Shipping %CallNum% to %ShipSite%
-	Gui, ShipoutGui:Font, s8
-	Gui, ShipoutGui:Add, Text, x0 y+5 w267 center BackgroundTrans,Enter Version Number
-	Gui, ShipoutGui:Add, ComboBox, x33 y+5 w200 vNotes, %CustomVersion%
-	Gui, ShipoutGui:Add, Button, X181 y+5 w50 gSaveNoteShipout -TabStop, Save
-	Gui, ShipoutGui:Add, Button, X34 ym+60 w50 gDeleteNoteShipout -TabStop, Delete
-	Gui, ShipoutGui:Add, Button, X207 y+30 w50 gNext vShipOutGuiNext +Default Disabled, Ship
-	Gui, ShipoutGui:Add, Button, X7 ym+112 w50 gCancelShip, Cancel
-	if (CustomerDamageCheck = "CDAM"){
-		CustomerDamage = This call is marked as customer damage
-	} else {
-		CustomerDamage = This call is not marked as customer damage
-	}
-	Gui, ShipoutGui:Font, s11
-	Gui, ShipoutGui:Add, Text, x65 y100 w130 cFF0000 Center, %CustomerDamage%
-	Gui, ShipoutGui:Font, s8
-	Gui, ShipoutGui: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
+	;~ Gui, ShipoutGui:Font, s11
+	;~ gui,ShipoutGui:Add, Text, x0 y0 w247 center, Shipping %CallNum% to %ShipSite%
+	;~ Gui, ShipoutGui:Font, s8
+	;~ Gui, ShipoutGui:Add, Text, x0 y+5 w267 center BackgroundTrans,Enter Version Number
+	;~ Gui, ShipoutGui:Add, ComboBox, x33 y+5 w200 vNotes, %CustomVersion%
+	;~ Gui, ShipoutGui:Add, Button, X181 y+5 w50 gSaveNoteShipout -TabStop, Save
+	;~ Gui, ShipoutGui:Add, Button, X34 ym+60 w50 gDeleteNoteShipout -TabStop, Delete
+	;~ Gui, ShipoutGui:Add, Button, X207 y+30 w50 gNext vShipOutGuiNext +Default Disabled, Ship
+	;~ Gui, ShipoutGui:Add, Button, X7 ym+112 w50 gCancelShip, Cancel
+	;~ if (CustomerDamageCheck = "CDAM"){
+		;~ CustomerDamage = This call is marked as customer damage
+	;~ } else {
+		;~ CustomerDamage = This call is not marked as customer damage
+	;~ }
+	;~ Gui, ShipoutGui:Font, s11
+	;~ Gui, ShipoutGui:Add, Text, x65 y100 w130 cFF0000 Center, %CustomerDamage%
+	;~ Gui, ShipoutGui:Font, s8
+	;~ Gui, ShipoutGui: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
 	
-	X:=GetWinPosX("T-Enhanced Shipout Window")
-Y:=GetWinPosY("T-Enhanced Shipout Window")
-if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
-Gui, CreateGuint: Show, ,T-Enhanced Shipout Window
-} else {
-Gui, CreateGuint: Show, X%x% Y%y%  ,T-Enhanced Shipout Window
-}
-	gosub, ConfirmGuiWait
-	return
-	ConfirmGuiWait:
-	GuiControl,ShipoutGui:Enabled,ShipOutGuiNext
-	return
+	;~ X:=GetWinPosX("T-Enhanced Shipout Window")
+;~ Y:=GetWinPosY("T-Enhanced Shipout Window")
+;~ if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
+;~ Gui, CreateGuint: Show, ,T-Enhanced Shipout Window
+;~ } else {
+;~ Gui, CreateGuint: Show, X%x% Y%y%  ,T-Enhanced Shipout Window
+;~ }
+	;~ gosub, ConfirmGuiWait
+	;~ return
+	;~ ConfirmGuiWait:
+	;~ GuiControl,ShipoutGui:Enabled,ShipOutGuiNext
+	;~ return
 	Next:
 	SaveWinPos(" T-Enhanced Create Job Window")
 	gui,ShipoutGui:submit
@@ -107,34 +111,6 @@ Gui, CreateGuint: Show, X%x% Y%y%  ,T-Enhanced Shipout Window
 	pwb:=""
 	return
 }
-cancelShip:
-Process,Close,Msgbox_Close.exe
-Gui,ShipoutGui:Destroy
-OutputDebug, Shipout Canceled within cancel ship label
-TP_Show("Automatic Shipout Cancelled")
-return
-SaveNoteShipout:
-Gui, ShipoutGui:Submit, Nohide
-if (CustomVersion = ""){
-	CustomVersion = %Notes%
-}Else{
-	CustomVersion =%CustomVersion%|%Notes%
-}
-StringReplace, CustomVersion, CustomVersion,||,|, All
-IniWrite, %CustomVersion%, %config%,VersionNumbers,MyVersions
-IniRead, CustomVersion, %config%,VersionNumbers,MyVersions
-GuiControl,,Notes,|%CustomVersion%
-return
-DeleteNoteShipout:
-Empty:=""
-Gui, ShipoutGui:Submit, Nohide
-StringReplace, CustomVersion, CustomVersion, %Notes%|
-IniWrite, %CustomVersion%, %config%,VersionNumbers,MyVersions
-Notes:=""
-CustomVersion:=""
-GuiControl,,Notes,%CustomVersion%
-MsgBox, Change will be mode the next time this loads
-return
 
 ZuluShip:
 OutputDebug, [T-Enhanced] Zulu Ship function activated

@@ -10,6 +10,11 @@ FormatTime,curDate,, yyyy-MM-dd
 	ProdCode := "" 
 	RO := ""
 	AdditionalInfo:= ""
+	
+	
+	if (getKeyState("Alt","P") = 1 && eng = "406bk") {
+		godMode := true
+	}
 
 Create_EngineerNumber() {
 	IniRead,Engineer,%Config%,Engineer,Number
@@ -68,8 +73,8 @@ Gui, CreateGuint:Add, Text, center BackgroundTrans,Problem Code
 Gui, CreateGuint:Add, DropDownList,  sort vProbCode, Customer Damage|Distribution|Epos|Handheld|Printer|Self Checkout|Server
 Gui, CreateGuint:Add, Text,  center BackgroundTrans,Job Type
 Gui, CreateGuint:Add, DropDownList,  sort vJobType, Zulu Repair|Imac Refurb|Adhoc TCG|Consumables|Zulu VP
-;Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
-;Gui, CreateGuint:Add, edit, vRepOrdNo
+Gui, CreateGuint:Add, Text,  center BackgroundTrans,Repair order Number
+Gui, CreateGuint:Add, edit, vroVerify
 Gui, CreateGuint:Add, Button, x65 gCreateContinue, Continue
 Gui, CreateGuint: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
 
@@ -93,8 +98,8 @@ return
 
 CreateContinue:
 StartTime := A_Now
+SaveWinPos("T-Enhanced Create Job Window")
 Gui,CreateGuint:Submit
-SaveWinPos(" T-Enhanced Create Job Window")
 if (Create_EngineerNumber() = "406"){
 	msgbox,4,Customer Damage Verification, Is there ANY sign of customer damage?
 	IfMsgBox,Yes
@@ -200,13 +205,25 @@ TrayTip,Create Wizard,Failed!
 return
 }
 if  (JobType = "ZR1") {
-Pwb.document.getElementById("txtJobRef6") .value :=GetRO(SerialNumber,ProdCode)
+if godMode {
+	Pwb.document.getElementById("txtJobRef6") .value := GetRO(SerialNumber,ProdCode)	
+} else {
+		while (roVerify  = "") {
+		InputBox roVerify,RO input, Input your repair order number
+		}
+		Pwb.document.getElementById("txtJobRef6") .value := GetRO(SerialNumber,ProdCode) = roVerify ? roVerify : ""
+}
 if (Pwb.document.getElementById("txtJobRef6") .value = "") {
 	MsgBox,Requires Order Number
 	gosub,Create_Cancel
 	return
 }
 }
+
+godMode := false
+
+
+
 
 Pwb.document.getElementById("cmdNext") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 198]
@@ -303,6 +320,8 @@ Create_KillPopup()
 frame := wb.document.all(7).contentWindow
 frame.document.getElementById("cmdSubmit").click
 WinWaitClose, Message from webpage
+
+
 
 Create_cancel:
 OutputDebug,[T-Enhanced]%A_thislabel% Started

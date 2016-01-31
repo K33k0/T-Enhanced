@@ -30,12 +30,14 @@ goto, InsertSN
 TrayTip,Create Wizard,Failed!
 return
 }
+if  (JobType != "ZR2" && JobType != "ZR3"){
 while (MyRO = ""){
 	Loop {
 		InputBox,myRO,Repair Order Input,Insert your repair Order Number
 		IfInString,myRO, 480
 			RealRO := true
 	}until (realRO = true)
+}
 }
 
 RealRO :=""

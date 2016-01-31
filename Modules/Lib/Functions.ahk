@@ -12,6 +12,7 @@ hModule := DllCall("LoadLibrary","Str",AhkDllPath)
 
 SaveWinPos(title=""){
 	WinGetPos, Xpos, Ypos,,,%Title%
+	OutputDebug, %Title% - Y position = %Ypos% : X position = %Xpos%
 	IniWrite, %Xpos%, %Config%,%Title%,Xpos
 	IniWrite, %Ypos%, %Config%,%Title%,Ypos
 	return
@@ -164,9 +165,9 @@ PageAlert() {
 Loop {
 	IfWinExist,ahk_class #32770
 	{
-		OutputDebug, [TZ] Well the window exists...
+		OutputDebug, [TE] Well the window exists...
 		WinKill, ahk_class #32770
-		OutputDebug, [TZ] And The window is closed
+		OutputDebug, [TE] And The window is closed
 		ExitApp
 	}
 }

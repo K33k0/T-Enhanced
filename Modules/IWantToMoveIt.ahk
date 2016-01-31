@@ -10,6 +10,7 @@ x:=""
 y:=""
 Listofmovedparts:=""
 
+;=======Array Wipe==========
 I=1
 while	PartcodeQuantity%i% != "" {
 PartcodeQuantity%i% := ""
@@ -20,20 +21,20 @@ while	Partcode%i% != ""  {
 PartcodeCode%i% := ""
 I+=1
 }
+;========================
+
+
 global  PartsDatabase:="modules/database/PartsDataBase.ini"
 FileInstall,C:/Users/kieran.wynn/Projects/Git/T-Enhanced [ZULU]/InstallMe/PartsDataBase.ini,modules/database/PartsDataBase.ini,1
+
+;==============Get eligible parts from the ini db ====================
 iniread,EligibleProducts,modules/database/PartsDataBase.ini,EligibleProducts,List
-Authorized=406
+;=======================================================
 
+;============== Select  product gui ==========================
 gui,ProductSelector:add,text,,product
-Gui,ProductSelector:add,ComboBox,0x100 vProductcode,%EligibleProducts%|%currentproduct%
+Gui,ProductSelector:add,ComboBox,0x100 vProductcode,%EligibleProducts%
 gui,ProductSelector:add,button,gsubmitstage1,submit
-
-IniRead,Engineer,%Config%,Engineer,Number
-StringReplace,Engineer,Engineer,BK,,
-IfInString,Authorized,%Engineer%
-gui,ProductSelector:add,button, gCheckProduct,check products
-
 
 Gui, ProductSelector:- +AlwaysOnTop +ToolWindow
 X:=GetWinPosX("T-Enhanced Product Select")
@@ -44,18 +45,23 @@ Gui, ProductSelector: Show, ,T-Enhanced Product Select
 Gui, ProductSelector: Show, X%x% Y%y%  ,T-Enhanced Product Select
 }
 return
+;====================================================
+
 
 submitstage1:
 SaveWinPos("T-Enhanced Product Select")
 gui,ProductSelector:submit
+;================ Get Parts using the supplied product ======================================
 iniread,Eligibleparts,%PartsDatabase%,PartsbyProduct,%ProductCode%
 if (EligibleParts="error") {
-		MsgBox, %Productcode% has no eligibleparts for this function. `n email your line manager to get some added.
+		MsgBox, %Productcode% has no eligibleparts for this function.
 		gosub,EndMovement
 		return
 }
+;=============================================================================
 
 
+;================= Gui for selecting your parts ======================
 gui,Partselector:add,text,w254 x5 center,%Productcode%
 stringsplit,Partmoveloop,Eligibleparts,|
 I=1
@@ -85,7 +91,9 @@ Gui, Partselector: Show, ,T-Enhanced Part Select
 Gui, Partselector: Show, X%x% Y%y%,  T-Enhanced Part Select
 }
 return
+;============================================================
 
+;============= Subroutine to show descriptions for parts filtered by product ========
 Viewdescriptions:
 gui,Partselector:submit,nohide
 SaveWinPos("T-Enhanced Part Select")
@@ -99,85 +107,87 @@ loop, %partmoveloop0% {
 
 gui,Partdescriptions:show
 return
+;=============================================================
 
+;============== Commence the movements =========================
 SubmitParts:
 SaveWinPos("T-Enhanced Part Select")
 gui,Partselector:submit
+
 I = 1
 Part := PartCode%I%
 Quantity := PartcodeQuantity%i%
 while (Part != "") {
 ; code for the submission
-PartMovePointer:=IEVget(Title)
-URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx
-	PartMovePointer.Navigate2(URL,2048)
+PartMovePointer:=IEVget(Title) ;hijack session
+URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx ;set the url
+	PartMovePointer.Navigate2(URL,2048) ;navigate the hijacked session to a new tab opening the set url
 	Loop {
 		try {
-			PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx")
-			If (PartMovePointer.document.GetElementById("MainTitle").innertext = "This page can't be displayed") {
-				PartMovePointer.refresh()
-				sleep, 2500
-			}
+			PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx")  ;get session by url
 			Frame:=PartMovePointer.document.all(9).contentwindow
-			Frame.document.GetElementById("cboPartNum").value := Part
+			Frame.document.GetElementById("cboPartNum").value := Part ;set the value of the field
 		}
-	}Until (Frame.document.GetElementById("cboPartNum").value = Part)
+	}Until (Frame.document.GetElementById("cboPartNum").value = Part) ;break the loop when the field is set to the correct field
 
 frame := PartMovePointer.document.all(9).contentWindow
 
-frame.document.getelementbyID("cboPartNum").value := Part
+;================= Page Inputs =============================
+frame.document.getelementbyID("cboPartNum").value := Part ;--input part
 
-iniread,AltlocationList,%PartsDatabase%,STOKGOODS,List
-IfInString,AltLocationList,%Part% 
+iniread,AltlocationList,%PartsDatabase%,STOKGOODS,List ;--get list of parts that come from other places
+IfInString,AltLocationList,%Part%  ; if part is in the list then give it an alt location
 {
 MovementSite := "STOKGOODS"
-
 }
 else
 {
 MovementSite := "STOWPARTS"
 }
-frame.document.getelementbyID("cboSourceSiteNum").value := MovementSite
+frame.document.getelementbyID("cboSourceSiteNum").value := MovementSite ;set the movement site to whatever was decided above
 OutputDebug, [COK]Movement site is set to %MovementSite%
 ModalDialogue() 
 frame.document.getElementsByTagName("IMG")[2] .click 
 WinWaitClose, ahk_class Internet Explorer_TridentDlgFrame
 sleep, 500
 
-loop {
+while (frame.document.getelementbyID("txtSourceSerialised").value = "")
 	sleep, 250
-} until (frame.document.getelementbyID("txtSourceSerialised").value != "" )
+
 
 if (frame.document.getelementbyID("txtSourceTotalQty").value != "" OR 0) {
-	SourceQuantity := frame.document.getelementbyID("txtSourceTotalQty").value
-	OutputDebug % "[COK] Quantity in stock " . SourceQuantity
+	SourceQuantity := frame.document.getelementbyID("txtSourceTotalQty").value ;check current stock
 	if (frame.document.getelementbyID("txtSourceTotalQty").value < Qunatity) {
 		While (SourceQuantity < Qunatity) {
 		SourceQuantity := frame.document.getelementbyID("txtSourceTotalQty").value
-		OutputDebug % "[COK] Quantity in stock " SourceQuantity
 		Gui +LastFound +OwnDialogs +AlwaysOnTop
 		inputbox, QUANTITY, Insufficient Stock, There is insufficient stock in STOWPARTS`n maximum available is %SourceQuantity%`ninput a new amount
+		WinWaitClose
 	}
 	}
-	IniRead,Engineer,%Config%,Engineer,Number
+	IniRead,Engineer,%Config%,Engineer,Number ;read engineer number
 	
-	frame.document.getelementbyID("cboDestSiteNum").value := Engineer
+	frame.document.getelementbyID("cboDestSiteNum").value := Engineer ;input engineer number
 	ModalDialogue() 
 	frame.document.getElementsByTagName("IMG")[6] .click 
+	
 	while (frame.document.getelementbyID("txtDestTotalNeed").value = "")
 		sleep, 500
-	frame.document.getelementbyID("txtMoveTotalQty").value := Quantity
-	frame.document.getelementbyID("cboAdjustCode").value := "MV"
-	frame.document.getelementbyID("txtReason").value := "Automated movement - TG"
-	TP_Show("Stock movement from " .  MovementSite , "Blue", "12", "White", 2000)
-	frame.document.getelementbyID("cboSourceSiteNum").value := MovementSite
+	
+	frame.document.getelementbyID("txtMoveTotalQty").value := Quantity ;insert  quantity
+	frame.document.getelementbyID("cboAdjustCode").value := "MV" ;set adjustment code
+	frame.document.getelementbyID("txtReason").value := "Automated movement - TE" ;inserted reason
+	frame.document.getelementbyID("cboSourceSiteNum").value := MovementSite ;insert movement site
 	ModalDialogue() 
 	frame.document.getElementsByTagName("IMG")[2] .click 
 	sleep, 500
-	frame.document.getelementbyid("chkAllowNewStockFlag").click
+	frame.document.getelementbyid("chkAllowNewStockFlag").click  ;check the flag
 	frame := PartMovePointer.document.all(6).contentWindow
-	frame.document.getElementByID("cmdSubmit").Click
+	frame.document.getElementByID("cmdSubmit").Click ;submit
+	sleep 500
 	PageLoading(PartMovePointer)
+	while PartMovePointer.busy
+		sleep 250
 } else {
 	msgbox % Part . " is out of stock"
 	PartcodeQuantity%i% = out of stock
@@ -219,6 +229,8 @@ gui,ProductSelector:destroy
 Qunatuty:= ""
 Listofmovedparts:=""
 return
+;============================================================
+
 PartselectorGuiEscaper:
 ProductSelectorGuiEscape:
 EndMovement:
@@ -231,43 +243,4 @@ gui,ProductSelector:destroy
 Qunatuty:= ""
 Listofmovedparts:=""
 return
-
-;Manage Database
-
-
-CheckProduct:
-Gui, CheckProduct:add, text,, Insert Product Code
-gui, CheckProduct:add, edit, vProduct,
-gui, CheckProduct:add,button, gsubmitProductCheck, Submit
-gui, CheckProduct:show
-return
-
-
-
-submitProductcheck:
-Gui,CheckProduct:Submit
-gui,ProductSelector:destroy
-if CheckEligibleProducts(Product)
-	msgbox % Product . " is eligible"
-else
-	msgbox % Product . " does not exist"
-gui,CheckProduct:destroy
-return
-
-AddProduct:
-Gui, addproduct:add, text,,select a product
-Gui,  CheckProduct:add, edit, vproductcodeadd,
-gui, addproduct:add, button,gsubmitProductadd,submit
-gui, addproduct:show
-return
-
-submitProductadd:
-gui, addproduct:submit
-if CheckEligibleProducts(productcodeadd) {
-	MsgBox, %product% already exists
-	Gui,CheckProduct:destroy
-	Gui,addproduct:destroy
-	return
-}
-
 

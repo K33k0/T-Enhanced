@@ -1,6 +1,21 @@
 ﻿IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
 gui:
 gosub, datagrab
+if (getKeyState("Alt","P") = 1 && eng = "406bk"){
+DymoAddIn.Open("Modules/Workshop Codes.label")
+StringUpper, SN, SN
+StringUpper, PC, PC
+DymoLabel.SetField( 1, SN)
+DymoLabel.SetField( 2, PC)
+DymoLabel.SetField( "JobNumber", Call)
+DymoLabel.SetField( 3, Notes)
+DymoAddIn.Print( 2, TRUE )
+return
+
+}
+	
+
+
 if (SN = ""){
 SN:="Insert Serial Number"
 PC:="Insert Product Code"

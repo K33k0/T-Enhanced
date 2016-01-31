@@ -9,6 +9,7 @@ if not A_isadmin {
 
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
+
 	
 
 A:=true
@@ -109,10 +110,8 @@ Launch the Main User Interface
 SplashTextOff
 Gui, Master: Margin, 0, 0
 Gui, Master: Font, s8
-Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Tools|Management
+Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics|Management
 Gui, Master: Tab, Management
-Gui, Master: Add, Button, x92 y30 w80 h45 gPanic 0x8000, Reload T-Enhanced
-Gui, Master: Add, Button, x5 y85 w80 h45 gPrintFunction 0x8000, Print Labels
 Gui, Master: Add, Button, x92 y85 w80 h45 gBER 0x8000, Ber Item
 Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
@@ -128,10 +127,10 @@ Gui, Master: Add, Button, x92 y85 w80 h45 gPanic 0x8000, Reload T-Enhanced
 Gui, Master: Add, Button, x5 y85 w80 h45 gPrintFunction vPrint 0x8000, Print Labels
 Gui, Master: Add, Button, x180 y30 w80 h45 gShip vShipOut 0x8000, Ship Current Job
 Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
-Gui, Master:Tab, Tools
-Gui, Master: Add, Button, x180 y30 w80 h45 gStatRace 0x8000, Stats
-Gui, Master: Add, Button, x5 y85 w80 h45 gBenchkit, Check Benchkit
-Gui, Master: Add, Button, x92 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
+Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
+Gui, Master: Tab, Logistics
+Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
+
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
 Y:=GetWinPosY("T-Enhanced Master Window")
@@ -239,7 +238,7 @@ Show commit history
 Opens github to the commits page
 */
 Changelog:
-run, https://github.com/k33k00/T-Enhanced/commits/master
+run, https://github.com/k33k00/T-Enhanced--ZULU-/commits/master
 OutputDebug,[T-Enhanced]  opened changelog
 return
 ;}
@@ -359,5 +358,10 @@ LetsMoveSomeShit:
 #include Modules/IWantToMoveIt.AHK
 return
 
+Assets:
+#include Modules/KillMeNow.ahk
+return
 
+#if eng = "406bk"
+#include Modules\406.ahk
 
