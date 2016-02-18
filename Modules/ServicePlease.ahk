@@ -20,6 +20,7 @@ return
 frame := Pwb.document.all(10).contentWindow
 ProdCode:=frame.document.getElementById("cboJobPartNum").value
 JobType:=frame.document.getElementById("cboCallCalTCode").value
+RO:=frame.document.getElementById("txtJobRef6").value
 frame := Pwb.document.all(9).contentWindow
 frame.document.getElementById("lblRepairJobFSR").click
 Loop{
@@ -250,8 +251,8 @@ If (CLF = True OR Rep = "Awaiting Spares"){
 Goto, CLF
 }
 If (Rep = "BER" or Rep = 21){
-Filecopy,%A_ScriptDir%/modules/BerForm.docx,%A_Temp%/%call%.docx,
-Run,%A_Temp%/%call%.docx
+Filecopy,%A_ScriptDir%/modules/BerForm.docx,%A_Temp%/%RO%.docx,
+Run,%A_Temp%/%RO%.docx
 }
 gosub, Service_cancel
 return

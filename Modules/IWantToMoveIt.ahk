@@ -26,7 +26,7 @@ I+=1
 
 global  PartsDatabase:="modules/database/PartsDataBase.ini"
 FileInstall,C:/Users/kieran.wynn/Projects/Git/T-Enhanced [ZULU]/InstallMe/PartsDataBase.ini,modules/database/PartsDataBase.ini,1
-
+FileInstall,C:/Users/kieran.wynn/Projects/Git/T-Enhanced [ZULU]/InstallMe/Parts-Request.msg,modules/Parts-Request.msg,1
 ;==============Get eligible parts from the ini db ====================
 iniread,EligibleProducts,modules/database/PartsDataBase.ini,EligibleProducts,List
 ;=======================================================
@@ -35,7 +35,7 @@ iniread,EligibleProducts,modules/database/PartsDataBase.ini,EligibleProducts,Lis
 gui,ProductSelector:add,text,,product
 Gui,ProductSelector:add,ComboBox,0x100 vProductcode,%EligibleProducts%
 gui,ProductSelector:add,button,gsubmitstage1,submit
-
+gui,ProductSelector:add,button,gRequestParts,Request Part
 Gui, ProductSelector:- +AlwaysOnTop +ToolWindow
 X:=GetWinPosX("T-Enhanced Product Select")
 Y:=GetWinPosY("T-Enhanced Product Select")
@@ -244,3 +244,6 @@ Qunatuty:= ""
 Listofmovedparts:=""
 return
 
+RequestParts:
+run, %A_scriptdir%/modules/Parts-Request.msg
+return

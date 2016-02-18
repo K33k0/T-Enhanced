@@ -2,6 +2,7 @@
 gui,KMN:Destroy
 }
 
+
 gui, KMN:add, text,,Insert Serial Number
 Gui, KMN:Add, Edit, vSerialNumber
 gui, KMN:add, text,,Insert Repair Order Number
@@ -54,7 +55,6 @@ loop{ ;loop waiting for page to load whilst figuring out the landing page
 }until (SiteNo != ""|| Records != "") ;stop loop as soon as one exists
 
 if (SiteNo = "ZULU" && Records = ""){ ;if sitenumber is ZULU & records is nothingthen do some stuff relating to the part being in zulu
-	msgbox, unit is in zulu
 	
 	if (ExistingRO := frame.document.getElementById("txtSerReference2").value) {
 		frame.document.getElementById("txtSerReference1").value := ExistingRO ;move the existing RO number to the last RO field
@@ -86,37 +86,36 @@ if (SiteNo = "ZULU" && Records = ""){ ;if sitenumber is ZULU & records is nothin
 		}
 		frame := wb.document.all(7).contentWindow
 		;=================================
-		;PageAlert()
-		;frame.document.getElementById("cmdSubmit").click
+		PageAlert()
+		frame.document.getElementById("cmdSubmit").click
+		pageloading(wb)
 		;=================================
 		gosub, KMN_Create
 		return
-} else if (Records = 0 && SiteNo = "") { ; if  records = 0 and no site number exists then the unit does not exist on the system
-	msgbox, unit is not in any customer assets
-	gosub, productAdd
-	return
-
-	
-
-
-}else if (siteNo != "" && siteNo != "ZULU" && Records = "") { ; if  site number isn't blank and it doesnt  equal zero and Records is blank then the unit is installed in a store
-	msgbox, deleting out of store
+} else if (siteNo != "" && siteNo != "ZULU" && Records = "") { ; if  site number isn't blank and it doesnt  equal zero and Records is blank then the unit is installed in a store
+	OutputDebug, Install in a site that isn't ZULU
 	frame := wb.document.all(7).contentWindow ;select frame
 		;=================================
-		;PageAlert()
-		;frame.document.getElementById("cmdDelete").click
+		frame.document.getElementById("cmdDelete").click
+		WinWaitClose, Message from webpage
+	
+		pageloading(wb)
 		;=================================
 	gosub, productAdd
 	return
+
+}else if (Records = "0" && SiteNo = "") { ; if  records = 0 and no site number exists then the unit does not exist on the system
+	gosub, productAdd
+	return
+
 } else { ;if the if statements havn't caught is already then failsafe
 	msgbox, an error has occurred whilst trying to determine the units location
 	return
 }
 
 
-msgbox, all done dude
-
 productAdd:
+	OutputDebug, running productAdd
 	frame := wb.document.all(9).contentWindow ;select frame
 	frame.document.getElementById("lblSerProdAdd").click  ;add the part
 	Loop{ ;begin loop to (wait for page to load)
@@ -126,12 +125,14 @@ productAdd:
 			sleep 250
 		}
 	} until (pageTitle = "serialised product add" && wb.busy = 0)
+	OutputDebug, productAdd - reached marker 1
 	
 	frame := wb.document.all(10).contentWindow ;select frame
 	frame.document.getElementById("txtSerNum").value :=SerialNumber ;check for site number
 	
 	if (ExistingRO) {
 		frame.document.getElementById("txtSerReference1").value := ExistingRO ;move the existing RO number to the last RO field
+		outputDebug, inserting pre-existing RO into required field
 	}
 	IfNotInString,NewRO,480
 		{
@@ -142,7 +143,9 @@ productAdd:
 			}
 		}
 	frame.document.getElementById("txtSerReference2").value := newRO
+	OutputDebug, New RO added to field
 	frame.document.getElementByid("cboSerSeStatCode").value := "REP"
+	OutputDebug, Status set to REP
 	IfNotInString, ProductCode, 177 
 		{
 			MsgBox,4,Product Code Verify, Product Code is showing as %productCode%. `nIs this Correct
@@ -152,23 +155,21 @@ productAdd:
 			}
 		}
 	productCode:= LTrim(productCode, "0")
+	OutputDebug, removed trailing zero's from product
 	frame.document.getElementById("cboSerProdNum").value := productCode
+	OutputDebug, Product Code inserted
 	frame.document.getElementById("txtSerSiteNum").value := "ZULU"
+	OutputDebug, site number set to zulu
 	frame := wb.document.all(7).contentWindow
 		;=================================
-		;PageAlert()
-		;frame.document.getElementById("cmdSubmit").click
+		PageAlert()
+		frame.document.getElementById("cmdSubmit").click
+		OutputDebug, submit has been hiti for product add
+		PageLoading(wb)
 		;=================================
 		gosub, KMN_Create
 return
 
-!C::
-StartTime := A_Now
-SerialNumber = D11D05834
-StringUpper, SerialNumber, SerialNumber
-newRO = 1872349
-productCode = 0001770049577
-wb:=IEVget(Title)
 KMN_Create:
 wb.Navigate2("http://hypappbs005/SC5/SC_RepairJob/aspx/repairjob_create_wzd.aspx")
 sleep, 2500
@@ -213,9 +214,20 @@ FinishedTime:=A_Now
 EnvSub,FinsihedTime,StartTime,Seconds
 wb.document.getElementsByTagName("TEXTAREA")[4] .value := "==== Booking in finsihed in: " . FinsihedTime . " seconds ====`n==== Repair Order Number: " . newRO . " ====`n=======Powered by T-Enhanced======="
 ;===================================
-;wb.document.getElementById("cmdSubmit") .click
+PageAlert()
+wb.document.getElementById("cmdFinish") .click
+Pageloading(wb)
+wb.document.getElementsByTagName("INPUT")[119] .click
+wb.document.getElementById("cmdFinish") .click
+Pageloading(wb)
+frame := wb.document.all(10).contentWindow
+newCall:=frame.document.getElementsByTagName("INPUT")[0].value
 ;===================================
-msgbox, done
+
+DymoAddIn.Open("Modules/Zulu-book-in.label")
+DymoLabel.SetField( "RO-Number", newRO)
+DymoLabel.SetField( "Call-Number", newCall)
+DymoAddIn.Print( 1, TRUE )
 
 return
 

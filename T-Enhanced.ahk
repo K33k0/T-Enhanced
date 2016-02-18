@@ -9,6 +9,7 @@ if not A_isadmin {
 
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
+#include Modules\Lib\Rini.ahk
 
 	
 
@@ -355,7 +356,7 @@ BulkProcess:
 return
 
 LetsMoveSomeShit:
-#include Modules/IWantToMoveIt.AHK
+#include Modules/Move.AHK
 return
 
 Assets:
