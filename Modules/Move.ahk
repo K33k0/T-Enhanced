@@ -3,11 +3,12 @@ databasePath := "/modules/Database/DatabaseStart/partList.ini"
 PartMove := new Movement("default")
 PartMove.ini := new PartMove.ini("default")
 
+
         
 gui,Move2:add,Text,,Select Manufacturer
 gui,Move2: add, DDL, vSelectedSection gManuUpdate, % PartMove.ini.Sections()
 gui, Move2: +OwnDialogs
-Gui,Move2: show
+gui, Move2:show
 return
 
 ManuUpdate:
@@ -46,18 +47,18 @@ loop, 5 {
             InputBox, selectedQuantity,Select Quantity, Input correct quantity - current set to %selectedQuantity%
         }
         
-        PartMove.MovePart(currentPart,selectedQuantity)
-        
+        if (PartMove.MovePart(currentPart,selectedQuantity)) {
+            PartMove.queuePrint(currentPart,selectedQuantity)
+            partMove.GetPartLocation(currentPart)
+            } else {
+                msgbox, failed to move %currentPart%
+        }
     }
-   
 }
-For key, value in PartMove.parts
-    MsgBox %key% = %value%
 
-loop, 5 {
-    selectedKey%A_Index% := ""
-    KeyQuantity%A_Index% := ""
-}
+partmove.print()
+
+
 PartMove := ""
 gui,Move2:destroy
 return
@@ -65,16 +66,21 @@ return
 
 class Movement
 {
-    Parts := {}
+    requestedPart := {}
+    partLocation := {}
     __New()
     {
-        ini := new this.ini("default")
-        gui:= new this.gui("default")
+        ;ini := new this.ini("default")
+        ;gui:= new this.gui("default")
     }
     
     __Delete()
     {
-        this.destroy()
+        RIni_Shutdown(1)
+        loop, 5 {
+        selectedKey%A_Index% := ""
+        KeyQuantity%A_Index% := ""
+}
     }
     class ini
     {
@@ -121,10 +127,7 @@ class Movement
     
     class gui
     {
-        __New()
-        {
-            
-        }
+    
     }
     
     MovePart(part,quantity)
@@ -176,14 +179,60 @@ class Movement
 	frame.document.getElementsByTagName("IMG")[2] .click 
 	sleep, 500
 	frame.document.getelementbyid("chkAllowNewStockFlag").click  ;check the flag
-	;frame := PartMovePointer.document.all(6).contentWindow
+    PageAlert()
+	frame := PartMovePointer.document.all(6).contentWindow
+	frame.document.getElementByID("cmdSubmit").Click ;submit
+    sleep 250
+    WinWait,Message from webpage
     PartMovePointer.quit
-    return this.queuePrint(part,quantity)
+    return true
 }
 
     queuePrint(part,quantity) 
     {
-    this.Parts[part] := quantity
-    return this.Parts
+    this.requestedPart[part] := quantity
+    return true
+    }
+    
+    GetpartLocation(part)
+    {
+        PartMovePointer:=IEVget(Title)
+        URL:="http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part ;set the url
+        PartMovePointer.Navigate2(URL,2048) ;navigate the hijacked session to a new tab opening the set url
+    	Loop {
+		try {
+			PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part)  ;get session by url
+			stockCheck := PartMovePointer.document.GetElementById("txtTotalQty").value ;set the value of the field
+            }
+        }Until (stockCheck != "") ;break the loop when the field is set to the correct field
+        StockLocation :=  PartMovePointer.document.GetElementById("txtLocation").value
+        if (stockLocation = "") {
+            StockLocation :=  PartMovePointer.document.GetElementById("txtBinLoc").value
+        }
+        if  (StockLocation = "") {
+            StockLocation := false
+        }
+        this.partLocation[part] := StockLocation
+        PartMovePointer.quit()
+    }
+    
+    print()
+    {
+        global DymoAddin
+        global DymoLabel
+        DymoAddIn.Open("Modules\Part Order.label")
+        DymoAddin.StartPrintJob()
+        
+        For key, value in this.requestedPart
+        {
+            OutputDebug % key . " = " value
+        DymoLabel.SetField( "Part1", key) 
+        DymoLabel.SetField( "Quantity1", value) 
+        if (this.partLocation[key]) {
+            DymoLabel.SetField( "Description1", this.partLocation[key]) 
+        }
+        DymoAddIn.Print( 1, TRUE )
+        }
+        DymoAddin.EndPrintJob()
     }
 }
