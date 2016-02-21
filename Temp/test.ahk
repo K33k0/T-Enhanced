@@ -1,0 +1,1 @@
+MsgBox % RegExReplace("Kieran Wynne", "^(\w{3})\w*\s+\b(\w{3})\w*$", "$1$2")

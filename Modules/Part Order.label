@@ -30,7 +30,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="180.860927152318" Y="115.658941357341" Width="329.80131995599" Height="212.407284970315" />
+		<Bounds X="180.860931396484" Y="115.65894317627" Width="329.801330566406" Height="212.407287597656" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<DateTimeObject>
@@ -53,7 +53,7 @@
 			<IncludeTime>True</IncludeTime>
 			<Use24HourFormat>True</Use24HourFormat>
 		</DateTimeObject>
-		<Bounds X="2030.92715231788" Y="149.756622516557" Width="806.622509785835" Height="327.316237695959" />
+		<Bounds X="2030.92712402344" Y="149.756622314453" Width="806.622497558594" Height="327.316223144531" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -79,7 +79,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="130" Y="292.23178807947" Width="2846" Height="239.278145695365" />
+		<Bounds X="130" Y="336.735092264138" Width="2846" Height="239.27815246582" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -105,7 +105,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="1078.41081793577" Y="1144.15233313958" Width="1760.26489621598" Height="183.576156616211" />
+		<Bounds X="2458.01341560818" Y="1144.15234375" Width="380.662243571503" Height="183.576156616211" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -131,7 +131,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="142.053202041727" Y="1114.99669561323" Width="723.973505386454" Height="243.00330438677" />
+		<Bounds X="1699.6691014372" Y="1108.63907294873" Width="723.973510742188" Height="243.003311157227" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -157,6 +157,74 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="130" Y="615.17880794702" Width="2846" Height="480.867549668875" />
+		<Bounds X="130" Y="767.761614464766" Width="2846" Height="277.423845101666" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<TextObject>
+			<Name>TEXT__1</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<HorizontalAlignment>Left</HorizontalAlignment>
+			<VerticalAlignment>Top</VerticalAlignment>
+			<TextFitMode>ShrinkToFit</TextFitMode>
+			<UseFullFontHeight>True</UseFullFontHeight>
+			<Verticalized>False</Verticalized>
+			<StyledText>
+				<Element>
+					<String>Location</String>
+					<Attributes>
+						<Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					</Attributes>
+				</Element>
+			</StyledText>
+		</TextObject>
+		<Bounds X="130" Y="1114.99668884277" Width="774.834437894506" Height="243.003311157227" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<TextObject>
+			<Name>Location1</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<HorizontalAlignment>Center</HorizontalAlignment>
+			<VerticalAlignment>Top</VerticalAlignment>
+			<TextFitMode>ShrinkToFit</TextFitMode>
+			<UseFullFontHeight>True</UseFullFontHeight>
+			<Verticalized>False</Verticalized>
+			<StyledText>
+				<Element>
+					<String>NA</String>
+					<Attributes>
+						<Font Family="Arial" Size="11" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					</Attributes>
+				</Element>
+			</StyledText>
+		</TextObject>
+		<Bounds X="969.205298013245" Y="1159.32450331126" Width="506.397350993377" Height="198.675496688742" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<ShapeObject>
+			<Name>SHAPE</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<ShapeType>HorizontalLine</ShapeType>
+			<LineWidth>15</LineWidth>
+			<LineAlignment>Center</LineAlignment>
+			<FillColor Alpha="0" Red="255" Green="255" Blue="255" />
+		</ShapeObject>
+		<Bounds X="130" Y="1136.82119205298" Width="2846" Height="15" />
 	</ObjectInfo>
 </DieCutLabel>

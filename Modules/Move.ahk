@@ -1,67 +1,116 @@
-databasePath := "/modules/Database/DatabaseStart/partList.ini"
-
+FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
+FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
+FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
 PartMove := new Movement("default")
 PartMove.ini := new PartMove.ini("default")
 
 
         
 gui,Move2:add,Text,,Select Manufacturer
-gui,Move2: add, DDL, vSelectedSection gManuUpdate, % PartMove.ini.Sections()
-gui, Move2: +OwnDialogs
-gui, Move2:show
+gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % PartMove.ini.Sections()
+gui, Move2: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
+gui, Move2:show,, Parts Movement
+WinActivate, Parts Movement
 return
 
 ManuUpdate:
 gui, Move2:submit,nohide
 GuiControl,disable,SelectedSection
-gui,Move2:add,Text,,Select Unit Type
-gui, Move2:add, DDL, vSelectedKey gTypeUpdate,% PartMove.ini.SectionKeys(selectedSection)
+gui,Move2:add,Text,w200,Select Unit Type
+gui, Move2:add, DDL, w200 vSelectedKey gTypeUpdate,% PartMove.ini.SectionKeys(selectedSection)
 gui, Move2: show, AutoSize
 return
 
 TypeUpdate:
 gui, Move2:submit, NoHide
 GuiControl,disable,SelectedKey
-gui,Move2:add,Text,,Select Parts
+gui,Move2:add,Text, w200,Select Parts
 selectedKey :=  PartMove.ini.SectionkeyValues(SelectedKey)
 
 Loop % PartMove.ini.KeyValues().MaxIndex()
 {
-    gui, Move2:add, DDL, vSelectedKey%A_Index%, % PartMove.ini.SectionKeyValue
-    gui, Move2:Add,edit
+    gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index%, % PartMove.ini.SectionKeyValue
+    gui, Move2:Add,edit, w40 yp x+2
     gui, Move2:add,updown, vKeyQuantity%A_Index%
+    gui, Move2:add, text, vstatusText%A_Index% w20 h20 yp0 x+4,
+    
+    
 }until A_index > 4
 
-gui,Move2:add, button, gPartMoveGo, Submit
+gui,Move2:add, button, w200 xm gPartMoveGo, Submit
+gui,Move2:add, button, w200 xm gPartMoveDesc, Description Lookup
 
 gui, Move2: show, AutoSize
 return
 
+PartMoveDesc:
+Gui, Move2:add, ListView, w400 x220 ym r16, Part Code|Description
+thelist := PartMove.ini.SectionKeyValue
+Loop, parse, thelist , |
+{
+    IniRead,tempdescription, Modules/Database/PartDescriptions.ini,PartDescriptions,%A_LoopField%
+    LV_Add("", A_LoopField , tempDescription)
+    LV_ModifyCol()  
+}
+LV_ModifyCol()  
+gui, Move2: show, AutoSize
+return
+
 PartMoveGo:
-gui,Move2:submit
+gui,Move2:submit, nohide
 loop, 5 {
     if (selectedKey%A_Index%) {
         currentPart := selectedKey%A_Index%
         selectedQuantity := KeyQuantity%A_Index%
-        if  (selectedQuantity = "" OR selectedQuantity =  0) {
-            InputBox, selectedQuantity,Select Quantity, Input correct quantity - current set to %selectedQuantity%
-        }
+        currentStatus := statusText%A_Index%
+        Gui Font, cBlue s14
+        GuiControl, Move2:Font, statusText%A_Index%
+        GuiControl,Move2:text ,statusText%A_Index%, % chr(0x00221E)
+            while not selectedQuantity
+                InputBox, selectedQuantity,Select Quantity, Input correct quantity - current set to %selectedQuantity%
         
         if (PartMove.MovePart(currentPart,selectedQuantity)) {
+            sleep, 150
             PartMove.queuePrint(currentPart,selectedQuantity)
+            sleep, 150
             partMove.GetPartLocation(currentPart)
+            sleep, 150
+            Gui Font, cGreen
+            GuiControl, Move2:Font, statusText%A_Index%
+            GuiControl,Move2:text ,statusText%A_Index%, % chr(0x002714)
             } else {
-                msgbox, failed to move %currentPart%
+                Gui Font, cRed
+                GuiControl, Move2:Font, statusText%A_Index%
+                GuiControl,Move2:text ,statusText%A_Index%, X
         }
     }
 }
 
 partmove.print()
 
-
+Move2GuiClose:
+Move2GuiEscape:
 PartMove := ""
 gui,Move2:destroy
 return
+
+
+;~ #IfWinActive,Parts Movement
+;~ {
+   ;~ $WheelDown::
+    ;~ if selectedKey
+        ;~ return
+    ;~ else
+        ;~ Send {WheelDown}
+    ;~ return
+    
+    ;~ $WheelUp::
+    ;~ if selectedKey
+       ;~ return
+    ;~ else
+        ;~ Send {WheelUp}
+    ;~ return
+;~ }
 
 
 class Movement
@@ -84,7 +133,7 @@ class Movement
     }
     class ini
     {
-        databasePath := "/modules/Database/DatabaseStart/partList.ini"
+        databasePath := "/modules/Database/partList.ini"
         instance := ""
         selectedSection := ""
         selectedKey:= ""
@@ -132,6 +181,7 @@ class Movement
     
     MovePart(part,quantity)
     {
+    sleep 250
     PartMovePointer:=IEVget(Title)
     URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx ;set the url
 	PartMovePointer.Navigate2(URL,2048) ;navigate the hijacked session to a new tab opening the set url
@@ -182,9 +232,9 @@ class Movement
     PageAlert()
 	frame := PartMovePointer.document.all(6).contentWindow
 	frame.document.getElementByID("cmdSubmit").Click ;submit
-    sleep 250
-    WinWait,Message from webpage
-    PartMovePointer.quit
+    pageloading(PartMovePointer)
+    WinClose,Message from webpage,,5
+    PartMovePointer.quit()
     return true
 }
 
@@ -196,24 +246,25 @@ class Movement
     
     GetpartLocation(part)
     {
-        PartMovePointer:=IEVget(Title)
+        SecondaryPointer:=IEVget(Title)
         URL:="http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part ;set the url
-        PartMovePointer.Navigate2(URL,2048) ;navigate the hijacked session to a new tab opening the set url
+        SecondaryPointer.Navigate2(URL,4096) ;navigate the hijacked session to a new tab opening the set url
     	Loop {
 		try {
-			PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part)  ;get session by url
-			stockCheck := PartMovePointer.document.GetElementById("txtTotalQty").value ;set the value of the field
+			SecondaryPointer:=IEGetURL("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part)  ;get session by url
+			stockCheck := SecondaryPointer.document.GetElementById("txtTotalQty").value ;set the value of the field
             }
         }Until (stockCheck != "") ;break the loop when the field is set to the correct field
-        StockLocation :=  PartMovePointer.document.GetElementById("txtLocation").value
+        StockLocation :=  SecondaryPointer.document.GetElementById("txtLocation").value
         if (stockLocation = "") {
-            StockLocation :=  PartMovePointer.document.GetElementById("txtBinLoc").value
+            StockLocation :=  SecondaryPointer.document.GetElementById("txtBinLoc").value
         }
         if  (StockLocation = "") {
             StockLocation := false
         }
         this.partLocation[part] := StockLocation
-        PartMovePointer.quit()
+        SecondaryPointer.quit()
+        return true
     }
     
     print()
@@ -227,9 +278,11 @@ class Movement
         {
             OutputDebug % key . " = " value
         DymoLabel.SetField( "Part1", key) 
+        IniRead,description, Modules/Database/PartDescriptions.ini,PartDescriptions,%key%
+        DymoLabel.SetField( "Description1", description) 
         DymoLabel.SetField( "Quantity1", value) 
         if (this.partLocation[key]) {
-            DymoLabel.SetField( "Description1", this.partLocation[key]) 
+            DymoLabel.SetField( "Location1", this.partLocation[key]) 
         }
         DymoAddIn.Print( 1, TRUE )
         }
