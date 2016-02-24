@@ -6,22 +6,21 @@ class config {
 	static HashedUserName
 	static HashedPassword
 	static BenchKit
+	static Firstrun = False
 	
 	__New(ini) {
 		IniRead, Engineer, %ini%, Enginer, Number
-		if (Engineer = "ERROR")
-			return false
 		IniRead, user, %ini%, login, UserName
 		IniRead, pass, %ini%, login, Password
 		IniRead,wSite, %ini%, Site, location
-		if (wSite = "ERROR") {
-			return False
-		}
 		this.HashedUserName := user
 		this.HashedPassword := pass
 		this.BenchKit := BenchKit . "BK"
 		this.Engineer := Engineer
 		this.workshopSite := wSite
+		if (Engineer = "ERROR"){
+			this.FirstRun := True
+		}
 	}
 	
 	decrypt(setting) {
@@ -47,25 +46,24 @@ class config {
 	}
 
 	setup() {
-		gui, new
-		gui, add, text,, Select your workshop site
-		gui, add, ddl,vWorkshopSite, NSC
-		gui, add, text,, Insert your engineer number
-		gui, add, edit, vEngineer,
-		gui, add,text,, insert your username
-		gui, add,edit, vUsername
-		gui, add,text,, insert your password
-		gui, add,edit, vPassword Password,
-		gui,show
-		WinWaitClose
-		return
-		
-		
+		msgbox, requires configuration
+		;~ gui, new
+		;~ gui, add, text,, Select your workshop site
+		;~ gui, add, ddl,vWorkshopSite, NSC
+		;~ gui, add, text,, Insert your engineer number
+		;~ gui, add, edit, vEngineer,
+		;~ gui, add,text,, insert your username
+		;~ gui, add,edit, vUsername
+		;~ gui, add,text,, insert your password
+		;~ gui, add,edit, vPassword Password,
+		;~ gui, add, button, hwndDone, Done
+		;~ gui,show
 	}
 }
 
-if not config := new config("config.ini") {
-	msgbox, Config not set
+config := new config("config.ini")
+if (config.FirstRun){
+	msgbox, test
+	config.setup()
 }
-
-
+	

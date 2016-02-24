@@ -22,7 +22,7 @@
 			<Verticalized>False</Verticalized>
 			<StyledText>
 				<Element>
-					<String>406</String>
+					<String>Engineer</String>
 					<Attributes>
 						<Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
 						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
@@ -79,7 +79,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="130" Y="336.735092264138" Width="2846" Height="239.27815246582" />
+		<Bounds X="130" Y="336.735107421875" Width="2846" Height="239.27815246582" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -105,7 +105,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="2458.01341560818" Y="1144.15234375" Width="380.662243571503" Height="183.576156616211" />
+		<Bounds X="2458.01342773438" Y="1144.15234375" Width="380.662231445313" Height="183.576156616211" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -131,7 +131,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="1699.6691014372" Y="1108.63907294873" Width="723.973510742188" Height="243.003311157227" />
+		<Bounds X="1699.66906738281" Y="1108.63903808594" Width="723.973510742188" Height="243.003311157227" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -157,7 +157,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="130" Y="767.761614464766" Width="2846" Height="277.423845101666" />
+		<Bounds X="130" Y="767.761596679688" Width="2846" Height="277.423858642578" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -183,7 +183,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="130" Y="1114.99668884277" Width="774.834437894506" Height="243.003311157227" />
+		<Bounds X="130" Y="1114.99670410156" Width="774.834411621094" Height="243.003311157227" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -209,7 +209,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="969.205298013245" Y="1159.32450331126" Width="506.397350993377" Height="198.675496688742" />
+		<Bounds X="969.205322265625" Y="1159.32446289062" Width="506.397338867188" Height="198.675491333008" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<ShapeObject>
@@ -225,6 +225,6 @@
 			<LineAlignment>Center</LineAlignment>
 			<FillColor Alpha="0" Red="255" Green="255" Blue="255" />
 		</ShapeObject>
-		<Bounds X="130" Y="1136.82119205298" Width="2846" Height="15" />
+		<Bounds X="130" Y="1136.82116699219" Width="2846" Height="15" />
 	</ObjectInfo>
 </DieCutLabel>

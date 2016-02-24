@@ -15,21 +15,31 @@ return
 
 ManuUpdate:
 gui, Move2:submit,nohide
-GuiControl,disable,SelectedSection
+;GuiControl,disable,SelectedSection
+
+GuiControl, Move2:, SelectedKey,% "|" . PartMove.ini.SectionKeys(selectedSection)
+if (errorlevel) {
 gui,Move2:add,Text,w200,Select Unit Type
 gui, Move2:add, DDL, w200 vSelectedKey gTypeUpdate,% PartMove.ini.SectionKeys(selectedSection)
+}
 gui, Move2: show, AutoSize
+
 return
 
 TypeUpdate:
 gui, Move2:submit, NoHide
-GuiControl,disable,SelectedKey
-gui,Move2:add,Text, w200,Select Parts
+;GuiControl,disable,SelectedKey
+
 selectedKey :=  PartMove.ini.SectionkeyValues(SelectedKey)
 
+GuiControl,Move2:, textCheck,Select Parts
+if (errorLevel){
+    gui,Move2:add,Text, vtextCheck w200,Select Parts
+    gui,Move2:add, button, w200 xm vgoButton gPartMoveGo Disabled, Submit
+gui,Move2:add, button, w200 xm vdescButton gPartMoveDesc, Description Lookup
 Loop % PartMove.ini.KeyValues().MaxIndex()
 {
-    gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index%, % PartMove.ini.SectionKeyValue
+    gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % PartMove.ini.SectionKeyValue
     gui, Move2:Add,edit, w40 yp x+2
     gui, Move2:add,updown, vKeyQuantity%A_Index%
     gui, Move2:add, text, vstatusText%A_Index% w20 h20 yp0 x+4,
@@ -37,10 +47,24 @@ Loop % PartMove.ini.KeyValues().MaxIndex()
     
 }until A_index > 4
 
-gui,Move2:add, button, w200 xm gPartMoveGo, Submit
-gui,Move2:add, button, w200 xm gPartMoveDesc, Description Lookup
 
+} else {
+    Loop % PartMove.ini.KeyValues().MaxIndex()
+    {
+        GuiControl,Move2:, SelectedKey%A_Index% , % "|" . PartMove.ini.SectionKeyValue
+        if (errorlevel){
+            GuiControl,Move2:move, goButton,yp
+            GuiControl,Move2:move, descButton,yp
+            gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % PartMove.ini.SectionKeyValue
+            gui, Move2:Add,edit, w40 yp x+2
+        }
+    }until A_index > 4
+}
 gui, Move2: show, AutoSize
+return
+
+enableSubmit:
+GuiControl, enable, goButton
 return
 
 PartMoveDesc:
@@ -176,7 +200,7 @@ class Movement
     
     class gui
     {
-    
+        
     }
     
     MovePart(part,quantity)
@@ -281,6 +305,9 @@ class Movement
         IniRead,description, Modules/Database/PartDescriptions.ini,PartDescriptions,%key%
         DymoLabel.SetField( "Description1", description) 
         DymoLabel.SetField( "Quantity1", value) 
+        IniRead,Engineer,%Config%,Engineer,Number ;read engineer number
+        StringReplace,Engineer,Engineer,BK,,
+        DymoLabel.SetField( "Engineer", Engineer)
         if (this.partLocation[key]) {
             DymoLabel.SetField( "Location1", this.partLocation[key]) 
         }
