@@ -11,7 +11,7 @@ if not A_isadmin {
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
 #include Modules\config.ahk
-FileInstall, InstallMe/icon.ico,icon.ico, 1
+FileInstall, InstallMe/icon.png,icon.png, 1
 
 A:=true
 B:=3
@@ -19,7 +19,17 @@ C:=false
 
 
 
-SplashTextOn,200,100,T-Enhanced©, Created and maintained `n by Kieran Wynne `n`n All rights reservered %A_Year%
+;SplashTextOn,200,100,T-Enhanced©, Created and maintained `n by Kieran Wynne `n`n All rights reservered %A_Year%
+gui, splash: add, picture, w128 h-1 BackgroundTrans,icon.png
+Gui, splash: Font, s12
+gui, splash: add, Text,w128 center cblue BackgroundTrans, T-Enhanced
+Gui, splash: Font, s10
+gui, splash: add, Text,w128 center cblue BackgroundTrans, Created by`nKieran Wynne
+gui, splash: add, progress, w128 vLoadup,
+gui, splash: -border -caption +alwaysontop +LastFound +ToolWindow
+Gui, splash:Color, EEAA99
+WinSet, TransColor, EEAA99
+gui, splash:show, autosize, T-Enhanced
 
 ;{ ----Startup
 #NoEnv
@@ -28,6 +38,8 @@ SetWorkingDir %A_ScriptDir%
 Onexit,Endit
 #singleinstance, force
 #Persistent
+GuiControl,splash:, Loadup, +15
+sleep, 150
 ;}
 
 ;{ ----COM Addins
@@ -43,6 +55,8 @@ OutputDebug, [T-Enhanced] Enabled DYMO.LabelEngine 3/3
 	msgbox, Unable to activate Dymo.`nPlease check you have the latest Dymo software installed.
 }
 OutputDebug,[T-Enhanced]  Dymo successfully Loaded
+GuiControl,splash:, Loadup, +15
+sleep, 150
 ;}
 
 ;{ ----Variables
@@ -50,6 +64,8 @@ global Config:=A_ScriptDir "\Modules\Config.ini"
 OutputDebug,[T-Enhanced]  Config directory set to [ %config% ]
 
 global TesseractVersion:="5.40.14"
+GuiControl,splash:, Loadup, +15
+sleep, 150
 ;}
 
 /*
@@ -60,8 +76,8 @@ Launches all .AHK files inside Custom Scripts Folder
 */
 Loop %A_ScriptDir%\Custom Scripts\*.ahk
 Run %A_LoopFileFullPath%
-
-
+GuiControl,splash:, Loadup, +15  
+sleep, 150
 /*
 ###########
 SysTray Setup
@@ -71,26 +87,19 @@ Initialize the system tray menu
 if (A_IsCompiled){
 Menu,tray,Nostandard
 }
-Menu, Home, add, Config,config
 Menu, Home, add, Changelog,Changelog
 Menu, Workshop, add,Create Job,Create
 Menu, Workshop, add,Service Report,Report
 Menu, Workshop, add,Ship Out,Ship
 Menu, Workshop, add,Print,PrintFunction
-Menu,Tools,add,Pickable parts Requests,StockRequirements
-Menu,Tools,add,Stock Level check,RequiredStock
-Menu,Tools,add,Stat Levels,StatRace
-Menu,Management,add,BER Item,BER
 Menu, tray, add, Home, :Home
 Menu, tray, add, Workshop, :Workshop
-Menu, tray, add, Tools, :Tools
-Menu, tray, add, Management, :Management
-Menu, tray, add,
 Menu,Tray,add,Show
 Menu,Tray,add,Reload,panic
 Menu,Tray,add,Quit,Endit
 OutputDebug,[T-Enhanced]  Tray fully loaded
-
+GuiControl,splash:, Loadup, +15  
+sleep, 150
 /*
 ###########
 Timer Initialization
@@ -99,14 +108,17 @@ Start the Timers
 */
 SetTimer,TestDB,60000,-1
 OutputDebug,[T-Enhanced]  checking database connection every 5 seconds
-
+GuiControl,splash:, Loadup, +15  
+sleep, 150
 /*
 ###########
 Master GUI
 ###########
 Launch the Main User Interface
 */
-SplashTextOff
+GuiControl,splash:, Loadup, 100  
+sleep, 150
+gui, splash:destroy
 Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics|Management
 Gui, Master: Tab, Management
@@ -115,7 +127,7 @@ Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
 Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
 Gui, Master: Add, text, x40 y65 w150 h50  center ,By Kieran Wynne
-Gui, Master: Add, picture, x195 y30 w50 h50,icon.ico
+Gui, Master: Add, picture, x195 y30 w50 h50,icon.png
 Gui, Master: Font, s8 norm
 Gui, Master: add, Button , x20 y85 w112 h20 gChangelog 0x8000, Changelog
 Gui, Master: Add, Button, vConfigButton x20 y110 w225 h35  gConfig 0x8000, Configuration
@@ -175,10 +187,11 @@ Opens up the Configuration Interface
 */
 config:
 Gui, Master: Tab, Home
+GuiControl,Master:, Tab, |Home
 Gui, Master: Add, text, ym xm+267 center, Insert Engineer Number
-Gui, Master: Add, Edit, xm+267 yp+20 vEng1,
+Gui, Master: Add, Edit, xm+267 yp+17 vEng1,
 Gui, Master:Add, Text, xm+267 yp+20, Workshop Site?
-Gui, Master:add, DDL, xm+267 yp+20 vMySite, NSC|Cumbernauld
+Gui, Master:add, DDL, xm+267 yp+17 vMySite, NSC|Cumbernauld
 Gui, Master:Add, Text, xm+267 yp+20 BackgroundTrans, Username
 Gui, Master:Add, Edit, xm+267 yp+17 vUserNameIn,
 Gui, Master:Add, Text, xm+267 yp+20, Password
@@ -255,6 +268,12 @@ return
 
 ;{ ----On tab click
 TabClick:
+if (settings.Engineer = "" OR settings.Engineer = "Error") {
+	GuiControl,Master:, Tab, |Home
+	return
+}
+gui,Master:show, autosize
+
 return
 ;}
 
