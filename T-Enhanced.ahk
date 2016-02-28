@@ -72,7 +72,9 @@ SysTray Setup
 ###########
 Initialize the system tray menu
 */
-;~ Menu,tray,Nostandard
+if (A_IsCompiled){
+Menu,tray,Nostandard
+}
 Menu, Home, add, Config,config
 Menu, Home, add, Changelog,Changelog
 Menu, Workshop, add,Create Job,Create

@@ -20,7 +20,9 @@ class config {
 		this.Engineer := Engineer
 		this.workshopSite := wSite
 		if (Engineer = "ERROR"){
-			this.FirstRun := True
+			return False
+		} else {
+			return true
 		}
 	}
 	
@@ -46,48 +48,5 @@ class config {
 		}
 	}
 	
-	class Gui
-	{
-		static GuiID
-		
-		__New(){
-			gui, new, +LastFound +hwndConfigGui
-			this.guiID := ConfigGui
-			if (config.firstrun){
-				this.firstRun()
-			}
-		}
-		
-		firstRun(){
-			static myDDL
-			guiID := this.GuiID
-			gui, %GuiID%:add, text,, First Run
-			gui, %GuiID%:add, ddl, vmyDDL, one|two
-			gui, %GuiID%:show
-			this.submitGui()
-		}
-		
-		submitGui(){
-			guiID := this.GuiID
-			;ControlGetText, val,
-			msgbox % this.firstrun.myDDL
-		}
-	}
-}
-
-config := new config("config.ini")
-if (config.FirstRun){
-	configGui := new config.Gui()
 }
 	return
-		gui, config:new, +hwndConfig
-		gui, config:add, text,, Select your workshop site
-		gui, config:add, ddl,hwndWorkshopSite, NSC
-		gui, config:add, text,, Insert your engineer number
-		gui, config:add, edit, vEngineer,
-		gui, config:add,text,, insert your username
-		gui, config:add,edit, vUsername
-		gui, config:add,text,, insert your password
-		gui, config:add,edit, vPassword Password,
-		gui, config:add, button, hwndhDone, Done
-		gui,config:show
