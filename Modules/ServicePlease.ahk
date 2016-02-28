@@ -86,7 +86,7 @@ Gui,ServiceReportGui: Add, DropDownList, x10 y30 w300 Sort vRep, Repaired|Cleane
 Gui,ServiceReportGui: Add, DropDownList, x10 y75 w300 Sort vFault, Epos Fault|Server Fault|Pocket PC Fault|Printer Consumable Fault|Printer Fault|Self Checkout Issue|Software Epos Fault|Software Workstation Fault
 Gui,ServiceReportGui: Add, Edit, x10 y120 w300 h80 vsolution,
 Gui,ServiceReportGui: Add, edit, x10 y220 w50 h20,
-Gui,ServiceReportGui: Add,UpDown,vVarTime Range1-1000,%averagetime%
+Gui,ServiceReportGui: Add,UpDown,vVarTime Range1-1000,%TimeSinceSP%
 Gui,ServiceReportGui: Add, DropDownList, x240 y220 w70 Sort vNextArea, WREP|WSB|WSF|3RDP|APC1|BW3RP
 Gui,ServiceReportGui: Add, Checkbox, x15 y245 w75 h10 vAddParts gReadPartsInStock, Add Parts?
 Gui,ServiceReportGui: Add, Checkbox, x215 y245 w92 h13 vItemRepaired, Item Repaired?
@@ -95,7 +95,6 @@ Gui,ServiceReportGui: font, s12
 Gui,ServiceReportGui: Font, norm
 Gui,ServiceReportGui: font, s8
 Gui,ServiceReportGui: Add, Button, x255 y265 w54 h23 gCompleteServiceReport, Continue
-
 X:=GetWinPosX("T-Enhanced Service Report Window")
 Y:=GetWinPosY("T-Enhanced Service Report Window")
 if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){

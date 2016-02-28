@@ -1,7 +1,7 @@
 ﻿try {
 gui,KMN:Destroy
 }
-
+LogMove := new LogisticsBookIn()
 
 gui, KMN:add, text,,Insert Serial Number
 Gui, KMN:Add, Edit, vSerialNumber
@@ -20,6 +20,12 @@ if (!SerialNumber || !newRO || !productCode) {
 	return
 }
 gui, KMN:submit
+if (!logMove.ROisFree(newRO)){
+	msgbox, RO is in use
+	gui, KMN:Destroy
+	logMove:= ""
+	return
+}
 StringUpper, SerialNumber, SerialNumber
 StartTime := A_Now
 wb:=IEVget(Title) ;Gets active IE window
@@ -228,6 +234,47 @@ DymoAddIn.Open("Modules/Zulu-book-in.label")
 DymoLabel.SetField( "RO-Number", newRO)
 DymoLabel.SetField( "Call-Number", newCall)
 DymoAddIn.Print( 1, TRUE )
-
+gui, KMN:Destroy
+logMove:= ""
 return
 
+class LogisticsBookIn{
+	ROisFree(RO){
+		msgbox, Initialized RO check
+		wb:=IEVget(Title) ;Gets active IE window
+		wb.Navigate2("http://hypappbs005/SC5/SC_SerProd/aspx/serprod_main.aspx") ;navigates selected window to this url
+		Loop{ ;begin loop to (wait for page to load)
+			try{
+		frame := wb.document.all(7).contentWindow
+		pageTitle :=  frame.document.getElementById("txtFunctionText").innertext
+		sleep 250
+		}
+		} until (pageTitle = "serialised product query" && wb.busy = 0)
+		;loop has ended because page is correct and browser is reporting that loading has finished
+		;if for whatever reason the script has reached here it and the page title is wrong then you get an error
+		if  (pageTitle != "serialised product query"){
+			msgbox, Incorrect page found - %pageTitle%
+			return
+		}
+		
+		frame := wb.document.all(10).contentWindow ;select relevant frame
+		frame.document.getElementById("txtSerReference2").value := RO ;insert serial number
+		frame := wb.document.all(7).contentWindow ;select frame
+		frame.document.getElementById("cmdsubmit").click ;click submit
+		
+		loop{ ;loop waiting for page to load whilst figuring out the landing page
+			try{
+				 frame := wb.document.all(10).contentWindow ;select frame
+				 SiteNo := frame.document.getElementById("txtSerSiteNum").value ;check for site number
+				 Records :=  frame.document.getElementById("lblRecordCount").innerText ;check for total records
+				 
+			}
+		}until (SiteNo != ""|| Records != "") ;stop loop as soon as one exists
+		wb:=
+		if (records = 0){
+			return true
+		} else {
+			return false
+		}
+	}
+}
