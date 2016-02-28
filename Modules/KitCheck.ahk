@@ -6,7 +6,6 @@ GuiWidth := 267
 Height := Taskbar(150)
 Guixpos := A_ScreenWidth - GuiWidth
 }
-iniRead,Eng,%Config%,Engineer,Number
 Gui,benchkit:add,Listview, x2 w264 h100 gPartCopy,Part Description|Qty
 Gui,benchkit:add,button,w50 h30 gclosebenchkit,quit
 Gui,benchkit:Default
@@ -42,10 +41,10 @@ PartsPageLoad := ""
 Loop {
 sleep, 100
 try{
-frame.document.getElementByID("cboStockSiteNo").value :=Eng
+frame.document.getElementByID("cboStockSiteNo").value := settings.Benchkit
 PartsPageLoad:=frame.document.getElementsByTagName("INPUT")[4].value
 }
-}until (PartsPageLoad = Eng)
+}until (PartsPageLoad = settings.Benchkit)
 PartsPageLoad := ""
 frame := Pwb.document.all(7).contentWindow
 frame.document.getElementByID("cmdSubmit").click

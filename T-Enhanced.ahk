@@ -10,8 +10,8 @@ if not A_isadmin {
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
-
-	
+#include Modules\config.ahk
+FileInstall, InstallMe/icon.ico,icon.ico, 1
 
 A:=true
 B:=3
@@ -49,10 +49,6 @@ OutputDebug,[T-Enhanced]  Dymo successfully Loaded
 global Config:=A_ScriptDir "\Modules\Config.ini"
 OutputDebug,[T-Enhanced]  Config directory set to [ %config% ]
 
-IniRead,Eng,%Config%,Engineer,Number
-OutputDebug, [T-Enhanced] Engineer Stock site = %Eng%
-Iniread,Site, %Config%,Site,Location
-OutputDebug,[T-Enhanced]  Current stock site = %Site%
 global TesseractVersion:="5.40.14"
 ;}
 
@@ -101,7 +97,7 @@ Timer Initialization
 ###########
 Start the Timers
 */
-SetTimer,TestDB,5000,-1
+SetTimer,TestDB,60000,-1
 OutputDebug,[T-Enhanced]  checking database connection every 5 seconds
 
 /*
@@ -111,7 +107,6 @@ Master GUI
 Launch the Main User Interface
 */
 SplashTextOff
-Gui, Master: Margin, 0, 0
 Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics|Management
 Gui, Master: Tab, Management
@@ -120,9 +115,10 @@ Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
 Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
 Gui, Master: Add, text, x40 y65 w150 h50  center ,By Kieran Wynne
+Gui, Master: Add, picture, x195 y30 w50 h50,icon.ico
 Gui, Master: Font, s8 norm
 Gui, Master: add, Button , x20 y85 w112 h20 gChangelog 0x8000, Changelog
-Gui, Master: Add, Button, x20 y110 w225 h35  gConfig 0x8000, Configuration
+Gui, Master: Add, Button, vConfigButton x20 y110 w225 h35  gConfig 0x8000, Configuration
 Gui, Master: Add, Button, x5 y25 w35 h35 gEndit 0x8000, Quit
 Gui, Master: Tab, Engineer
 Gui, Master: Add, Button, x5 y30 w80 h45 gCreate vCreate 0x8000, Create Job
@@ -142,7 +138,7 @@ Gui, Master: Show, ,T-Enhanced Master Window
 } else {
 Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window
 }
-if (ENG = "error" Or Eng = "" Or Site = "error" Or Site = ""){
+if (settings.Engineer = "ERROR" or settings.Engineer = "" Or settings.WorkshopSite= "Error" or settings.WorkshopSite= ""){
 	OutputDebug,[T-Enhanced]  Failed to find settings
 	gosub, config
 }
@@ -178,58 +174,23 @@ Configuration Interface
 Opens up the Configuration Interface
 */
 config:
-Eng1:=""
-Gui, Setup: Margin, 0, 0
-Gui, Setup:Font, s10
-Gui, Setup:Add, Text, x20 y2 w267 h50, T-Enhanced Configuration
-Gui, Setup:Font, s10
-Gui, Setup:Add, Text, x150 y30 w100 h17, Workshop Site?
-Gui, Setup:add, DDL, x150 y50 w100 vMySite, NSC|Cumbernauld
-Gui, Setup:Font, s8 norm
-Gui, Setup:Add, Text, x20 y17 w105 h15, Engineer Stock site
-Gui, Setup:Add, Edit, x20 y32 w65 h20 vEng1, %Eng%
-Gui, Setup:Add, Text, x20 y50 w105 h15, Username
-Gui, Setup:Add, Edit, x20 y65 w65 h20 vUserNameIn,
-Gui, Setup:Add, Text, x20 y85 w105 h15, Password
-Gui, Setup:Add, Edit, x20 y100 w65 h20 vPasswordIn Password,
-;Gui, Setup:Add, Button, x20 y125 w43 h20 gEngSave, Save
-Gui, Setup:Add, Button, x216 y126 w43 h23 gDone, Submit
-Gui, Setup:  +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
+Gui, Master: Tab, Home
+Gui, Master: Add, text, ym xm+267 center, Insert Engineer Number
+Gui, Master: Add, Edit, xm+267 yp+20 vEng1,
+Gui, Master:Add, Text, xm+267 yp+20, Workshop Site?
+Gui, Master:add, DDL, xm+267 yp+20 vMySite, NSC|Cumbernauld
+Gui, Master:Add, Text, xm+267 yp+20 BackgroundTrans, Username
+Gui, Master:Add, Edit, xm+267 yp+17 vUserNameIn,
+Gui, Master:Add, Text, xm+267 yp+20, Password
+Gui, Master:Add, Edit, xm+267 yp+17 vPasswordIn Password,
+GuiControl, Master:hide, configButton
+Gui, Master: Add, Button, x20 y110 w225 h35  gDone 0x8000, Submit
+Gui, Master: show, autosize
+return
 
-X:=GetWinPosX("Setup")
-Y:=GetWinPosY("Setup")
-if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
-Gui, Setup: Show, ,Setup
-} else {
-Gui, Setup: Show, X%x% Y%y%  ,Setup
-}
-return
-EngSave:
-return
-SetupGuiClose:
-SetupGuiEscape:
-SaveWinPos("Setup")
-Reload
-return
 Done:
-gui,Setup:submit,nohide
-StringUpper,Eng1,Eng1
-IniDelete,%Config%,Engineer,Number
-IniWrite,%Eng1%,%Config%,Engineer,Number
-IniRead,Eng,%Config%,Engineer,Number
-OutputDebug,[T-Enhanced]  saved %eng% to %config%
-if (UserNameIn != "" OR PasswordIn != ""){
-UserHash:=Crypt.Encrypt.StrEncrypt(UserNameIn,Eng,5,1)
-PassHash:=Crypt.Encrypt.StrEncrypt(PasswordIn,Eng,5,1)
-IniWrite,%UserHash%,%Config%,Login,UserName
-IniWrite,%PassHash%,%Config%,Login,Password
-OutputDebug, [T-Enhanced] saved username & password
-}
-IniWrite,%mySite%,%Config%,Site,Location
-OutputDebug,[T-Enhanced]  saved %mysite% to %config%
-Gui,Setup:Destroy
-OutputDebug,[T-Enhanced]  succesfull config
-SaveWinPos("Setup")
+gui,Master:submit,nohide
+settings.save(Eng1,mySite,UserNameIn,PasswordIn)
 reload
 return
 
@@ -303,7 +264,6 @@ OutputDebug,[T-Enhanced]  Quick login started
 gui, Master:Submit, Nohide
 if (A_GuiControl = "Tab"){
 If (Tab = "Engineer"){
-IniRead,Eng,%Config%,Engineer,Number
 IniRead,UserHash,%Config%,Login,UserName
 IniRead,PassHash,%Config%,Login,Password
 If (UserHash = "" OR UserHash = "Error"){
@@ -313,13 +273,9 @@ if not PWB:= IEGET("Service Centre 5 Login") {
 pwb:=""
 return
 } else {
-User:=Crypt.Encrypt.StrDecrypt(UserHash,Eng,5,1)
-Pass:=Crypt.Encrypt.StrDecrypt(PassHash,Eng,5,1)
-pwb.document.getElementById("txtUserName").value := User
-pwb.document.getElementById("txtPassword").value := Pass
+pwb.document.getElementById("txtUserName").value := settings.decrypt("username")
+pwb.document.getElementById("txtPassword").value := settings.decrypt("password")
 pwb.document.getElementsByTagName("IMG")[7].click
-User:=""
-Pass:=""
 pwb:=""
 }
 }
@@ -365,6 +321,6 @@ Assets:
 #include Modules/KillMeNow.ahk
 return
 
-#if eng = "406bk"
+#if settings.Engineer = "406"
 #include Modules\406.ahk
 

@@ -11,15 +11,6 @@ CustomerDamage := ""
 IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
 
 
-IniRead,Engineer,%Config%,Engineer,Number
-	StringTrimRight,Engineer,Engineer,2
-	OutputDebug, [T-Enhanced] Engineer var updated to - %Engineer%
-	
-	
-
-
-
-
 WinActivate,ahk_class IEFrame
 if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
 	MsgBox Error accessing page
@@ -58,37 +49,7 @@ if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 	IELoad(Pwb)
 	Pwb.document.getElementsByTagName("INPUT")[48] .click
 
-	;~ Gui, ShipoutGui:Font, s11
-	;~ gui,ShipoutGui:Add, Text, x0 y0 w247 center, Shipping %CallNum% to %ShipSite%
-	;~ Gui, ShipoutGui:Font, s8
-	;~ Gui, ShipoutGui:Add, Text, x0 y+5 w267 center BackgroundTrans,Enter Version Number
-	;~ Gui, ShipoutGui:Add, ComboBox, x33 y+5 w200 vNotes, %CustomVersion%
-	;~ Gui, ShipoutGui:Add, Button, X181 y+5 w50 gSaveNoteShipout -TabStop, Save
-	;~ Gui, ShipoutGui:Add, Button, X34 ym+60 w50 gDeleteNoteShipout -TabStop, Delete
-	;~ Gui, ShipoutGui:Add, Button, X207 y+30 w50 gNext vShipOutGuiNext +Default Disabled, Ship
-	;~ Gui, ShipoutGui:Add, Button, X7 ym+112 w50 gCancelShip, Cancel
-	;~ if (CustomerDamageCheck = "CDAM"){
-		;~ CustomerDamage = This call is marked as customer damage
-	;~ } else {
-		;~ CustomerDamage = This call is not marked as customer damage
-	;~ }
-	;~ Gui, ShipoutGui:Font, s11
-	;~ Gui, ShipoutGui:Add, Text, x65 y100 w130 cFF0000 Center, %CustomerDamage%
-	;~ Gui, ShipoutGui:Font, s8
-	;~ Gui, ShipoutGui: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
 	
-	;~ X:=GetWinPosX("T-Enhanced Shipout Window")
-;~ Y:=GetWinPosY("T-Enhanced Shipout Window")
-;~ if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
-;~ Gui, CreateGuint: Show, ,T-Enhanced Shipout Window
-;~ } else {
-;~ Gui, CreateGuint: Show, X%x% Y%y%  ,T-Enhanced Shipout Window
-;~ }
-	;~ gosub, ConfirmGuiWait
-	;~ return
-	;~ ConfirmGuiWait:
-	;~ GuiControl,ShipoutGui:Enabled,ShipOutGuiNext
-	;~ return
 	Next:
 	SaveWinPos(" T-Enhanced Create Job Window")
 	gui,ShipoutGui:submit

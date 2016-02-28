@@ -143,9 +143,7 @@ frame.document.getElementsByTagName("INPUT")[13].value := Time_Now
 FormatTime, TimeEnd,, HH:mm
 frame.document.getElementsByTagName("INPUT")[16].value := TimeEnd
 Call:=frame.document.getElementsByTagName("INPUT")[0].value
-iniread,EngNo,%Config%,Engineer,Number
-StringLeft,EngNo,EngNo,3
-frame.document.getElementById("cboFSREmployNum").value := EngNo
+frame.document.getElementById("cboFSREmployNum").value := settings.engineer
 frame.document.getElementById("cboFSRSympCode").value := "WSHOP"
 Service_KillPopup()
 frame.document.getElementsByTagName("IMG")[11].click
@@ -265,7 +263,6 @@ return
 }
 }
 PartList:=""
-iniRead,Eng,%Config%,Engineer,Number
 Pwb.Navigate2("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_Frameset.aspx",2048)
 sleep, 2500
 Loop 15{
@@ -293,10 +290,10 @@ PartsPageLoad := ""
 Loop {
 sleep, 100
 try{
-frame.document.getElementByID("cboStockSiteNo").value :=Eng
+frame.document.getElementByID("cboStockSiteNo").value := settings.BenchKit
 PartsPageLoad:=frame.document.getElementsByTagName("INPUT")[4].value
 }
-}until (PartsPageLoad = Eng)
+}until (PartsPageLoad = settings.Benchkit)
 PartsPageLoad := ""
 frame := Pwb.document.all(7).contentWindow
 frame.document.getElementByID("cmdSubmit").click

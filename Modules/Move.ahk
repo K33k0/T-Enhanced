@@ -237,9 +237,8 @@ class Movement
                 return false
                 }
     } 
-    IniRead,Engineer,%Config%,Engineer,Number ;read engineer number
 	
-	frame.document.getelementbyID("cboDestSiteNum").value := Engineer ;input engineer number
+	frame.document.getelementbyID("cboDestSiteNum").value := Settings.BenchKit ;input engineer number
 	ModalDialogue() 
 	frame.document.getElementsByTagName("IMG")[6] .click 
 	
@@ -305,9 +304,7 @@ class Movement
         IniRead,description, Modules/Database/PartDescriptions.ini,PartDescriptions,%key%
         DymoLabel.SetField( "Description1", description) 
         DymoLabel.SetField( "Quantity1", value) 
-        IniRead,Engineer,%Config%,Engineer,Number ;read engineer number
-        StringReplace,Engineer,Engineer,BK,,
-        DymoLabel.SetField( "Engineer", Engineer)
+        DymoLabel.SetField( "Engineer", Settings.Engineer)
         if (this.partLocation[key]) {
             DymoLabel.SetField( "Location1", this.partLocation[key]) 
         }

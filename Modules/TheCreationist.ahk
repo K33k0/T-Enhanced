@@ -12,16 +12,11 @@ FormatTime,curDate,, yyyy-MM-dd
 	AdditionalInfo:= ""
 	
 	
-	if (getKeyState("Alt","P") = 1 && eng = "406bk") {
+	if (getKeyState("Alt","P") = 1 && settings.Engineer = "406") {
 		godMode := true
 	}
 
-Create_EngineerNumber() {
-	IniRead,Engineer,%Config%,Engineer,Number
-	StringTrimRight,Engineer,Engineer,2
-	OutputDebug, [T-Enhanced] Engineer var updated to - %Engineer%
-	return Engineer
-}
+
 
 Create_NavigateToPage() {
 	 If  Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion ) {
@@ -47,15 +42,6 @@ Create_KillPopup() {
 	}else{
 		run,Modules\TZAltThread.ahk
 	}
-}
-
-if not Engineer := Create_EngineerNumber() {
-	outputDebug, Engineer Number set to %Engineer%
-	msgbox, Failed to read Engineer Number.
-	Reload
-	return
-} else {
-	outputDebug, Engineer Number set to %Engineer%
 }
 
 If not Create_NavigateToPage() {
@@ -100,7 +86,7 @@ CreateContinue:
 StartTime := A_Now
 SaveWinPos("T-Enhanced Create Job Window")
 Gui,CreateGuint:Submit
-if (Create_EngineerNumber() = "406"){
+if (settings.Engineer = "406"){
 	msgbox,4,Customer Damage Verification, Is there ANY sign of customer damage?
 	IfMsgBox,Yes
 	{
@@ -140,15 +126,11 @@ Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
 FormatTime, Times,, HH:mm
 Pwb.document.getElementsByTagName("INPUT")[4] .value := Times
 Pwb.document.getElementsByTagName("INPUT")[8] .value := Times
-OutputDebug, [T-Enhanced] book in Time input [%TIMES%]
 Pwb.document.getElementById("cboJobWorkshopSiteNum") .value := "STOWS"
-OutputDebug, [T-Enhanced] Workshop Site = Stows
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[0] .click
 Pwb.document.getElementById("cmdNext") .click
-OutputDebug, [T-Enhanced] Page Load Initiated [ref 161]
 IELoad(Pwb)
-OutputDebug, [T-Enhanced] Page Load Success [ref 161]
 
 Create_Page2:
 if (JobType = "ZR1") {
@@ -187,7 +169,7 @@ OutputDebug, [T-Enhanced] Page Load Success [ref 166]
 InsertSN:
 Pwb.document.getElementById("cboCallSerNum") .value := SerialNumber
 Pwb.document.getElementsByTagName("INPUT")[58] .click
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[19] .click
 Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
 SerialNumber:= Pwb.document.getElementById("cboCallSerNum").value
@@ -233,27 +215,26 @@ OutputDebug, [T-Enhanced] Page Load Success [ref 198]
 Create_Page4:
 Pwb.document.getElementById("cboCallCalTCode") .value := JobType
 OutputDebug, [T-Enhanced] Successfully inputted Job Type
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[22] .click
 
 Pwb.document.getElementById("cboJobFlowCode") .value := "SWBENCH"
 OutputDebug, [T-Enhanced] Successfully inputted FlowCode
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[23] .click
 
 Pwb.document.getElementById("cboCallAreaCode") .value := "BFCA1"
 OutputDebug, [T-Enhanced] Successfully inputted Area
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[23] .click
 
-Pwb.document.getElementById("cboCallEmployNum") .value := Engineer
+Pwb.document.getElementById("cboCallEmployNum") .value := settings.engineer
 OutputDebug, [T-Enhanced] Successfully inputted Engineer Number
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[25] .click
 
-Create_KillPopup()
+ModalDialogue()
 Pwb.document.getElementById("cboCallProbCode") .value := ProbCode
-OutputDebug, [T-Enhanced] Successfully inputted Problem Code
 Pwb.document.getElementsByTagName("IMG")[26] .click
 if (JobType = "ZR1"){
 msgbox % "Your maximum budget is - £"  GetThreshold(ProdCode)
@@ -283,7 +264,7 @@ IfMsgBox, cancel
 }
 
 Create_Confirmed:
-Create_KillPopup()
+PageAlert()
 Pwb.document.getElementById("cmdFinish") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 534]
 IELoad(Pwb)
@@ -316,7 +297,7 @@ frame := wb.document.all(7).contentWindow
 frame.document.getElementById("cmdSubmit").click
 frame := wb.document.all(10).contentWindow
 frame.document.getElementById("cboCallUpdAreaCode").value := "WSB"
-Create_KillPopup()
+PageAlert()
 frame := wb.document.all(7).contentWindow
 frame.document.getElementById("cmdSubmit").click
 WinWaitClose, Message from webpage
