@@ -9,6 +9,7 @@ if not A_isadmin {
 
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
+#include Modules\Lib\Rini.ahk
 
 	
 
@@ -71,7 +72,9 @@ SysTray Setup
 ###########
 Initialize the system tray menu
 */
-;~ Menu,tray,Nostandard
+if (A_IsCompiled){
+Menu,tray,Nostandard
+}
 Menu, Home, add, Config,config
 Menu, Home, add, Changelog,Changelog
 Menu, Workshop, add,Create Job,Create
@@ -355,7 +358,7 @@ BulkProcess:
 return
 
 LetsMoveSomeShit:
-#include Modules/IWantToMoveIt.AHK
+#include Modules/Move.AHK
 return
 
 Assets:
