@@ -62,14 +62,14 @@ class config {
 			static myDDL
 			guiID := this.GuiID
 			gui, %GuiID%:add, text,, First Run
-			gui, %GuiID%:add, ddl, vmyDDL, one||two
+			gui, %GuiID%:add, ddl, vmyDDL, one|two
 			gui, %GuiID%:show
 			this.submitGui()
 		}
 		
 		submitGui(){
 			guiID := this.GuiID
-			ControlGetText, val,
+			;ControlGetText, val,
 			msgbox % this.firstrun.myDDL
 		}
 	}

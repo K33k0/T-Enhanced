@@ -277,4 +277,5 @@ class LogisticsBookIn{
 			return false
 		}
 	}
+
 }
