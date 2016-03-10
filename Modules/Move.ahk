@@ -1,10 +1,8 @@
 FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
 FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
 FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
-PartMove := new Movement("default")
+PartMove := new Movement(settings)
 PartMove.ini := new PartMove.ini("default")
-
-
         
 gui,Move2:add,Text,,Select Manufacturer
 gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % PartMove.ini.Sections()
@@ -68,7 +66,11 @@ GuiControl, enable, goButton
 return
 
 PartMoveDesc:
-Gui, Move2:add, ListView, w400 x220 ym r16, Part Code|Description
+if (!move2LV){
+    Gui, Move2:add, ListView,w400 x220 ym r16, Part Code|Description
+    Move2LV := true
+}
+LV_Delete()
 thelist := PartMove.ini.SectionKeyValue
 Loop, parse, thelist , |
 {
@@ -141,8 +143,9 @@ class Movement
 {
     requestedPart := {}
     partLocation := {}
-    __New()
+    __New(settings)
     {
+        this.settings := settings
         ;ini := new this.ini("default")
         ;gui:= new this.gui("default")
     }
@@ -237,8 +240,7 @@ class Movement
                 return false
                 }
     } 
-	
-	frame.document.getelementbyID("cboDestSiteNum").value := Settings.BenchKit ;input engineer number
+	frame.document.getelementbyID("cboDestSiteNum").value := this.settings.Benchkit ;input engineer number
 	ModalDialogue() 
 	frame.document.getElementsByTagName("IMG")[6] .click 
 	
@@ -304,7 +306,7 @@ class Movement
         IniRead,description, Modules/Database/PartDescriptions.ini,PartDescriptions,%key%
         DymoLabel.SetField( "Description1", description) 
         DymoLabel.SetField( "Quantity1", value) 
-        DymoLabel.SetField( "Engineer", Settings.Engineer)
+        DymoLabel.SetField( "Engineer", this.settings.Engineer)
         if (this.partLocation[key]) {
             DymoLabel.SetField( "Location1", this.partLocation[key]) 
         }

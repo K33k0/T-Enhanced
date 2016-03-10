@@ -1,8 +1,8 @@
 ﻿try {
 gui,KMN:Destroy
 }
-LogMove := new LogisticsBookIn()
-
+Logistics := new Logistics()
+Logistics.Bookin := new Logistics.Bookin()
 gui, KMN:add, text,,Insert Serial Number
 Gui, KMN:Add, Edit, vSerialNumber
 gui, KMN:add, text,,Insert Repair Order Number
@@ -20,10 +20,10 @@ if (!SerialNumber || !newRO || !productCode) {
 	return
 }
 gui, KMN:submit
-if (!logMove.ROisFree(newRO)){
+if (!Logistics.Bookin.ROisFree(newRO)){
 	msgbox, RO is in use
 	gui, KMN:Destroy
-	logMove:= ""
+	Logistics:= ""
 	return
 }
 StringUpper, SerialNumber, SerialNumber
@@ -235,12 +235,14 @@ DymoLabel.SetField( "RO-Number", newRO)
 DymoLabel.SetField( "Call-Number", newCall)
 DymoAddIn.Print( 1, TRUE )
 gui, KMN:Destroy
-logMove:= ""
+Logistics:= ""
 return
 
-class LogisticsBookIn{
+class Logistics{
+	__New() {
+	}
+	class Bookin {
 	ROisFree(RO){
-		msgbox, Initialized RO check
 		wb:=IEVget(Title) ;Gets active IE window
 		wb.Navigate2("http://hypappbs005/SC5/SC_SerProd/aspx/serprod_main.aspx") ;navigates selected window to this url
 		Loop{ ;begin loop to (wait for page to load)
@@ -277,5 +279,9 @@ class LogisticsBookIn{
 			return false
 		}
 	}
-
+	}
+	class BookOut {
+	
+	}
+	
 }
