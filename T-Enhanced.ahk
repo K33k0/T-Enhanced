@@ -10,8 +10,8 @@ if not A_isadmin {
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
-
-	
+#include Modules\config.ahk
+FileInstall, InstallMe/icon.png,icon.png, 1
 
 A:=true
 B:=3
@@ -19,7 +19,17 @@ C:=false
 
 
 
-SplashTextOn,200,100,T-Enhanced©, Created and maintained `n by Kieran Wynne `n`n All rights reservered %A_Year%
+;SplashTextOn,200,100,T-Enhanced©, Created and maintained `n by Kieran Wynne `n`n All rights reservered %A_Year%
+gui, splash: add, picture, w128 h-1 BackgroundTrans,icon.png
+Gui, splash: Font, s12
+gui, splash: add, Text,w128 center cblue BackgroundTrans, T-Enhanced
+Gui, splash: Font, s10
+gui, splash: add, Text,w128 center cblue BackgroundTrans, Created by`nKieran Wynne
+gui, splash: add, progress, w128 vLoadup,
+gui, splash: -border -caption +alwaysontop +LastFound +ToolWindow
+Gui, splash:Color, EEAA99
+WinSet, TransColor, EEAA99
+gui, splash:show, autosize, T-Enhanced
 
 ;{ ----Startup
 #NoEnv
@@ -28,6 +38,8 @@ SetWorkingDir %A_ScriptDir%
 Onexit,Endit
 #singleinstance, force
 #Persistent
+GuiControl,splash:, Loadup, +15
+sleep, 150
 ;}
 
 ;{ ----COM Addins
@@ -43,17 +55,17 @@ OutputDebug, [T-Enhanced] Enabled DYMO.LabelEngine 3/3
 	msgbox, Unable to activate Dymo.`nPlease check you have the latest Dymo software installed.
 }
 OutputDebug,[T-Enhanced]  Dymo successfully Loaded
+GuiControl,splash:, Loadup, +15
+sleep, 150
 ;}
 
 ;{ ----Variables
 global Config:=A_ScriptDir "\Modules\Config.ini"
 OutputDebug,[T-Enhanced]  Config directory set to [ %config% ]
 
-IniRead,Eng,%Config%,Engineer,Number
-OutputDebug, [T-Enhanced] Engineer Stock site = %Eng%
-Iniread,Site, %Config%,Site,Location
-OutputDebug,[T-Enhanced]  Current stock site = %Site%
 global TesseractVersion:="5.40.14"
+GuiControl,splash:, Loadup, +15
+sleep, 150
 ;}
 
 /*
@@ -64,8 +76,8 @@ Launches all .AHK files inside Custom Scripts Folder
 */
 Loop %A_ScriptDir%\Custom Scripts\*.ahk
 Run %A_LoopFileFullPath%
-
-
+GuiControl,splash:, Loadup, +15  
+sleep, 150
 /*
 ###########
 SysTray Setup
@@ -75,43 +87,38 @@ Initialize the system tray menu
 if (A_IsCompiled){
 Menu,tray,Nostandard
 }
-Menu, Home, add, Config,config
 Menu, Home, add, Changelog,Changelog
 Menu, Workshop, add,Create Job,Create
 Menu, Workshop, add,Service Report,Report
 Menu, Workshop, add,Ship Out,Ship
 Menu, Workshop, add,Print,PrintFunction
-Menu,Tools,add,Pickable parts Requests,StockRequirements
-Menu,Tools,add,Stock Level check,RequiredStock
-Menu,Tools,add,Stat Levels,StatRace
-Menu,Management,add,BER Item,BER
 Menu, tray, add, Home, :Home
 Menu, tray, add, Workshop, :Workshop
-Menu, tray, add, Tools, :Tools
-Menu, tray, add, Management, :Management
-Menu, tray, add,
 Menu,Tray,add,Show
 Menu,Tray,add,Reload,panic
 Menu,Tray,add,Quit,Endit
 OutputDebug,[T-Enhanced]  Tray fully loaded
-
+GuiControl,splash:, Loadup, +15  
+sleep, 150
 /*
 ###########
 Timer Initialization
 ###########
 Start the Timers
 */
-SetTimer,TestDB,5000,-1
+SetTimer,TestDB,60000,-1
 OutputDebug,[T-Enhanced]  checking database connection every 5 seconds
-
+GuiControl,splash:, Loadup, +15  
+sleep, 150
 /*
 ###########
 Master GUI
 ###########
 Launch the Main User Interface
 */
-SplashTextOff
-Gui, Master: Margin, 0, 0
+GuiControl,splash:, Loadup, 100  
+sleep, 150
+gui, splash:destroy
 Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics|Management
 Gui, Master: Tab, Management
@@ -120,9 +127,10 @@ Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
 Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
 Gui, Master: Add, text, x40 y65 w150 h50  center ,By Kieran Wynne
+Gui, Master: Add, picture, x195 y30 w50 h50,icon.png
 Gui, Master: Font, s8 norm
 Gui, Master: add, Button , x20 y85 w112 h20 gChangelog 0x8000, Changelog
-Gui, Master: Add, Button, x20 y110 w225 h35  gConfig 0x8000, Configuration
+Gui, Master: Add, Button, vConfigButton x20 y110 w225 h35  gConfig 0x8000, Configuration
 Gui, Master: Add, Button, x5 y25 w35 h35 gEndit 0x8000, Quit
 Gui, Master: Tab, Engineer
 Gui, Master: Add, Button, x5 y30 w80 h45 gCreate vCreate 0x8000, Create Job
@@ -133,6 +141,7 @@ Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
 Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
+Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
 
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
@@ -142,7 +151,7 @@ Gui, Master: Show, ,T-Enhanced Master Window
 } else {
 Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window
 }
-if (ENG = "error" Or Eng = "" Or Site = "error" Or Site = ""){
+if (settings.Engineer = "ERROR" or settings.Engineer = "" Or settings.WorkshopSite= "Error" or settings.WorkshopSite= ""){
 	OutputDebug,[T-Enhanced]  Failed to find settings
 	gosub, config
 }
@@ -178,58 +187,24 @@ Configuration Interface
 Opens up the Configuration Interface
 */
 config:
-Eng1:=""
-Gui, Setup: Margin, 0, 0
-Gui, Setup:Font, s10
-Gui, Setup:Add, Text, x20 y2 w267 h50, T-Enhanced Configuration
-Gui, Setup:Font, s10
-Gui, Setup:Add, Text, x150 y30 w100 h17, Workshop Site?
-Gui, Setup:add, DDL, x150 y50 w100 vMySite, NSC|Cumbernauld
-Gui, Setup:Font, s8 norm
-Gui, Setup:Add, Text, x20 y17 w105 h15, Engineer Stock site
-Gui, Setup:Add, Edit, x20 y32 w65 h20 vEng1, %Eng%
-Gui, Setup:Add, Text, x20 y50 w105 h15, Username
-Gui, Setup:Add, Edit, x20 y65 w65 h20 vUserNameIn,
-Gui, Setup:Add, Text, x20 y85 w105 h15, Password
-Gui, Setup:Add, Edit, x20 y100 w65 h20 vPasswordIn Password,
-;Gui, Setup:Add, Button, x20 y125 w43 h20 gEngSave, Save
-Gui, Setup:Add, Button, x216 y126 w43 h23 gDone, Submit
-Gui, Setup:  +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
+Gui, Master: Tab, Home
+GuiControl,Master:, Tab, |Home
+Gui, Master: Add, text, ym xm+267 center, Insert Engineer Number
+Gui, Master: Add, Edit, xm+267 yp+17 vEng1,
+Gui, Master:Add, Text, xm+267 yp+20, Workshop Site?
+Gui, Master:add, DDL, xm+267 yp+17 vMySite, NSC|Cumbernauld
+Gui, Master:Add, Text, xm+267 yp+20 BackgroundTrans, Username
+Gui, Master:Add, Edit, xm+267 yp+17 vUserNameIn,
+Gui, Master:Add, Text, xm+267 yp+20, Password
+Gui, Master:Add, Edit, xm+267 yp+17 vPasswordIn Password,
+GuiControl, Master:hide, configButton
+Gui, Master: Add, Button, x20 y110 w225 h35  gDone 0x8000, Submit
+Gui, Master: show, autosize
+return
 
-X:=GetWinPosX("Setup")
-Y:=GetWinPosY("Setup")
-if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
-Gui, Setup: Show, ,Setup
-} else {
-Gui, Setup: Show, X%x% Y%y%  ,Setup
-}
-return
-EngSave:
-return
-SetupGuiClose:
-SetupGuiEscape:
-SaveWinPos("Setup")
-Reload
-return
 Done:
-gui,Setup:submit,nohide
-StringUpper,Eng1,Eng1
-IniDelete,%Config%,Engineer,Number
-IniWrite,%Eng1%,%Config%,Engineer,Number
-IniRead,Eng,%Config%,Engineer,Number
-OutputDebug,[T-Enhanced]  saved %eng% to %config%
-if (UserNameIn != "" OR PasswordIn != ""){
-UserHash:=Crypt.Encrypt.StrEncrypt(UserNameIn,Eng,5,1)
-PassHash:=Crypt.Encrypt.StrEncrypt(PasswordIn,Eng,5,1)
-IniWrite,%UserHash%,%Config%,Login,UserName
-IniWrite,%PassHash%,%Config%,Login,Password
-OutputDebug, [T-Enhanced] saved username & password
-}
-IniWrite,%mySite%,%Config%,Site,Location
-OutputDebug,[T-Enhanced]  saved %mysite% to %config%
-Gui,Setup:Destroy
-OutputDebug,[T-Enhanced]  succesfull config
-SaveWinPos("Setup")
+gui,Master:submit,nohide
+settings.save(Eng1,mySite,UserNameIn,PasswordIn)
 reload
 return
 
@@ -294,6 +269,12 @@ return
 
 ;{ ----On tab click
 TabClick:
+if (settings.Engineer = "" OR settings.Engineer = "Error") {
+	GuiControl,Master:, Tab, |Home
+	return
+}
+gui,Master:show, autosize
+
 return
 ;}
 
@@ -303,7 +284,6 @@ OutputDebug,[T-Enhanced]  Quick login started
 gui, Master:Submit, Nohide
 if (A_GuiControl = "Tab"){
 If (Tab = "Engineer"){
-IniRead,Eng,%Config%,Engineer,Number
 IniRead,UserHash,%Config%,Login,UserName
 IniRead,PassHash,%Config%,Login,Password
 If (UserHash = "" OR UserHash = "Error"){
@@ -313,13 +293,9 @@ if not PWB:= IEGET("Service Centre 5 Login") {
 pwb:=""
 return
 } else {
-User:=Crypt.Encrypt.StrDecrypt(UserHash,Eng,5,1)
-Pass:=Crypt.Encrypt.StrDecrypt(PassHash,Eng,5,1)
-pwb.document.getElementById("txtUserName").value := User
-pwb.document.getElementById("txtPassword").value := Pass
+pwb.document.getElementById("txtUserName").value := settings.decrypt("username")
+pwb.document.getElementById("txtPassword").value := settings.decrypt("password")
 pwb.document.getElementsByTagName("IMG")[7].click
-User:=""
-Pass:=""
 pwb:=""
 }
 }
@@ -365,6 +341,10 @@ Assets:
 #include Modules/KillMeNow.ahk
 return
 
-#if eng = "406bk"
+LogShipout:
+shipout := new logistics.bookout()
+return
+
+#if settings.Engineer = "406"
 #include Modules\406.ahk
 

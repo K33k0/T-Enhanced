@@ -1,8 +1,8 @@
 ﻿try {
 gui,KMN:Destroy
 }
-LogMove := new LogisticsBookIn()
-
+Logistics := new Logistics()
+Logistics.Bookin := new Logistics.Bookin()
 gui, KMN:add, text,,Insert Serial Number
 Gui, KMN:Add, Edit, vSerialNumber
 gui, KMN:add, text,,Insert Repair Order Number
@@ -20,10 +20,10 @@ if (!SerialNumber || !newRO || !productCode) {
 	return
 }
 gui, KMN:submit
-if (!logMove.ROisFree(newRO)){
+if (!Logistics.Bookin.ROisFree(newRO)){
 	msgbox, RO is in use
 	gui, KMN:Destroy
-	logMove:= ""
+	Logistics.Bookin:= ""
 	return
 }
 StringUpper, SerialNumber, SerialNumber
@@ -235,12 +235,15 @@ DymoLabel.SetField( "RO-Number", newRO)
 DymoLabel.SetField( "Call-Number", newCall)
 DymoAddIn.Print( 1, TRUE )
 gui, KMN:Destroy
-logMove:= ""
+Logistics.Bookin:= ""
 return
 
-class LogisticsBookIn{
+class Logistics{
+	
+	__New() {
+	}
+	class Bookin {
 	ROisFree(RO){
-		msgbox, Initialized RO check
 		wb:=IEVget(Title) ;Gets active IE window
 		wb.Navigate2("http://hypappbs005/SC5/SC_SerProd/aspx/serprod_main.aspx") ;navigates selected window to this url
 		Loop{ ;begin loop to (wait for page to load)
@@ -277,5 +280,42 @@ class LogisticsBookIn{
 			return false
 		}
 	}
-
+	}
+	class BookOut {
+		__New(){
+			while not Manifest
+				InputBox, Manifest, Manifest Input, Insert Manifest Number
+			if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
+				MsgBox Error accessing page
+				return
+			} else {
+				frame := Pwb.document.all(10).contentWindow
+				CallNum:= frame.document.getElementsByTagName("INPUT")[0] .value
+				RONum:= frame.document.getElementByID("txtJobRef6").value
+				frame := Pwb.document.all(10).contentWindow
+				ShipSite:= frame.document.getElementById("cboJobShipSiteNum") .value
+				sleep, 250
+				frame := Pwb.document.all(9).contentWindow
+				frame.document.getElementById("lblJobShipOutWizard") .click
+				IELoad(pwb)
+				
+				Pwb.document.getElementById("txtInputJobNum") .value :=CallNum
+				Pwb.document.getElementById("cmdAddJobNum") .click
+				Pwb.document.getElementById("cmdNext") .click
+				IELoad(Pwb)
+				Pwb.document.getElementById("txtJobShipRef").value := Manifest
+				Pwb.document.getElementById("txtJobRef1").value := RONum
+				Pwb.document.getElementById("cmdNext") .click
+				IELoad(Pwb)
+				Pwb.document.getElementsByTagName("INPUT")[48] .click
+				Pwb.document.getElementById("cmdFinish") .click
+				pageAlert()
+				IELoad(Pwb)
+				Pwb.document.getElementsByTagName("INPUT")[40] .click
+				Pwb.document.getElementById("cmdFinish") .click
+				return
+			}
+		}
+	}
+	
 }

@@ -1,52 +1,59 @@
-#Include Lib/Functions.ahk
 class config {
-	
+	static ini
 	static Engineer
 	static WorkshopSite
 	static HashedUserName
 	static HashedPassword
 	static BenchKit
 	static Firstrun = False
-	static configGui
 	
 	__New(ini) {
-		IniRead, Engineer, %ini%, Enginer, Number
+		this.ini := ini
+		IniRead, Engineer, %ini%, Engineer, Number
 		IniRead, user, %ini%, login, UserName
 		IniRead, pass, %ini%, login, Password
 		IniRead,wSite, %ini%, Site, location
 		this.HashedUserName := user
 		this.HashedPassword := pass
-		this.BenchKit := BenchKit . "BK"
+		this.BenchKit := Engineer . "BK"
 		this.Engineer := Engineer
 		this.workshopSite := wSite
-		if (Engineer = "ERROR"){
-			return False
-		} else {
-			return true
-		}
 	}
 	
 	decrypt(setting) {
-		keys := this.BenchKit
+		keys := this.Engineer
 		if (setting = "password")	{
-			return Crypt.Encrypt.StrDecrypt(this.HashedPassword,keys,5,1)	
+			return Crypt.Encrypt.StrDecrypt(this.HashedPassword,keys)	
 		} else if ( setting = "username" )	{
-			return Crypt.Encrypt.StrDecrypt(this.HashedUserName,keys,5,1)	
+			return Crypt.Encrypt.StrDecrypt(this.HashedUserName,keys)	
 		} 	else {
 			return "failed to find setting"
 		}
 	}
 	
-	encrypt(setting) {
-		keys := this.BenchKit
+	encrypt(setting, value) {
+		keys := this.Engineer
 		if (setting = "password")	{
-			return Crypt.Encrypt.StrEncrypt(this.HashedPassword,keys,5,1)	
+			return Crypt.Encrypt.StrEncrypt(value,keys)	
 		} else if ( setting = "username" )	{
-			return Crypt.Encrypt.StrEncrypt(this.HashedUserName,keys,5,1)	
+			return Crypt.Encrypt.StrEncrypt(value,keys)	
 		} 	else {
-			return "failed to find setting"
+			return false
 		}
+		return true
 	}
 	
+	save(Engineer,WorkshopSite,UserName="",Password="") {
+		IniWrite, %Engineer%, % this.ini, Engineer, Number
+		this.engineer := Engineer
+		IniWrite, %WorkshopSite%, % this.ini, Site, location
+		if (userName) {
+			IniWrite, % this.encrypt("username",UserName), % this.ini, login, UserName
+		}
+		if (password) {
+			IniWrite, % this.encrypt("password",password), % this.ini, login, password 
+		}
+	}
 }
-	return
+
+settings := new config(A_ScriptDir "\Modules\Config.ini")
