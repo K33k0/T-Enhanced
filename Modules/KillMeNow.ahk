@@ -282,7 +282,41 @@ class Logistics{
 	}
 	}
 	class BookOut {
-	
+		__New(){
+			while not Manifest
+				InputBox, Manifest, Manifest Input, Insert Manifest Number
+			if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
+				MsgBox Error accessing page
+				return
+			} else {
+				frame := Pwb.document.all(10).contentWindow
+				CallNum:= frame.document.getElementsByTagName("INPUT")[0] .value
+				RONum:= frame.document.getElementByID("txtJobRef6").value
+				frame := Pwb.document.all(10).contentWindow
+				ShipSite:= frame.document.getElementById("cboJobShipSiteNum") .value
+				sleep, 250
+				frame := Pwb.document.all(9).contentWindow
+				frame.document.getElementById("lblJobShipOutWizard") .click
+				IELoad(pwb)
+				
+				Pwb.document.getElementById("txtInputJobNum") .value :=CallNum
+				Pwb.document.getElementById("cmdAddJobNum") .click
+				Pwb.document.getElementById("cmdNext") .click
+				IELoad(Pwb)
+				Pwb.document.getElementById("txtJobShipRef").value := Manifest
+				Pwb.document.getElementById("txtJobRef1").value := RONum
+				Pwb.document.getElementById("cmdNext") .click
+				IELoad(Pwb)
+				return
+				Pwb.document.getElementsByTagName("INPUT")[48] .click
+				Pwb.document.getElementById("cmdFinish") .click
+				pageAlert()
+				IELoad(Pwb)
+				Pwb.document.getElementsByTagName("INPUT")[40] .click
+				Pwb.document.getElementById("cmdFinish") .click
+				return
+			}
+		}
 	}
 	
 }

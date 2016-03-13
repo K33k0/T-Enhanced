@@ -141,6 +141,7 @@ Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
 Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
+Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
 
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
@@ -338,6 +339,10 @@ return
 
 Assets:
 #include Modules/KillMeNow.ahk
+return
+
+LogShipout:
+shipout := new logistics.bookout()
 return
 
 #if settings.Engineer = "406"
