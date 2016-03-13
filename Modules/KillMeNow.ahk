@@ -307,7 +307,6 @@ class Logistics{
 				Pwb.document.getElementById("txtJobRef1").value := RONum
 				Pwb.document.getElementById("cmdNext") .click
 				IELoad(Pwb)
-				return
 				Pwb.document.getElementsByTagName("INPUT")[48] .click
 				Pwb.document.getElementById("cmdFinish") .click
 				pageAlert()
