@@ -3,6 +3,7 @@ FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
 FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
 PartMove := new Movement(settings)
 PartMove.ini := new PartMove.ini("default")
+
         
 gui,Move2:add,Text,,Select Manufacturer
 gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % PartMove.ini.Sections()
@@ -208,6 +209,7 @@ class Movement
     
     MovePart(part,quantity)
     {
+    preMoveStock := this.partVerify(part, this.settings.Benchkit)    
     sleep 250
     PartMovePointer:=IEVget(Title)
     URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx ;set the url
@@ -260,6 +262,10 @@ class Movement
     pageloading(PartMovePointer)
     WinClose,Message from webpage,,5
     PartMovePointer.quit()
+    postMoveStock := this.partVerify(part, this.settings.Benchkit)
+    if (PostMoveStock != (PreMoveStock + quantity)){
+        return False
+    }
     return true
 }
 
@@ -313,5 +319,30 @@ class Movement
         DymoAddIn.Print( 1, TRUE )
         }
         DymoAddin.EndPrintJob()
+    }
+
+    partVerify(PartNo, StockLocation)
+    {       
+            bpwb:= ievget(Title)
+            baseUri:= "http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx"
+            uri := "?SiteNo=" . StockLocation . "&PartNo=" . PartNo
+            bpwb.Navigate2(baseUri . uri, 2048)
+            loop {
+                try{
+                    bpwb.Navigate("javascript: alert = function(){};")
+                    bpwb := IEGetUrl(baseUri . uri)
+                    Loaded := bpwb.document.GetElementByID("lblTotalQuantity").innerText
+                }
+            }until (Loaded != "")
+                value := bpwb.document.GetElementByID("txtTotalQty").value
+                if (Value = ""){
+                    Value := 0
+                }
+                IfWinExist,Message from webpage
+                {
+                    WinWaitClose, Message from webpage
+                }
+            bpwb.quit()
+            return Value
     }
 }

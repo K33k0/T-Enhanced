@@ -23,7 +23,7 @@ gui, KMN:submit
 if (!Logistics.Bookin.ROisFree(newRO)){
 	msgbox, RO is in use
 	gui, KMN:Destroy
-	Logistics:= ""
+	Logistics.Bookin:= ""
 	return
 }
 StringUpper, SerialNumber, SerialNumber
@@ -235,10 +235,11 @@ DymoLabel.SetField( "RO-Number", newRO)
 DymoLabel.SetField( "Call-Number", newCall)
 DymoAddIn.Print( 1, TRUE )
 gui, KMN:Destroy
-Logistics:= ""
+Logistics.Bookin:= ""
 return
 
 class Logistics{
+	
 	__New() {
 	}
 	class Bookin {
