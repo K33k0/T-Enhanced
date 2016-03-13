@@ -12,6 +12,7 @@ if not A_isadmin {
 #include Modules\Lib\Rini.ahk
 #include Modules\config.ahk
 FileInstall, InstallMe/icon.png,icon.png, 1
+FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
 
 A:=true
 B:=3
