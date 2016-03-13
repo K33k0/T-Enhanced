@@ -1,1 +1,6 @@
 *.bak
+AutoHotkey112301_Install.exe
+update/
+Temp/
+Modules/Database/*
+Modules/Config.ini
