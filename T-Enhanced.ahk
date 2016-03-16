@@ -147,7 +147,7 @@ Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
 Y:=GetWinPosY("T-Enhanced Master Window")
-if (X = "ERROR" OR Y = "ERROR"){
+if (X = "ERROR" || X= "" OR Y = "ERROR" || Y=""){
 Gui, Master: Show, ,T-Enhanced Master Window
 } else {
 Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window

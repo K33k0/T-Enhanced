@@ -69,7 +69,7 @@ return
 
 PartMoveDesc:
 if (!move2LV){
-    Gui, Move2:add, ListView,w400 x220 ym r16, Part Code|Description
+    Gui, Move2:add, ListView,w450 x220 ym r16 gPartLookup, Part Code|Description|Price
     Move2LV := true
 }
 LV_Delete()
@@ -77,11 +77,18 @@ thelist := PartMove.ini.SectionKeyValue
 Loop, parse, thelist , |
 {
     IniRead,tempdescription, Modules/Database/PartDescriptions.ini,PartDescriptions,%A_LoopField%
-    LV_Add("", A_LoopField , tempDescription)
+    LV_Add("", A_LoopField , tempDescription, "£   -   ")
     LV_ModifyCol()  
 }
 LV_ModifyCol()  
 gui, Move2: show, AutoSize
+return
+
+partLookup:
+if (A_guievent = "DoubleClick"){
+    LV_Modify(A_eventinfo,,,,PartMove.priceCheck(A_EventInfo))
+    LV_ModifyCol() 
+}
 return
 
 PartMoveGo:
@@ -119,6 +126,7 @@ partmove.print()
 Move2GuiClose:
 Move2GuiEscape:
 PartMove := ""
+move2LV := False
 gui,Move2:destroy
 return
 
@@ -345,5 +353,24 @@ class Movement
                 }
             bpwb.quit()
             return Value
+    }
+
+    priceCheck(RowNumber){
+        LV_GetText(part, RowNumber)
+        StringReplace,part,part,%A_space%,+
+        bpwb:= ievget(Title)
+            baseUri:= "http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx"
+            uri := "?SiteNo=STOWPARTS&PartNo=" . part
+            bpwb.Navigate2(baseUri . uri, 2048)
+            loop {
+                try{
+                    bpwb := IEGetUrl(baseUri . uri)
+                    Loaded := bpwb.document.GetElementByID("txtCost").value
+                }
+            }until (Loaded != "")
+                value := bpwb.document.GetElementByID("txtCost").value
+            bpwb.quit()
+        
+        return "£" . value
     }
 }
