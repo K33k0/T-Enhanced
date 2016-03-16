@@ -1,3 +1,4 @@
+FileCreateDir, Modules/Database
 FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
 FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
 FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
