@@ -13,7 +13,7 @@ if not A_isadmin {
 #include Modules\config.ahk
 FileInstall, InstallMe/icon.png,icon.png, 1
 FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
-
+#Include OOP.ahk
 A:=true
 B:=3
 C:=false
@@ -281,27 +281,8 @@ return
 
 ;{ ----AutoLogin
 MasterGuiContextMenu:
-OutputDebug,[T-Enhanced]  Quick login started
-gui, Master:Submit, Nohide
-if (A_GuiControl = "Tab"){
-If (Tab = "Engineer"){
-IniRead,UserHash,%Config%,Login,UserName
-IniRead,PassHash,%Config%,Login,Password
-If (UserHash = "" OR UserHash = "Error"){
-return
-}
-if not PWB:= IEGET("Service Centre 5 Login") {
-pwb:=""
-return
-} else {
-pwb.document.getElementById("txtUserName").value := settings.decrypt("username")
-pwb.document.getElementById("txtPassword").value := settings.decrypt("password")
-pwb.document.getElementsByTagName("IMG")[7].click
-pwb:=""
-}
-}
-}
-OutputDebug,[T-Enhanced]  Quick login ended
+gui,Master:submit, noHide
+Login := new TEnhanced.AutoLogin(settings,tab)
 return
 ;}
 
@@ -329,10 +310,6 @@ setTimer,TestDB,1000
 TestDB:=""
 return
 ;}
-
-BulkProcess:
-;#include Modules/FactoryTime.ahk
-return
 
 LetsMoveSomeShit:
 #include Modules/Move.AHK
