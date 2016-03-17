@@ -317,7 +317,77 @@ class Logistics{
 	
 	
 	class BookOut {
-	
+		__New() {
+			static manifest
+			static CallNumber
+			gui, KMN:add, text, w150,Insert Call Number
+			Gui, KMN:Add, Edit, w150 vCallNumber
+			gui, KMN:add, text,w150,Insert Manifest Number
+			FormatTime,Today,,dMyyyy
+			Gui, KMN:Add, Edit, w150 vmanifest, 1%Today%
+			Gui, KMN:add, button, gKMN_BookOut, Continue
+			Gui, KMN: +AlwaysOnTop +ToolWindow +LastFound
+			Gui, KMN:show,autosize, Book out
+			WinWaitClose, Book out
+			return "Gui Close"
+			
+			KMN_BookOut:
+			gui,KMN:submit, NoHide
+			if (!manifest || !CallNumber) {
+				return False
+			}
+			gui,KMN:Submit
+			if not RoNumber:= this.GetRO(CallNumber)
+				return False
+			if (!this.shipOut(CallNumber,RONumber,Manifest)){
+				return False
+			} else {
+				return True
+			}
+			
 	}
-	
+		getRO(callNumber){
+			URL := "http://hypappbs005/SC5/SC_RepairJob/aspx/RepairJob_Modify.aspx?CALL_NUM="callNumber
+			wb:=IEVget(Title) ;Gets active IE window
+			wb.Navigate2(URL) ;navigates selected window to this url
+			while callNumberVerify != callNumber {
+				try {
+					callNumberVerify := wb.document.getElementById("txtCallNum").value
+					sleep 250
+				}
+			}
+				
+			RONumber := wb.document.getElementById("txtJobRef6").value
+			if !RONumber
+				return False
+			else
+				return RONumber
+		}		
+		ShipOut(CallNumber,RONumber,Manifest){
+			url := "http://hypappbs005/SC5/SC_RepairJob/aspx/repairjob_ship_wzd.aspx"
+			wb:=IEVget(Title) ;Gets active IE window
+			wb.Navigate2(URL) ;navigates selected window to this url
+			while LoadVerify != "STOWS" {
+				try {
+					LoadVerify := wb.document.getElementById("cboJobNumWorkshopSiteNum").value := "STOWS"
+					sleep 250
+				}
+			}
+			wb.document.getElementById("cboJobNumWorkshopSiteNum").value := CallNumber
+			wb.document.getElementById("cmdAddJobNum").click
+			wb.document.getElementById("cmdNext").click
+			PageLoading(wb)
+			wb.document.getElementById("cmdNext").click
+			PageLoading(wb)
+			if (wb.document.getElementByID("cbaListJobPartNumLineArray").value = ""){
+				return false
+			} else {
+				PageAlert()
+				wb.document.getElementById("cmdFinish").click
+				WinWaitClose, Message from webpage
+				return true
+		}
+		
+	}
+	}
 }

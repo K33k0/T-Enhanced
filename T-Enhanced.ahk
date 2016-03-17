@@ -7,20 +7,6 @@ if not A_isadmin {
 	OutputDebug, [T-Enhanced] Running as administrator
 }
 
-#include Modules\Lib\Functions.ahk
-#include Modules\Lib\Api.ahk
-#include Modules\Lib\Rini.ahk
-#include Modules\config.ahk
-#include Modules/KillMeNow.ahk
-FileInstall, InstallMe/icon.png,icon.png, 1
-FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
-#Include OOP.ahk
-A:=true
-B:=3
-C:=false
-
-
-
 ;SplashTextOn,200,100,T-Enhanced©, Created and maintained `n by Kieran Wynne `n`n All rights reservered %A_Year%
 gui, splash: add, picture, w128 h-1 BackgroundTrans,icon.png
 Gui, splash: Font, s12
@@ -33,6 +19,29 @@ Gui, splash:Color, EEAA99
 WinSet, TransColor, EEAA99
 gui, splash:show, autosize, T-Enhanced
 
+#include Modules\Lib\Functions.ahk
+GuiControl,splash:, Loadup, +10
+#include Modules\Lib\Api.ahk
+GuiControl,splash:, Loadup, +10
+#include Modules\Lib\Rini.ahk
+GuiControl,splash:, Loadup, +10
+#include Modules\config.ahk
+GuiControl,splash:, Loadup, +10
+#include Modules/KillMeNow.ahk
+
+GuiControl,splash:, Loadup, +10
+
+FileInstall, InstallMe/icon.png,icon.png, 1
+FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
+#Include OOP.ahk
+A:=true
+B:=3
+C:=false
+
+
+
+
+
 ;{ ----Startup
 #NoEnv
 SendMode Input
@@ -40,7 +49,7 @@ SetWorkingDir %A_ScriptDir%
 Onexit,Endit
 #singleinstance, force
 #Persistent
-GuiControl,splash:, Loadup, +15
+GuiControl,splash:, Loadup, +10
 sleep, 150
 ;}
 
@@ -57,7 +66,7 @@ OutputDebug, [T-Enhanced] Enabled DYMO.LabelEngine 3/3
 	msgbox, Unable to activate Dymo.`nPlease check you have the latest Dymo software installed.
 }
 OutputDebug,[T-Enhanced]  Dymo successfully Loaded
-GuiControl,splash:, Loadup, +15
+GuiControl,splash:, Loadup, +10
 sleep, 150
 ;}
 
@@ -66,7 +75,7 @@ global Config:=A_ScriptDir "\Modules\Config.ini"
 OutputDebug,[T-Enhanced]  Config directory set to [ %config% ]
 
 global TesseractVersion:="5.40.14"
-GuiControl,splash:, Loadup, +15
+GuiControl,splash:, Loadup, +10
 sleep, 150
 ;}
 
@@ -78,7 +87,7 @@ Launches all .AHK files inside Custom Scripts Folder
 */
 Loop %A_ScriptDir%\Custom Scripts\*.ahk
 Run %A_LoopFileFullPath%
-GuiControl,splash:, Loadup, +15  
+GuiControl,splash:, Loadup, +10  
 sleep, 150
 /*
 ###########
@@ -143,7 +152,7 @@ Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
 Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
-;Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
+Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
 
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
@@ -319,6 +328,11 @@ return
 Assets:
 Bookin := new Logistics.Bookin()
 Bookin:= ""
+return
+
+LogShipout:
+BookOut := new Logistics.BookOut()
+BookOut := ""
 return
 
 
