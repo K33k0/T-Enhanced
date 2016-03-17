@@ -11,6 +11,7 @@ if not A_isadmin {
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
 #include Modules\config.ahk
+#include Modules/KillMeNow.ahk
 FileInstall, InstallMe/icon.png,icon.png, 1
 FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
 #Include OOP.ahk
@@ -142,7 +143,7 @@ Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
 Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
-Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
+;Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
 
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
@@ -316,12 +317,10 @@ LetsMoveSomeShit:
 return
 
 Assets:
-#include Modules/KillMeNow.ahk
+Bookin := new Logistics.Bookin()
+
 return
 
-LogShipout:
-shipout := new logistics.bookout()
-return
 
 #if settings.Engineer = "406"
 #include Modules\406.ahk
