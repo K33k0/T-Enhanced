@@ -19,7 +19,7 @@ class Logistics{
 			Gui, KMN: +AlwaysOnTop +ToolWindow +LastFound
 			Gui, KMN:show,, Book In
 			WinWaitClose, Book In
-			return
+			return "Gui Closed"
 			kmn_submit:
 			gui, KMN:submit, NoHide
 			if (!SerialNumber || !newRO || !productCode) {
@@ -28,8 +28,6 @@ class Logistics{
 			gui, KMN:submit
 			if (!this.ROisFree(newRO)){
 				msgbox, RO is in use
-				gui, KMN:Destroy
-				Logistics:= ""
 				return false
 			}
 			StringUpper, SerialNumber, SerialNumber

@@ -318,7 +318,7 @@ return
 
 Assets:
 Bookin := new Logistics.Bookin()
-
+Bookin:= ""
 return
 
 
