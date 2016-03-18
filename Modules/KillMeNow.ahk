@@ -4,7 +4,7 @@ class Logistics{
 	__New() {
 	}
 	class Bookin {
-		static StartTime
+		static StartTime		
 		__New(){
 			static SerialNumber
 			static newRO
@@ -51,14 +51,17 @@ class Logistics{
 					if (!this.ProductAdd(SerialNumber, NewRO, ProductCode)){
 						return false
 					}
-				}
-				if not Call:=this.Create(SerialNumber,newRO) {
-					return false
 				} else {
-					this.print(newRO,Call)
+					return false
 				}
 			}
-			
+			if Call:=this.Create(SerialNumber,newRO) {
+				OutputDebug % call
+				this.print(newRO,Call)
+				return true
+			} else {
+				return False
+			}
 		}
 	
 		ROisFree(RO){
@@ -302,6 +305,10 @@ class Logistics{
 		}
 		
 		print(newRO,newCall){
+			global DymoLabel
+			global DymoAddIn
+			global DymoEngine
+			OutputDebug % "newRO = " newRO " - SerialNumber = " SerialNumber
 			DymoAddIn.Open("Modules/Zulu-book-in.label")
 			DymoLabel.SetField( "RO-Number", newRO)
 			DymoLabel.SetField( "Call-Number", newCall)

@@ -56,11 +56,11 @@ sleep, 150
 ;{ ----COM Addins
 Pwb:=""
 try {
-DymoLabel := ComObjCreate("DYMO.DymoLabels")
+Global DymoLabel := ComObjCreate("DYMO.DymoLabels")
 OutputDebug, [T-Enhanced] Enabled DYMO.DymoLabels 1/3 
-DymoAddIn := ComObjCreate("DYMO.DymoAddIn")
+global DymoAddIn := ComObjCreate("DYMO.DymoAddIn")
 OutputDebug, [T-Enhanced] Enabled DYMO.DymoAddIn 2/3
-DymoEngine := ComObjCreate("DYMO.LabelEngine")
+global DymoEngine := ComObjCreate("DYMO.LabelEngine")
 OutputDebug, [T-Enhanced] Enabled DYMO.LabelEngine 3/3
 } catch {
 	msgbox, Unable to activate Dymo.`nPlease check you have the latest Dymo software installed.
@@ -334,7 +334,6 @@ LogShipout:
 BookOut := new Logistics.BookOut()
 BookOut := ""
 return
-
 
 #if settings.Engineer = "406"
 #include Modules\406.ahk
