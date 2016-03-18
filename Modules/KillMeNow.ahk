@@ -380,13 +380,13 @@ class Logistics{
 					sleep 250
 				}
 			}
-			wb.document.getElementById("cboJobNumWorkshopSiteNum").value := CallNumber
+			wb.document.getElementById("txtInputJobNum").value := CallNumber
 			wb.document.getElementById("cmdAddJobNum").click
 			wb.document.getElementById("cmdNext").click
 			PageLoading(wb)
 			wb.document.getElementById("cmdNext").click
 			PageLoading(wb)
-			if (wb.document.getElementByID("cbaListJobPartNumLineArray").value = ""){
+			if ((wb.document.getElementByID("cbaListJobPartNumLineArray").value) = ""){
 				return false
 			} else {
 				PageAlert()
