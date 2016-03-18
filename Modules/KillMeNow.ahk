@@ -351,8 +351,11 @@ class Logistics{
 			} else {
 				return True
 			}
-			
 	}
+		__Delete(){
+			this := ""
+			Gui, KMN:Destroy
+		}
 		getRO(callNumber){
 			URL := "http://hypappbs005/SC5/SC_RepairJob/aspx/RepairJob_Modify.aspx?CALL_NUM="callNumber
 			wb:=IEVget(Title) ;Gets active IE window
