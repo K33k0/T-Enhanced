@@ -387,6 +387,8 @@ class Logistics{
 			wb.document.getElementById("cmdAddJobNum").click
 			wb.document.getElementById("cmdNext").click
 			PageLoading(wb)
+			wb.document.getElementById("txtJobShipRef").value := Manifest
+			wb.document.getElementById("txtJobShipRef1").value := RONumber
 			wb.document.getElementById("cmdNext").click
 			PageLoading(wb)
 			if ((wb.document.getElementByID("cbaListJobPartNumLineArray").value) = ""){
