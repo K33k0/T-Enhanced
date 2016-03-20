@@ -20,19 +20,30 @@ WinSet, TransColor, EEAA99
 gui, splash:show, autosize, T-Enhanced
 
 #include Modules\Lib\Functions.ahk
+
 GuiControl,splash:, Loadup, +10
 #include Modules\Lib\Api.ahk
+
 GuiControl,splash:, Loadup, +10
 #include Modules\Lib\Rini.ahk
+
 GuiControl,splash:, Loadup, +10
 #include Modules\config.ahk
-GuiControl,splash:, Loadup, +10
-#include Modules/KillMeNow.ahk
 
 GuiControl,splash:, Loadup, +10
+#include Modules/Logistics.ahk
 
+GuiControl,splash:, Loadup, +10
 FileInstall, InstallMe/icon.png,icon.png, 1
 FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
+FileInstall, InstallMe/Part Order.label,Modules/Part Order.label,1
+FileInstall, InstallMe/Workshop Codes Large.label,Modules/Workshop Codes Large.label,1
+FileInstall, InstallMe/Workshop Codes.label,Modules/Workshop Codes.label,1
+FileInstall, InstallMe/Zulu-book-in.label,Modules/Zulu-book-in.label,1
+
+FileCreateDir, Modules/Lib
+FileInstall, InstallMe/AutoHotkeyMini.dll,Modules/Lib/AutoHotkeyMini.dll,1
+
 #Include OOP.ahk
 A:=true
 B:=3
@@ -233,7 +244,8 @@ return
 ;}
 
 Create:
-#include Modules/TheCreationist.ahk
+Create:= new TEnhanced.Create(settings)
+Create:= ""
 return
 
 Report:

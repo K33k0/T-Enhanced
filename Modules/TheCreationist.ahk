@@ -85,14 +85,6 @@ return
 CreateContinue:
 StartTime := A_Now
 SaveWinPos("T-Enhanced Create Job Window")
-Gui,CreateGuint:Submit
-if (settings.Engineer = "406"){
-	msgbox,4,Customer Damage Verification, Is there ANY sign of customer damage?
-	IfMsgBox,Yes
-	{
-		ProbCode = Customer Damage
-	}
-}
 		
 If (ProbCode = "Epos") {
 	ProbCode = HEP
@@ -204,32 +196,27 @@ if (Pwb.document.getElementById("txtJobRef6") .value = "") {
 
 godMode := false
 
-
-
-
 Pwb.document.getElementById("cmdNext") .click
 OutputDebug, [T-Enhanced] Page Load Initiated [ref 198]
 IELoad(Pwb)
 OutputDebug, [T-Enhanced] Page Load Success [ref 198]
 
+
+
 Create_Page4:
 Pwb.document.getElementById("cboCallCalTCode") .value := JobType
-OutputDebug, [T-Enhanced] Successfully inputted Job Type
 ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[22] .click
 
 Pwb.document.getElementById("cboJobFlowCode") .value := "SWBENCH"
-OutputDebug, [T-Enhanced] Successfully inputted FlowCode
 ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[23] .click
 
 Pwb.document.getElementById("cboCallAreaCode") .value := "BFCA1"
-OutputDebug, [T-Enhanced] Successfully inputted Area
 ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[23] .click
 
 Pwb.document.getElementById("cboCallEmployNum") .value := settings.engineer
-OutputDebug, [T-Enhanced] Successfully inputted Engineer Number
 ModalDialogue()
 Pwb.document.getElementsByTagName("IMG")[25] .click
 
@@ -243,7 +230,6 @@ msgbox % "Your maximum budget is - £"  GetThreshold(ProdCode)
 FinishedTime:=A_Now
 EnvSub,FinsihedTime,StartTime,Seconds
 Pwb.document.getElementsByTagName("TEXTAREA")[4] .value := Fault . "`n---------------[T-Enhanced]---------------`n Job created in "FinsihedTime " Seconds"
-OutputDebug, [T-Enhanced] Successfully inputted customer fault
 FinsihedTime:=""
 StartTime:=""
 msgbox,4,Creation Confirmation,Are you happy to continue. `nMistakes may lead to stock anomalies
