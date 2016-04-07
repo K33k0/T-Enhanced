@@ -65,12 +65,12 @@ sleep, 150
 ;{ ----COM Addins
 Pwb:=""
 try {
-	Global DymoLabel := ComObjCreate("DYMO.DymoLabels")
-	OutputDebug, [T-Enhanced] Enabled DYMO.DymoLabels 1/3 
-	global DymoAddIn := ComObjCreate("DYMO.DymoAddIn")
-	OutputDebug, [T-Enhanced] Enabled DYMO.DymoAddIn 2/3
-	global DymoEngine := ComObjCreate("DYMO.LabelEngine")
-	OutputDebug, [T-Enhanced] Enabled DYMO.LabelEngine 3/3
+Global DymoLabel := ComObjCreate("DYMO.DymoLabels")
+OutputDebug, [T-Enhanced] Enabled DYMO.DymoLabels 1/3 
+global DymoAddIn := ComObjCreate("DYMO.DymoAddIn")
+OutputDebug, [T-Enhanced] Enabled DYMO.DymoAddIn 2/3
+global DymoEngine := ComObjCreate("DYMO.LabelEngine")
+OutputDebug, [T-Enhanced] Enabled DYMO.LabelEngine 3/3
 } catch {
 	msgbox, Unable to activate Dymo.`nPlease check you have the latest Dymo software installed.
 }
@@ -89,23 +89,23 @@ sleep, 150
 ;}
 
 /*
-	###########
-	Custom Scripts
-	###########
-	Launches all .AHK files inside Custom Scripts Folder
+###########
+Custom Scripts
+###########
+Launches all .AHK files inside Custom Scripts Folder
 */
 Loop %A_ScriptDir%\Custom Scripts\*.ahk
-	Run %A_LoopFileFullPath%
+Run %A_LoopFileFullPath%
 GuiControl,splash:, Loadup, +10  
 sleep, 150
 /*
-	###########
-	SysTray Setup
-	###########
-	Initialize the system tray menu
+###########
+SysTray Setup
+###########
+Initialize the system tray menu
 */
 if (A_IsCompiled){
-	Menu,tray,Nostandard
+Menu,tray,Nostandard
 }
 Menu, Home, add, Changelog,Changelog
 Menu, Workshop, add,Create Job,Create
@@ -121,20 +121,20 @@ OutputDebug,[T-Enhanced]  Tray fully loaded
 GuiControl,splash:, Loadup, +15  
 sleep, 150
 /*
-	###########
-	Timer Initialization
-	###########
-	Start the Timers
+###########
+Timer Initialization
+###########
+Start the Timers
 */
 SetTimer,TestDB,60000,-1
 OutputDebug,[T-Enhanced]  checking database connection every 5 seconds
 GuiControl,splash:, Loadup, +15  
 sleep, 150
 /*
-	###########
-	Master GUI
-	###########
-	Launch the Main User Interface
+###########
+Master GUI
+###########
+Launch the Main User Interface
 */
 GuiControl,splash:, Loadup, 100  
 sleep, 150
@@ -160,15 +160,14 @@ Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
 Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
-Gui, Master: Add, Button, x180 y30 w80 h45 0x8000 gImacLines, Add Lines
 
 Gui, Master: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 X:=GetWinPosX("T-Enhanced Master Window")
 Y:=GetWinPosY("T-Enhanced Master Window")
 if (X = "ERROR" || X= "" OR Y = "ERROR" || Y=""){
-	Gui, Master: Show, ,T-Enhanced Master Window
+Gui, Master: Show, ,T-Enhanced Master Window
 } else {
-	Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window
+Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window
 }
 if (settings.Engineer = "ERROR" or settings.Engineer = "" Or settings.WorkshopSite= "Error" or settings.WorkshopSite= ""){
 	OutputDebug,[T-Enhanced]  Failed to find settings
@@ -185,14 +184,14 @@ gosub,Hide
 return
 
 /*
-	###########
-	Simple Quit
-	###########
-	Quits the master Gui
+###########
+Simple Quit
+###########
+Quits the master Gui
 */
 Endit:
 try
-	pwb := ""
+pwb := ""
 SaveWinPos("T-Enhanced Master Window")
 OutputDebug,[T-Enhanced]  Force quit
 Exitapp
@@ -200,10 +199,10 @@ return
 
 
 /*
-	###########
-	Configuration Interface
-	###########
-	Opens up the Configuration Interface
+###########
+Configuration Interface
+###########
+Opens up the Configuration Interface
 */
 config:
 Gui, Master: Tab, Home
@@ -229,10 +228,10 @@ return
 
 
 /*
-	###########
-	Show commit history
-	###########
-	Opens github to the commits page
+###########
+Show commit history
+###########
+Opens github to the commits page
 */
 Changelog:
 run, https://github.com/k33k00/T-Enhanced--ZULU-/commits/master
@@ -301,11 +300,11 @@ return
 ;{ ----Database Check
 TestDB:
 If TestDB:=IETitle("ESOLBRANCH TEST DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) {
-	setTimer,TestDB,Off
-	msgbox, You are logged in the Test Database `, Redirecting
-	TestDB.Navigate("http://hypappbs005/SC5/SC_Login/aspx/login_launch.aspx?SOURCE=ESOLBRANCHLIVE")
-	sleep, 5000
-	setTimer,TestDB,1000
+setTimer,TestDB,Off
+msgbox, You are logged in the Test Database `, Redirecting
+TestDB.Navigate("http://hypappbs005/SC5/SC_Login/aspx/login_launch.aspx?SOURCE=ESOLBRANCHLIVE")
+sleep, 5000
+setTimer,TestDB,1000
 }
 TestDB:=""
 return
@@ -323,10 +322,6 @@ return
 LogShipout:
 BookOut := new Logistics.BookOut()
 BookOut := ""
-return
-
-ImacLines:
-#Include Modules\IMAC.ahk
 return
 
 #if settings.Engineer = "406"

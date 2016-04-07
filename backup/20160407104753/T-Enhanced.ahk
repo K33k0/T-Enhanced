@@ -327,7 +327,6 @@ return
 
 ImacLines:
 #Include Modules\IMAC.ahk
-return
 
 #if settings.Engineer = "406"
 #include Modules\406.ahk
