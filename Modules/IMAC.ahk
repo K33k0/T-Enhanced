@@ -10,7 +10,7 @@ Gui,ImacMultAdd:Add,Text, xm BackgroundTrans, Input Partcode
 Gui,ImacMultAdd:Add, Edit,vPartCode%LineNo% ,
 Gui,ImacMultAdd:Add,Text,BackgroundTrans, Input Serial Number
 Gui,ImacMultAdd:Add, edit,vSerial%LineNo% gAddNewLine
-Gui,ImacMultAdd:  +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale
+Gui,ImacMultAdd:  +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale +LastFound
 
 X:=GetWinPosX("T-Enhanced Multi Part Move")
 Y:=GetWinPosY("T-Enhanced Multi Part Move")
@@ -22,6 +22,12 @@ if (X = "ERROR" || X= "" OR Y = "ERROR" || Y=""){
 
 
 return
+GuiClose:
+GuiEscape:
+MsgBox, test
+Gui,ImacMultAdd:Destroy
+return
+
 AddNewLine:
 Gui,ImacMultAdd:submit, nohide
 If (Serial%LineNo% = ""){
@@ -30,8 +36,13 @@ If (Serial%LineNo% = ""){
 PartCode:=PartCode1
 LineNo +=1
 Gui,ImacMultAdd:Add, Edit,vSerial%LineNo% gAddNewLine ,
-Height:= Height - 25
-Gui,ImacMultAdd: Show, x%x% y%y% AutoSize
+
+if (X = "ERROR" || X= "" OR Y = "ERROR" || Y=""){
+	Gui, ImacMultAdd: Show,AutoSize ,T-Enhanced Multi Part Move
+} else {
+	Gui, ImacMultAdd: Show, X%x% Y%y%  AutoSize,T-Enhanced Multi Part Move
+}
+
 return
 #D::
 
@@ -90,7 +101,3 @@ gosub, AddPartsRefresh
 return
 
 
-ImacMultiAddGuiClose:
-ImacMultiAddGuiEscape:
-Gui,ImacMultAdd:Destroy
-return
