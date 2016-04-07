@@ -41,13 +41,11 @@ Gui,ImacMultAdd:Submit
 I:=1
 LineNo-=1
 loop, %LineNo%{
-	Process,Close,IEInterupt.exe
 	StringReplace,PartCode,PartCode,%A_SPACE%,`%,All
 	Pwb := IEGet("FSRL_Create_Wzd - " TesseractVersion)
-	run, Modules/IEInterupt.exe
+	ModalDialogue()
 	Pwb.document.getElementById("cboWZPartNum").value :=PartCode
 	Pwb.document.getElementById("cboWZPartNum_Container").click
-	Process,Close,IEInterupt.exe
 	check:=Pwb.document.getElementById("cboWZPartDesc").value
 	if(check = ""){
 		MsgBox,Part not found. Input Manually
@@ -62,7 +60,7 @@ loop, %LineNo%{
 	if(Pwb.document.getElementById("chkAllowNewStockUsed").outerHTML = 	"<INPUT id=chkAllowNewStockUsed type=checkbox name=chkAllowNewStockUsed>"){
 		Pwb.document.getElementById("chkAllowNewStockUsed").Click
 	}
-	run, Modules/IEInterupt.exe
+	ModalDialogue()
 	pwb.document.getElementByID("cboFSRLStockSiteNum").Value:=""
 	pwb.document.getElementByID("cboFSRLIDNum").Value:=Serial%I%
 	pwb.document.getElementByID("cboFSRLIDNum_Container").Click
@@ -89,4 +87,10 @@ if (reload != True){
 Gui,ImacMultAdd:Destroy
 Reload := False
 gosub, AddPartsRefresh
+return
+
+
+ImacMultiAddGuiClose:
+ImacMultiAddGuiEscape:
+Gui,ImacMultAdd:Destroy
 return
