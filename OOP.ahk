@@ -1,7 +1,7 @@
 TEnhanced := new TEnhanced(settings)
 
 class TEnhanced {
-	static TesseractVersion := "5.40.14"
+	
 	
 	Class AutoLogin {
 		
@@ -383,15 +383,16 @@ class TEnhanced {
 			}Until (PageLoaded = "submit")
 			PageLoaded:=""
 			frame.document.getElementById("cmdSubmit").click
+			pageloading(pwb)
+			sleep, 500
 			frame := Pwb.document.all(10).contentWindow
 			frame.document.getElementById("cboCallUpdAreaCode").value := "WSF"
 			ModalDialogue()
 			frame.document.getElementsByTagName("IMG")[35].click
-			WinWaitClose,Popup List -- Webpage Dialog
-			PageAlert()
+			WinWaitClose,Popup List -- Webpage Dialog,,5
 			frame := Pwb.document.all(7).contentWindow
-			frame.document.getElementById("cmdSubmit").click
-			WinWaitClose, Message from webpage
+			PageAlert()
+			
 			return
 		}
 		
@@ -400,6 +401,7 @@ class TEnhanced {
 				return false
 			sleep, 250
 			frame := Pwb.document.all(10).contentWindow
+			CallNum := ShipSite:= frame.document.getElementById("txtCallNum") .value
 			ShipSite:= frame.document.getElementById("cboJobShipSiteNum") .value
 			sleep, 250
 			frame := Pwb.document.all(9).contentWindow

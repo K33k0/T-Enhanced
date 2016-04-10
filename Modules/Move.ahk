@@ -1,4 +1,4 @@
-FileCreateDir, Modules/Database
+ï»¿FileCreateDir, Modules/Database
 FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
 FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
 FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
@@ -76,7 +76,7 @@ thelist := PartMove.ini.filteredParts
 Loop, parse, thelist , |
 {
 	IniRead,tempdescription, Modules/Database/PartDescriptions.ini,PartDescriptions,%A_LoopField%
-	LV_Add("", A_LoopField , tempDescription, "£   -   ")
+	LV_Add("", A_LoopField , tempDescription, "Â£   -   ")
 	LV_ModifyCol()  
 }
 LV_ModifyCol()  
@@ -268,9 +268,13 @@ class Movement
 		frame.document.getelementbyid("chkAllowNewStockFlag").click  ;check the flag
 		PageAlert()
 		frame := PartMovePointer.document.all(6).contentWindow
+		
 		frame.document.getElementByID("cmdSubmit").Click ;submit
+		Frame:=PartMovePointer.document.all(9).contentwindow
 		pageloading(PartMovePointer)
-		WinClose,Message from webpage,,5
+		while (Frame.document.GetElementById("cboPartNum").value)
+			sleep, 500
+		;WinwaitClose,Message from webpage,,5
 		PartMovePointer.quit()
     ;postMoveStock := this.partVerify(part, this.settings.Benchkit)
 		return true
@@ -369,6 +373,6 @@ class Movement
 		value := bpwb.document.GetElementByID("txtCost").value
 		bpwb.quit()
 		
-		return "£" . value
+		return "Â£" . value
 	}
 }

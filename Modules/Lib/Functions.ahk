@@ -165,9 +165,8 @@ Loop {
 	IfWinExist,ahk_class #32770
 	{
 		OutputDebug, [TE] Well the window exists...
-		WinKill, ahk_class #32770
+		WinClose, ahk_class #32770
 		OutputDebug, [TE] And The window is closed
-		tooltip, closed
 		ExitApp
 	}
 }

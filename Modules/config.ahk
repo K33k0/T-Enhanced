@@ -6,6 +6,7 @@ class config {
 	static HashedPassword
 	static BenchKit
 	static Firstrun = False
+
 	
 	__New(ini) {
 		this.ini := ini
