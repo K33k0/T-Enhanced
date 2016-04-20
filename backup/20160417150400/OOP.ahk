@@ -140,17 +140,17 @@ class TEnhanced {
 		ConvertHumanText(){
 			If (this.ProblemCode = "Epos") {
 				this.ProbCode := "HEP"
-			} Else if (this.ProblemCode = "HandHeld") {
+			} Else if (this.ProbCode = "HandHeld") {
 				this.Probcode := "HHT"
-			} Else if (this.ProblemCode = "Printer") {
+			}Else if (this.ProbCode = "Printer") {
 				this.Probcode := "HPR"
-			} Else if (this.ProblemCode = "Server") {
+			}Else if (this.ProbCode = "Server") {
 				this.Probcode := "HSV"
-			} Else if (this.ProblemCode = "Self Checkout") {
+			}Else if (this.ProbCode = "Self Checkout") {
 				this.Probcode := "SCO"
-			} Else if (this.ProblemCode = "Customer Damage") {
+			}Else if (this.ProbCode = "Customer Damage") {
 				this.Probcode := "CDAM"
-			} Else if (this.ProblemCode = "Distribution") {
+			}Else if (this.ProbCode = "Distribution") {
 				this.Probcode := "RDC"
 			} else {
 				return false
@@ -238,7 +238,7 @@ class TEnhanced {
 			Pwb.document.getElementsByTagName("Input")[35] .value :=""
 			Pwb.document.getElementsByTagName("Input")[36] .value :=""
 			Pwb.document.getElementsByTagName("Input")[37] .value :=""
-			if  (this.JobType = "ZR2"){
+			if  (JobType = "ZR2"){
 				ShipSite = IMACREP
 			} else {
 				ShipSite = STOKGOODS
@@ -321,6 +321,6 @@ class TEnhanced {
 		}
 		
 	}
-	
+		
 }
 

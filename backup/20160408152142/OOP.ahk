@@ -140,17 +140,17 @@ class TEnhanced {
 		ConvertHumanText(){
 			If (this.ProblemCode = "Epos") {
 				this.ProbCode := "HEP"
-			} Else if (this.ProblemCode = "HandHeld") {
+			} Else if (this.ProbCode = "HandHeld") {
 				this.Probcode := "HHT"
-			} Else if (this.ProblemCode = "Printer") {
+			}Else if (this.ProbCode = "Printer") {
 				this.Probcode := "HPR"
-			} Else if (this.ProblemCode = "Server") {
+			}Else if (this.ProbCode = "Server") {
 				this.Probcode := "HSV"
-			} Else if (this.ProblemCode = "Self Checkout") {
+			}Else if (this.ProbCode = "Self Checkout") {
 				this.Probcode := "SCO"
-			} Else if (this.ProblemCode = "Customer Damage") {
+			}Else if (this.ProbCode = "Customer Damage") {
 				this.Probcode := "CDAM"
-			} Else if (this.ProblemCode = "Distribution") {
+			}Else if (this.ProbCode = "Distribution") {
 				this.Probcode := "RDC"
 			} else {
 				return false
@@ -238,7 +238,7 @@ class TEnhanced {
 			Pwb.document.getElementsByTagName("Input")[35] .value :=""
 			Pwb.document.getElementsByTagName("Input")[36] .value :=""
 			Pwb.document.getElementsByTagName("Input")[37] .value :=""
-			if  (this.JobType = "ZR2"){
+			if  (JobType = "ZR2"){
 				ShipSite = IMACREP
 			} else {
 				ShipSite = STOKGOODS
@@ -320,6 +320,108 @@ class TEnhanced {
 			return True
 		}
 		
+	}
+	
+	Class Shipout {
+		static pwb
+		__New() {
+			if not this.Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
+				return False
+			}
+			if !(JobType:= this.getJobType()){
+				return false
+			}
+			if (JobType = "ZULUAW"){
+				msgbox, Already shipped
+			}
+			if !(ShipSite:= this.getShipSite()){
+				return False
+			}
+			if (shipSite = "ZULU"){
+				this.zuluShipout()
+				return true
+			} else {
+				this.oldShipout()
+			}
+		}
+		
+		__Delete(){
+			this:= ""
+		}
+		
+		getJobType(){
+			pwb:= this.pwb
+			frame := Pwb.document.all(10).contentWindow
+			return (frame.document.getElementByID("cboJobFlowCode").value)
+		}
+		
+		getShipSite(){
+			pwb:= this.pwb
+			frame := Pwb.document.all(10).contentWindow
+			return (frame.document.getElementById("cboJobShipSiteNum").value)
+		}
+		
+		zuluShipout(){
+			pwb := this.pwb
+			Loop{
+				Try{
+					frame := Pwb.document.all(10).contentWindow
+					PageLoaded:= frame.document.getElementsByTagName("Label")[0].innertext
+				}
+			}Until (PageLoaded = "Job Details")
+			PageLoaded:=""
+			frame := Pwb.document.all(10).contentWindow
+			frame.document.getElementByID("cboJobFlowCode").value:="ZULUAW"
+			frame.document.getElementByID("cboCallAreaCode").value:="WSF"
+			
+			sleep, 250
+			frame := Pwb.document.all(7).contentWindow
+			Loop{
+				Try{
+					PageLoaded:= frame.document.getElementByID("cmdSubmit").value
+				}
+			}Until (PageLoaded = "submit")
+			PageLoaded:=""
+			frame.document.getElementById("cmdSubmit").click
+			pageloading(pwb)
+			sleep, 500
+			frame := Pwb.document.all(10).contentWindow
+			frame.document.getElementById("cboCallUpdAreaCode").value := "WSF"
+			ModalDialogue()
+			frame.document.getElementsByTagName("IMG")[35].click
+			WinWaitClose,Popup List -- Webpage Dialog,,5
+			frame := Pwb.document.all(7).contentWindow
+			PageAlert()
+
+			return
+		}
+		
+		oldShipout(){
+			if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion)
+				return false
+			sleep, 250
+			frame := Pwb.document.all(10).contentWindow
+			ShipSite:= frame.document.getElementById("cboJobShipSiteNum") .value
+			sleep, 250
+			frame := Pwb.document.all(9).contentWindow
+			frame.document.getElementById("lblJobShipOutWizard") .click
+			IELoad(pwb)
+			Pwb.document.getElementById("txtInputJobNum") .value :=CallNum
+			Pwb.document.getElementById("cmdAddJobNum") .click
+			Pwb.document.getElementById("cmdNext") .click
+			IELoad(Pwb)
+			Pwb.document.getElementById("cmdNext") .click
+			IELoad(Pwb)
+			Pwb.document.getElementsByTagName("INPUT")[48] .click
+			SerialNumber:=Pwb.document.getElementbyID("cbaListCallSerNumLineArray").value
+			ProdCode:=Pwb.document.getElementbyID("cbaListJobPartNumLineArray").value
+			Pwb.document.getElementById("cmdFinish") .click
+			PageAlert()
+			IELoad(Pwb)
+			Pwb.document.getElementsByTagName("INPUT")[40] .click
+			Pwb.document.getElementById("cmdFinish") .click
+			return true
+		}
 	}
 	
 }

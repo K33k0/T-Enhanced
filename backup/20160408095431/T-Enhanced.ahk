@@ -15,8 +15,8 @@ showSplashScreen()
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
-settings := new config(A_ScriptDir "\Modules\Config.ini")
-#Include Modules\BookIn\Logistics.ahk
+#include Modules\config.ahk
+#include Modules/Logistics.ahk
 #Include OOP.ahk
 installFiles()
 A:=true
@@ -31,7 +31,14 @@ CreateTrayMenu()
 destroySplashScreen()
 
 
-MasterGui:
+/*
+	###########
+	Master GUI
+	###########
+	Launch the Main User Interface
+*/
+
+
 Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics
 Gui, Master: Tab, Home
@@ -63,9 +70,10 @@ if (X = "ERROR" || X= "" OR Y = "ERROR" || Y=""){
 	Gui, Master: Show, X%x% Y%y%  ,T-Enhanced Master Window
 }
 if (settings.Engineer = "ERROR" or settings.Engineer = "" Or settings.WorkshopSite= "Error" or settings.WorkshopSite= ""){
+	OutputDebug,[T-Enhanced]  Failed to find settings
 	gosub, config
 }
-
+OutputDebug,[T-Enhanced]  Master Gui loaded
 WinGet,MasterWindow,ID,T-Enhanced Master Window
 return
 
@@ -124,15 +132,17 @@ Create:= ""
 return
 
 Report:
-#Include Modules\ServiceReport\ServiceReport.ahk
+#Include Modules/ServicePlease.ahk
 return
 
 Ship:
-#Include Modules\Shipout\Sayonara.ahk
+Shipout:= new TEnhanced.Shipout(settings)
+ShipOut:= ""
 return
 
 Panic:
 SaveWinPos("T-Enhanced Master Window")
+OutputDebug,[T-Enhanced]  Force Reload
 Reload
 return
 
@@ -148,7 +158,7 @@ return
 
 
 PrintFunction:
-#Include Modules\ManualPrint\ManualPrint.ahk
+#include Modules/ManualPrint.ahk
 return
 
 
@@ -173,7 +183,7 @@ return
 
 
 LetsMoveSomeShit:
-#Include Modules\BenchKitMove\BenchKitMove.ahk
+#Include Modules/Move.ahk
 return
 
 Assets:
@@ -187,16 +197,15 @@ BookOut := ""
 return
 
 ImacLines:
-#Include Modules\ImacMultiLine\IMAC.ahk
+#Include Modules\IMAC.ahk
 return
 
 #if settings.Engineer = "406"
-#Include Modules\CustomScripts\406.ahk
+#include Modules\406.ahk
 
 
 
 showSplashScreen(){
-	;Displays the splash screen
 	gui, splash: add, picture, w128 h-1 BackgroundTrans,icon.png
 	Gui, splash: Font, s12
 	gui, splash: add, Text,w128 center cblue BackgroundTrans, T-Enhanced
@@ -208,11 +217,10 @@ showSplashScreen(){
 	gui, splash:show, autosize, T-Enhanced
 }
 destroySplashScreen(){
-	;Destroys the splash screen
 	gui, splash:destroy
 }
 installFiles(){
-	;installs required files
+	
 	FileInstall, InstallMe/icon.png,icon.png, 1
 	FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
 	FileInstall, InstallMe/Part Order.label,Modules/Part Order.label,1
@@ -223,7 +231,6 @@ installFiles(){
 	FileInstall, InstallMe/AutoHotkeyMini.dll,Modules/Lib/AutoHotkeyMini.dll,1
 }
 InitializeDymo(){
-	;initializes the dymo label printer
 	try {
 		Global DymoLabel := ComObjCreate("DYMO.DymoLabels")
 		OutputDebug, [T-Enhanced] Enabled DYMO.DymoLabels 1/3 
@@ -236,20 +243,16 @@ InitializeDymo(){
 	}
 }
 setConfigLocation(path){
-	;sets the location of the config file
 	global Config:=A_ScriptDir . path
 }
 setTesseractVersion(version){
-	;sets the Tesseract Version
 	TesseractVersion:= version
 }
 LaunchCustomScripts(){
-	;loops through custom scripts folder, launching every .ahk file it finds
 	Loop %A_ScriptDir%\Custom Scripts\*.ahk
 		Run %A_LoopFileFullPath%
 }
 CreateTrayMenu(){
-	;sets up the tray menu
 	if (A_IsCompiled){
 		Menu,tray,Nostandard
 	}
@@ -265,68 +268,8 @@ CreateTrayMenu(){
 	Menu,Tray,add,Quit,Endit
 }
 CloseProgram(){
-	;closes T-Enhanced
 	SaveWinPos("T-Enhanced Master Window")
+	OutputDebug,[T-Enhanced]  Force quit
 	Exitapp
 	return
 }
-
-class config {
-	static ini
-	static Engineer
-	static WorkshopSite
-	static HashedUserName
-	static HashedPassword
-	static BenchKit
-	static Firstrun = False
-	
-	
-	__New(ini) {
-		this.ini := ini
-		IniRead, Engineer, %ini%, Engineer, Number
-		IniRead, user, %ini%, login, UserName
-		IniRead, pass, %ini%, login, Password
-		IniRead,wSite, %ini%, Site, location
-		this.HashedUserName := user
-		this.HashedPassword := pass
-		this.BenchKit := Engineer . "BK"
-		this.Engineer := Engineer
-		this.workshopSite := wSite
-	}
-	
-	decrypt(setting) {
-		keys := this.Engineer
-		if (setting = "password")	{
-			return Crypt.Encrypt.StrDecrypt(this.HashedPassword,keys)	
-		} else if ( setting = "username" )	{
-			return Crypt.Encrypt.StrDecrypt(this.HashedUserName,keys)	
-		} 	else {
-			return "failed to find setting"
-		}
-	}
-	
-	encrypt(setting, value) {
-		keys := this.Engineer
-		if (setting = "password")	{
-			return Crypt.Encrypt.StrEncrypt(value,keys)	
-		} else if ( setting = "username" )	{
-			return Crypt.Encrypt.StrEncrypt(value,keys)	
-		} 	else {
-			return false
-		}
-		return true
-	}
-	
-	save(Engineer,WorkshopSite,UserName="",Password="") {
-		IniWrite, %Engineer%, % this.ini, Engineer, Number
-		this.engineer := Engineer
-		IniWrite, %WorkshopSite%, % this.ini, Site, location
-		if (userName) {
-			IniWrite, % this.encrypt("username",UserName), % this.ini, login, UserName
-		}
-		if (password) {
-			IniWrite, % this.encrypt("password",password), % this.ini, login, password 
-		}
-	}
-}
-
