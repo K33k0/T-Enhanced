@@ -276,7 +276,7 @@ Gui,AddPartsGui:Add, Updown, vQuantity%LineNo%
 Gui,AddPartsGui:add, checkbox,yp x+5 vBillable%LineNo%, Billable?
 Gui,AddPartsGui:Add, Text, Yp+28 w40 h20 x5, Reason
 Gui,AddPartsGui:Add, edit, Yp-3 w160 h20 x+5 vReason%LineNo%,
-Gui,AddPartsGui:  +AlwaysOnTop +Border +Owner%MasterWindow%
+Gui,AddPartsGui:  +AlwaysOnTop +Owner%MasterWindow% +ToolWindow
 X:=GetWinPosX("Part Add")
 Y:=GetWinPosY("Part Add")
 if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){

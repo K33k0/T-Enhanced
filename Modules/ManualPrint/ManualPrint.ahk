@@ -29,16 +29,16 @@ DymoLabel.SetField( 2, PC)
 DymoLabel.SetField( "JobNumber", Call)
 DymoLabel.SetField( 3, Notes)
 
-Gui,PriSmall:+ToolWindow +alwaysontop
+Gui,PriSmall:+ToolWindow +alwaysontop +Owner%MasterWindow%
 Gui,PriSmall: add,picture,  +hwndcontainer w210 h130,
 
 
 
-Gui,PriLarge:+ToolWindow +alwaysontop 
+Gui,PriLarge:+ToolWindow +alwaysontop +Owner%MasterWindow%
 Gui,PriLarge: add,picture,  +hwndcontainer2 w340 h130,
 
 
-
+Gui,PriInfo: +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
 Gui,PriInfo:add,text,,Label Size
 Gui,Priinfo:Add, Radio, gswitchLabel vrad1 checked,Small Preview
 Gui,Priinfo:Add, Radio, gSwitchLabel vrad2,Large Preview
