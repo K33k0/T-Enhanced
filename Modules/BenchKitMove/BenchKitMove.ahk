@@ -152,6 +152,7 @@ class Movement
 {
 	requestedPart := {}
 	partLocation := {}
+	
 	__New(settings)
 	{
 		this.settings := settings
@@ -275,7 +276,13 @@ class Movement
 		while (Frame.document.GetElementById("cboPartNum").value)
 			sleep, 500
 		;WinwaitClose,Message from webpage,,5
-		PartMovePointer.quit()
+		while (PartMovePointer){
+			sleep, 100
+			PartMovePointer.quit()
+			PartMovePointer := ""
+			sleep, 100
+		}
+		
     ;postMoveStock := this.partVerify(part, this.settings.Benchkit)
 		return true
 	}
@@ -305,7 +312,12 @@ class Movement
 			StockLocation := false
 		}
 		this.partLocation[part] := StockLocation
-		SecondaryPointer.quit()
+		while (SecondaryPointer){
+			Sleep 100
+			SecondaryPointer.quit()
+			SecondaryPointer := ""
+			Sleep 100
+		}
 		return true
 	}
 	
