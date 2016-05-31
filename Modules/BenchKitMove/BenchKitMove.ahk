@@ -372,7 +372,7 @@ class Movement
 	priceCheck(RowNumber){
 		LV_GetText(part, RowNumber)
 		StringReplace,part,part,%A_space%,+
-		bpwb:= ievget(Title)
+		bpwb:= ievget()
 		baseUri:= "http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx"
 		uri := "?SiteNo=STOWPARTS&PartNo=" . part
 		bpwb.Navigate2(baseUri . uri, 2048)
