@@ -276,12 +276,9 @@ class Movement
 		while (Frame.document.GetElementById("cboPartNum").value)
 			sleep, 500
 		;WinwaitClose,Message from webpage,,5
-		while (PartMovePointer){
-			sleep, 100
 			PartMovePointer.quit()
 			PartMovePointer := ""
 			sleep, 100
-		}
 		
     ;postMoveStock := this.partVerify(part, this.settings.Benchkit)
 		return true
@@ -312,12 +309,10 @@ class Movement
 			StockLocation := false
 		}
 		this.partLocation[part] := StockLocation
-		while (SecondaryPointer){
 			Sleep 100
 			SecondaryPointer.quit()
 			SecondaryPointer := ""
 			Sleep 100
-		}
 		return true
 	}
 	
