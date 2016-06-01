@@ -63,16 +63,16 @@ class Logistics{
 				return False
 			}
 		}
-	
+		
 		ROisFree(RO){
 			wb:=IEVget(Title) ;Gets active IE window
 			wb.Navigate2("http://hypappbs005/SC5/SC_SerProd/aspx/serprod_main.aspx") ;navigates selected window to this url
 			Loop{ ;begin loop to (wait for page to load)
 				try{
-			frame := wb.document.all(7).contentWindow
-			pageTitle :=  frame.document.getElementById("txtFunctionText").innertext
-			sleep 250
-			}
+					frame := wb.document.all(7).contentWindow
+					pageTitle :=  frame.document.getElementById("txtFunctionText").innertext
+					sleep 250
+				}
 			} until (pageTitle = "serialised product query" && wb.busy = 0)
 			;loop has ended because page is correct and browser is reporting that loading has finished
 			;if for whatever reason the script has reached here it and the page title is wrong then you get an error
@@ -88,10 +88,10 @@ class Logistics{
 			
 			loop{ ;loop waiting for page to load whilst figuring out the landing page
 				try{
-					 frame := wb.document.all(10).contentWindow ;select frame
-					 SiteNo := frame.document.getElementById("txtSerSiteNum").value ;check for site number
-					 Records :=  frame.document.getElementById("lblRecordCount").innerText ;check for total records
-					 
+					frame := wb.document.all(10).contentWindow ;select frame
+					SiteNo := frame.document.getElementById("txtSerSiteNum").value ;check for site number
+					Records :=  frame.document.getElementById("lblRecordCount").innerText ;check for total records
+					
 				}
 			}until (SiteNo != ""|| Records != "") ;stop loop as soon as one exists
 			wb:=
@@ -101,17 +101,17 @@ class Logistics{
 				return false
 			}
 		}
-	
+		
 		HistoryCheck(SerialNumber){
 			wb:=IEVget(Title) ;Gets active IE window
 			wb.Navigate2("http://hypappbs005/SC5/SC_SerProd/aspx/serprod_main.aspx") ;navigates selected window to this url
 			Loop{ ;begin loop to (wait for page to load)
 				try{
-			frame := wb.document.all(7).contentWindow
-			pageTitle :=  frame.document.getElementById("txtFunctionText").innertext
-			OutputDebug % wb.busy
-			sleep 250
-			}
+					frame := wb.document.all(7).contentWindow
+					pageTitle :=  frame.document.getElementById("txtFunctionText").innertext
+					OutputDebug % wb.busy
+					sleep 250
+				}
 			} until (pageTitle = "serialised product query" && wb.busy = 0)
 			;loop has ended because page is correct and browser is reporting that loading has finished
 			;if for whatever reason the script has reached here it and the page title is wrong then you get an error
@@ -125,10 +125,10 @@ class Logistics{
 			frame.document.getElementById("cmdsubmit").click ;click submit
 			loop{ ;loop waiting for page to load whilst figuring out the landing page
 				try{
-					 frame := wb.document.all(10).contentWindow ;select frame
-					 SiteNo := frame.document.getElementById("txtSerSiteNum").value ;check for site number
-					 Records :=  frame.document.getElementById("lblRecordCount").innerText ;check for total records
-					 
+					frame := wb.document.all(10).contentWindow ;select frame
+					SiteNo := frame.document.getElementById("txtSerSiteNum").value ;check for site number
+					Records :=  frame.document.getElementById("lblRecordCount").innerText ;check for total records
+					
 				}
 			}until (SiteNo != ""|| Records != "") ;stop loop as soon as one exists
 			if (SiteNo = "ZULU" && Records = ""){
@@ -148,14 +148,14 @@ class Logistics{
 			frame := wb.document.all(10).contentWindow
 			
 			if (ExistingRO := frame.document.getElementById("txtSerReference2").value) {
-			frame.document.getElementById("txtSerReference1").value := ExistingRO ;move the existing RO number to the last RO field
-		}
+				frame.document.getElementById("txtSerReference1").value := ExistingRO ;move the existing RO number to the last RO field
+			}
 			
 			frame.document.getElementById("txtSerReference2").value := NewRO
 			NewRO := frame.document.getElementById("txtSerReference2").value
 			IfNotInString,NewRO,480
 			{
-			msgbox,4,RO Number verify,Something seem's off with your RO number`nare you sure you want to continue with %NewRO%
+				msgbox,4,RO Number verify,Something seem's off with your RO number`nare you sure you want to continue with %NewRO%
 				IfMsgBox, No 
 				{
 					return false
@@ -183,7 +183,7 @@ class Logistics{
 			;=================================
 			return true
 		}
-			
+		
 		InstalledElsewhere(){
 			wb:=IEVget(Title)
 			OutputDebug, Install in a site that isn't ZULU
@@ -213,25 +213,25 @@ class Logistics{
 			frame.document.getElementById("txtSerNum").value :=SerialNumber ;check for site number
 			
 			IfNotInString,NewRO,480
-				{
+			{
 				msgbox,4,RO Number verify,Something seem's off with your RO number`nare you sure you want to continue with %NewRO%
-					IfMsgBox, No 
-					{
-						return false
-					}
+				IfMsgBox, No 
+				{
+					return false
 				}
+			}
 			frame.document.getElementById("txtSerReference2").value := newRO
 			OutputDebug, New RO added to field
 			frame.document.getElementByid("cboSerSeStatCode").value := "REP"
 			OutputDebug, Status set to REP
 			IfNotInString, ProductCode, 177 
+			{
+				MsgBox,4,Product Code Verify, Product Code is showing as %productCode%. `nIs this Correct
+				IfMsgBox, No
 				{
-					MsgBox,4,Product Code Verify, Product Code is showing as %productCode%. `nIs this Correct
-					IfMsgBox, No
-					{
-						return false
-					}
+					return false
 				}
+			}
 			productCode:= LTrim(productCode, "0")
 			OutputDebug, removed trailing zero's from product
 			frame.document.getElementById("cboSerProdNum").value := productCode
@@ -240,14 +240,14 @@ class Logistics{
 			OutputDebug, site number set to zulu
 			frame := wb.document.all(7).contentWindow
 				;=================================
-				PageAlert()
-				frame.document.getElementById("cmdSubmit").click
-				OutputDebug, submit has been hiti for product add
-				PageLoading(wb)
+			PageAlert()
+			frame.document.getElementById("cmdSubmit").click
+			OutputDebug, submit has been hiti for product add
+			PageLoading(wb)
 				;=================================
 			return true
 		}
-	
+		
 		Create(SerialNumber,newRO){
 			wb:=IEVget(Title)
 			wb.Navigate2("http://hypappbs005/SC5/SC_RepairJob/aspx/repairjob_create_wzd.aspx")
@@ -285,10 +285,10 @@ class Logistics{
 			wb.document.getElementById("cboCallCalTCode") .value := "ZR1"
 			ModalDialogue()
 			wb.document.getElementsByTagName("IMG")[22] .click
-
+			
 			wb.document.getElementById("cboJobFlowCode") .value := "SWBOOKIN"
 			ModalDialogue()
-
+			
 			FinishedTime:=A_Now
 			EnvSub,FinsihedTime,this.StartTime,Seconds
 			wb.document.getElementsByTagName("TEXTAREA")[4] .value := "==== Booking in finsihed in: " . FinsihedTime . " seconds ====`n==== Repair Order Number: " . newRO . " ====`n=======Powered by T-Enhanced======="
@@ -315,7 +315,7 @@ class Logistics{
 			DymoAddIn.Print( 1, TRUE )
 			return true
 		}
-	
+		
 		__Delete(){
 			this := ""
 			Gui, KMN:Destroy
@@ -351,7 +351,7 @@ class Logistics{
 			} else {
 				return True
 			}
-	}
+		}
 		__Delete(){
 			this := ""
 			Gui, KMN:Destroy
@@ -366,7 +366,7 @@ class Logistics{
 					sleep 250
 				}
 			}
-				
+			
 			RONumber := wb.document.getElementById("txtJobRef6").value
 			if !RONumber
 				return False
@@ -392,14 +392,15 @@ class Logistics{
 			wb.document.getElementById("cmdNext").click
 			PageLoading(wb)
 			if ((wb.document.getElementByID("cbaListJobPartNumLineArray").value) = ""){
+				msgbox, Shipout Failed. Item not marked as repaired
 				return false
 			} else {
 				PageAlert()
 				wb.document.getElementById("cmdFinish").click
 				WinWaitClose, Message from webpage
 				return true
+			}
+			
 		}
-		
-	}
 	}
 }
