@@ -395,12 +395,56 @@ class Logistics{
 				msgbox, Shipout Failed. Item not marked as repaired
 				return false
 			} else {
+				
 				PageAlert()
 				wb.document.getElementById("cmdFinish").click
 				WinWaitClose, Message from webpage
+				if !this.SetCustomerAssetsStatus(RONumber){
+					msgbox, Job shipped. Failed to update customer assets
+					return false
+				}
+				wb.Navigate2("http://hypappbs005/SC5/SC_Menu/aspx/Menu_Frameset.aspx")
 				return true
 			}
 			
+		}
+		SetCustomerAssetsStatus(RONumber){
+			wb:=IEVget(Title) ;Gets active IE window
+			wb.Navigate2("http://hypappbs005/SC5/SC_SerProd/aspx/serprod_main.aspx") ;navigates selected window to this url
+			Loop{ ;begin loop to (wait for page to load)
+				try{
+					frame := wb.document.all(7).contentWindow
+					pageTitle :=  frame.document.getElementById("txtFunctionText").innertext
+					sleep 250
+				}
+			} until (pageTitle = "serialised product query" && wb.busy = 0)
+			;loop has ended because page is correct and browser is reporting that loading has finished
+			;if for whatever reason the script has reached here it and the page title is wrong then you get an error
+			if  (pageTitle != "serialised product query"){
+				msgbox, Incorrect page found - %pageTitle%
+				return False
+			}
+			
+			frame := wb.document.all(10).contentWindow ;select relevant frame
+			frame.document.getElementById("txtSerReference2").value := RONumber ;insert serial number
+			frame := wb.document.all(7).contentWindow ;select frame
+			frame.document.getElementById("cmdsubmit").click ;click submit
+			
+			loop{ ;loop waiting for page to load whilst figuring out the landing page
+				try{
+					frame := wb.document.all(10).contentWindow ;select frame
+					SiteNo := frame.document.getElementById("txtSerSiteNum").value ;check for site number
+					Records :=  frame.document.getElementById("lblRecordCount").innerText ;check for total records
+					
+				}
+			}until (SiteNo != ""|| Records != "") ;stop loop as soon as one exists
+			
+			frame.document.getElementByID("cboSerSeStatCode").value := "RIC"
+			frame := wb.document.all(7).contentWindow ;select frame
+			PageAlert()
+			frame.document.getElementById("cmdsubmit").click ;click submit
+			WinWaitClose,Message from Webpage, The Serialized Product record was successfully updated
+			return true
 		}
 	}
 }

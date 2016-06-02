@@ -227,7 +227,6 @@ IEvGet(Name="")
 	Name := ( Name="New Tab - Windows Internet Explorer" ) ? "about:Tabs"
 	
 	: RegExReplace( Name, " - Internet Explorer.*$" )
-	
 	For Pwb in ComObjCreate( "Shell.Application" ).Windows
 		Return Pwb
 }
