@@ -295,7 +295,23 @@ If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " 
 frame := Pwb.document.all(10).contentWindow
 frame.document.getElementById("lblServiceReportLines").click
 
-IELoad(pwb)
+
+
+PageLoading(pwb)
+
+
+
+try {
+	frame := Pwb.document.all(9).contentWindow
+	if (frame.document.getElementById("lblServiceReportLineAdd").innertext){
+		frame.document.getElementById("lblServiceReportLineAdd").click
+		PageLoading(pwb)
+	}	
+}
+
+
+
+
 SaveWinPos("Part Add")
 Gui,AddPartsGui:Submit
 
