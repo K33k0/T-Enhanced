@@ -1,3 +1,8 @@
+406Launcher:
+gui,master:submit, nohide
+msgbox, hi Kieran
+return
+
 
 !1::
 ;{ check stats

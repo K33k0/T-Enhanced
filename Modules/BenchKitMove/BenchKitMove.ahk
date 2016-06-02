@@ -5,7 +5,6 @@ FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
 PartMove := new Movement(settings)
 PartMove.ini := new PartMove.ini("default")
 
-
 gui,Move2:add,Text,,Select Manufacturer
 gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % PartMove.ini.Sections()
 gui, Move2: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
@@ -122,8 +121,9 @@ loop, 5 {
 
 partmove.print()
 
-Move2GuiClose:
+
 Move2GuiEscape:
+Move2GuiClose:
 PartMove := ""
 move2LV := False
 gui,Move2:destroy
@@ -276,9 +276,9 @@ class Movement
 		while (Frame.document.GetElementById("cboPartNum").value)
 			sleep, 500
 		;WinwaitClose,Message from webpage,,5
-			PartMovePointer.quit()
-			PartMovePointer := ""
-			sleep, 100
+		PartMovePointer.quit()
+		PartMovePointer := ""
+		sleep, 100
 		
     ;postMoveStock := this.partVerify(part, this.settings.Benchkit)
 		return true
@@ -309,10 +309,10 @@ class Movement
 			StockLocation := false
 		}
 		this.partLocation[part] := StockLocation
-			Sleep 100
-			SecondaryPointer.quit()
-			SecondaryPointer := ""
-			Sleep 100
+		Sleep 100
+		SecondaryPointer.quit()
+		SecondaryPointer := ""
+		Sleep 100
 		return true
 	}
 	

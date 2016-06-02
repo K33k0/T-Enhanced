@@ -1,7 +1,7 @@
 ﻿IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
 gui:
 gosub, datagrab
-if (getKeyState("Alt","P") = 1 && eng = "406bk"){
+if (getKeyState("Alt","P") = 1 && settings.Engineer = "406"){
 	DymoAddIn.Open("Modules/Workshop Codes.label")
 	StringUpper, SN, SN
 	StringUpper, PC, PC
