@@ -399,6 +399,7 @@ class Logistics{
 				PageAlert()
 				wb.document.getElementById("cmdFinish").click
 				WinWaitClose, Message from webpage
+				sleep, 1000
 				if !this.SetCustomerAssetsStatus(RONumber){
 					msgbox, Job shipped. Failed to update customer assets
 					return false
