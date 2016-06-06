@@ -5,3 +5,4 @@ Temp/
 Modules/Database/*
 Modules/Config.ini
 Modules/ProductsAverage.ini
+**/backup/**/*
