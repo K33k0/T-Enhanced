@@ -1,3 +1,4 @@
+;test
 TEnhanced := new TEnhanced(settings)
 
 class TEnhanced {
