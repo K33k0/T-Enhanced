@@ -171,6 +171,9 @@ If (Rep = "BER" or Rep = 21){
 	Filecopy,%A_ScriptDir%/modules/BerForm.docx,%A_Temp%/%RO%.docx,
 	Run,%A_Temp%/%RO%.docx
 }
+if (itemrepaired = 1){
+	Goto, markComplete
+}
 gosub, Service_cancel
 return
 ReadPartsInStock:
@@ -410,6 +413,9 @@ frame := Pwb.document.all(6).contentWindow
 f6td1 = <TD width="25`%"><DIV style="Color:Red; height:100`%; text-Align:center; font:20">Powered by <br>T-Enhanced</br></DIV></TD>
 frame.document.getElementsBytagName("td")[1].innerhtml := f6td1
 frame := Pwb.document.all(10).contentWindow
+if (itemrepaired = 1){
+	frame.document.GetElementById("txtCallProblem").value := frame.document.GetElementById("txtCallProblem").value . "`n=====Item Repaired===" . frame.document.getElementById("txtJobCTime").value . " hours=====`n========£" . frame.document.getElementById("txtTotalCost").value . "========="
+}
 if (rep = "Damaged Due To CLF"){
 	frame.document.getElementsByTagName("INPUT")[99].click
 	frame.document.getElementsByTagName("INPUT")[95].click
@@ -513,6 +519,44 @@ TotalRecs:=""
 
 gui,ServiceReportGui:destroy
 gui,AddPartsGui:destroy
+return
+
+markComplete:
+OutputDebug, [T-Enhanced] Marking Complete
+
+Loop{
+	Try{
+		frame := Pwb.document.all(10).contentWindow
+		PageLoaded:= frame.document.getElementsByTagName("Label")[0].innertext
+	}
+}Until (PageLoaded = "Job Details")
+PageLoaded:=""
+
+frame := Pwb.document.all(10).contentWindow
+frame.document.GetElementById("txtCallProblem").value := frame.document.GetElementById("txtCallProblem").value . "`n=====Item Repaired===" . frame.document.getElementById("txtJobCTime").value . " hours=====`n========£" . frame.document.getElementById("txtTotalCost").value . "========="
+
+sleep, 250
+frame := Pwb.document.all(7).contentWindow
+Loop{
+	Try{
+		PageLoaded:= frame.document.getElementByID("cmdSubmit").value
+	}
+}Until (PageLoaded = "submit")
+PageLoaded:=""
+frame.document.getElementById("cmdSubmit").click
+frame := Pwb.document.all(10).contentWindow
+frame.document.getElementById("cboCallUpdAreaCode").value := NextArea
+ModalDialogue()
+frame.document.getElementsByTagName("IMG")[35].click
+WinWaitClose,Popup List -- Webpage Dialog
+sleep, 250
+PageAlert()
+frame := Pwb.document.all(7).contentWindow
+frame.document.getElementById("cmdSubmit").click
+Pwb:=""
+WinWaitClose, Message from webpage
+OutputDebug, [T-Enhanced] CLF function Ended
+goto, service_cancel
 return
 
 getServiceReportPointer(){

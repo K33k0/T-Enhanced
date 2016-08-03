@@ -78,6 +78,7 @@ zuluShipout(Pwb){
 	frame := Pwb.document.all(7).contentWindow
 	frame.document.getElementById("cmdSubmit").click
 	PageAlert()
+	Pwb.navigate2("http://hypappbs005/SC5/SC_RepairJob/aspx/RepairJob_frameset.aspx")
 	return
 }
 
