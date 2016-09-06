@@ -110,7 +110,7 @@ class TEnhanced {
 			Gui, Create:Add, Text, center BackgroundTrans,Problem Code
 			Gui, Create:Add, DropDownList,  sort vProblemCode, Customer Damage|Distribution|Epos|Handheld|Printer|Self Checkout|Server
 			Gui, Create:Add, Text,  center BackgroundTrans,Job Type
-			Gui, Create:Add, DropDownList,  sort vJobType, Zulu Repair|Imac Refurb|Adhoc TCG|Consumables|Zulu VP
+			Gui, Create:Add, DropDownList,  sort vJobType, Zulu Repair|Imac Refurb|Adhoc TCG|Consumables|Zulu VP|Mid Counties
 			Gui, Create:Add, Text,  center BackgroundTrans,Repair order Number
 			Gui, Create:Add, edit, vRONumber
 			Gui, Create:Add, Button, x65 gContinue, Continue
@@ -166,6 +166,8 @@ class TEnhanced {
 				this.JobType := "ZR4"
 			} else if (this.JobType = "Zulu VP") {
 				this.JobType := "VP"
+			} else if (this.JobType = "Mid Counties"){
+				this.JobType := "ZR6"
 			} else {
 				return false
 			}
@@ -241,6 +243,8 @@ class TEnhanced {
 			Pwb.document.getElementsByTagName("Input")[37] .value :=""
 			if  (this.JobType = "ZR2"){
 				ShipSite = IMACREP
+			} else if (this.JobType = "ZR6"){
+				shipsite = STOFSLGDSI
 			} else {
 				ShipSite = STOKGOODS
 			}

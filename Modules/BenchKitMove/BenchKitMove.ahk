@@ -1,8 +1,4 @@
-﻿FileCreateDir, Modules/Database
-FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
-FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
-FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
-PartMove := new Movement(settings)
+﻿PartMove := new Movement(settings)
 PartMove.ini := new PartMove.ini("default")
 
 gui,Move2:add,Text,,Select Manufacturer
@@ -130,24 +126,6 @@ gui,Move2:destroy
 return
 
 
-;~ #IfWinActive,Parts Movement
-;~ {
-   ;~ $WheelDown::
-    ;~ if selectedKey
-        ;~ return
-    ;~ else
-        ;~ Send {WheelDown}
-    ;~ return
-
-    ;~ $WheelUp::
-    ;~ if selectedKey
-       ;~ return
-    ;~ else
-        ;~ Send {WheelUp}
-    ;~ return
-;~ }
-
-
 class Movement
 {
 	requestedPart := {}
@@ -155,9 +133,11 @@ class Movement
 	
 	__New(settings)
 	{
+		FileCreateDir, Modules/Database
+		FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
+		FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
+		FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
 		this.settings := settings
-        ;ini := new this.ini("default")
-        ;gui:= new this.gui("default")
 	}
 	
 	__Delete()
@@ -213,10 +193,6 @@ class Movement
 		}
 	}
 	
-	class gui
-	{
-		
-	}
 	
 	MovePart(part,quantity)
 	{
@@ -383,3 +359,5 @@ class Movement
 		return "£" . value
 	}
 }
+
+
