@@ -197,7 +197,7 @@ ImacLines:
 return
 
 #if settings.Engineer = "406"
-#Include Modules\CustomScripts\406.ahk
+	#Include Modules\CustomScripts\406.ahk
 
 
 
@@ -222,8 +222,8 @@ installFiles(){
 	FileInstall, InstallMe/icon.png,icon.png, 1
 	FileInstall, InstallMe/BerForm.docx,Modules/BerForm.docx,1
 	FileInstall, InstallMe/Part Order.label,Modules/Part Order.label,1
-	FileInstall, InstallMe/Workshop Codes Large.label,Modules/Workshop Codes Large.label,1
-	FileInstall, InstallMe/Workshop Codes.label,Modules/Workshop Codes.label,1
+	FileInstall, InstallMe/WorkshopCode_Large.label,Modules/WorkshopCode_Large.label,1
+	FileInstall, InstallMe/WorkshopCode_Small.label,Modules/WorkshopCode_Small.label,1
 	FileInstall, InstallMe/Zulu-book-in.label,Modules/Zulu-book-in.label,1
 	FileCreateDir, Modules/Lib
 	FileInstall, InstallMe/AutoHotkeyMini.dll,Modules/Lib/AutoHotkeyMini.dll,1
