@@ -1,14 +1,15 @@
 ﻿IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
+Notes := ""
 gui:
 gosub, datagrab
 if (getKeyState("Alt","P") = 1 && settings.Engineer = "406"){
-	DymoAddIn.Open("Modules/Workshop Codes.label")
+	DymoAddIn.Open("Modules/WorkshopCode_Small.label")
 	StringUpper, SN, SN
 	StringUpper, PC, PC
-	DymoLabel.SetField( 1, SN)
-	DymoLabel.SetField( 2, PC)
-	DymoLabel.SetField( "JobNumber", Call)
-	DymoLabel.SetField( 3, Notes)
+	DymoLabel.SetField( "Call_Number", Call)
+	DymoLabel.SetField( "Part_Code", PC)
+	DymoLabel.SetField( "Serial_Number", SN)
+	DymoLabel.SetField( "Version_Text", Notes)
 	DymoAddIn.Print( 2, TRUE )
 	return
 	
@@ -17,17 +18,17 @@ if (getKeyState("Alt","P") = 1 && settings.Engineer = "406"){
 
 
 if (SN = ""){
-	SN:="Insert Serial Number"
+	SN:="Insert Call Number"
 	PC:="Insert Product Code"
 }
 
 
 
-DymoAddIn.Open("Modules/Workshop Codes.label")
-DymoLabel.SetField( 1, SN)
-DymoLabel.SetField( 2, PC)
-DymoLabel.SetField( "JobNumber", Call)
-DymoLabel.SetField( 3, Notes)
+DymoAddIn.Open("Modules/WorkshopCode_Small.label")
+DymoLabel.SetField( "Call_Number", Call)
+DymoLabel.SetField( "Part_Code", PC)
+DymoLabel.SetField( "Serial_Number", SN)
+DymoLabel.SetField( "Version_Text", Notes)
 
 Gui,PriSmall:+ToolWindow +alwaysontop +Owner%MasterWindow%
 Gui,PriSmall: add,picture,  +hwndcontainer w210 h130,
@@ -40,20 +41,30 @@ Gui,PriLarge: add,picture,  +hwndcontainer2 w340 h130,
 
 Gui,PriInfo: +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
 Gui,PriInfo:add,text,,Label Size
+
+;Label Size Options
 Gui,Priinfo:Add, Radio, gswitchLabel vrad1 checked,Small Preview
 Gui,Priinfo:Add, Radio, gSwitchLabel vrad2,Large Preview
+
+;Product Code
 Gui,PriInfo:add,text,,Product Code
 Gui,Priinfo:add,edit,vPC gUpdate,%PC%
-Gui,PriInfo:add,text,,Serial Number
-Gui,Priinfo:add,edit,vSN gUpdate,%SN%
+;Call Number
 Gui,PriInfo:add,text,,Call Number
 Gui,Priinfo:add,edit,vCall gUpdate,%Call%
+;Serial Number
+Gui,PriInfo:add,text,,Serial Number
+Gui,Priinfo:add,edit,vSN gUpdate,%SN%
+;Version Text
 Gui,PriInfo:add,text,,Version
 Gui,Priinfo:add,edit,vNotes gUpdate,%Notes%
+;Print Count
 Gui,PriInfo:add,text,,Total Printoffs
 Gui,Priinfo:add,edit,vCount
 Gui,Priinfo:add,updown
+
 Gui,Priinfo:add,button, gPriPrint,Print
+
 X:=GetWinPosX("T-Enhanced Manual Print Window")
 Y:=GetWinPosY("T-Enhanced Manual Print Window")
 if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
@@ -65,7 +76,7 @@ if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
 switchLabel:
 gui,Priinfo:submit,nohide
 if (rad1 = 1){
-	DymoAddIn.Open("Modules/Workshop Codes.label")
+	DymoAddIn.Open("Modules/WorkshopCode_Small.label")
 	hDCS := DllCall("GetDCEx", "UInt", container, "UInt", 0, "UInt", 1|2)
 	DymoEngine.DrawLabel(hdcS)
 	X:=GetWinPosX("Small Preview")
@@ -78,7 +89,7 @@ if (rad1 = 1){
 	Gui,PriSmall: show, autosize noactivate X%x% Y%y%,Small Preview
 	
 }else if (rad2 = 1){
-	DymoAddIn.Open("Modules/Workshop Codes Large.label")
+	DymoAddIn.Open("Modules/WorkshopCode_Large.label")
 	hDCS2 := DllCall("GetDCEx", "UInt", container2, "UInt", 0, "UInt", 1|2)
 	DymoEngine.DrawLabel(hdcS2)
 	X:=GetWinPosX("Large Preview")
@@ -96,17 +107,17 @@ return
 
 PriPrint:
 gui,Priinfo:submit,nohide
-StringUpper, SN, SN
-StringUpper, PC, PC
 DymoAddIn.Print( Count, TRUE )
 return
 
 Update:
 gui,Priinfo:submit,nohide
-DymoLabel.SetField( 1, SN)
-DymoLabel.SetField( 2, PC)
-DymoLabel.SetField( "JobNumber", Call)
-DymoLabel.SetField( 3, Notes)
+StringUpper, SN, SN
+StringUpper, PC, PC
+DymoLabel.SetField( "Call_Number", Call)
+DymoLabel.SetField( "Part_Code", PC)
+DymoLabel.SetField( "Serial_Number", SN)
+DymoLabel.SetField( "Version_Text", Notes)
 if (rad1 = 1){
 	
 	DymoEngine.DrawLabel(hdcS)
@@ -140,22 +151,8 @@ try {
 	SN:=frame.document.getElementById("cboCallSerNum").value
 	PC:=frame.document.getElementById("cboJobPartNum").value
 	Call:=frame.document.getElementById("txtCallNum").value
+	StringUpper, SN, SN
+	StringUpper, PC, PC
 }
-if (SN  = "") {
-	try {
-		Pwb := IEGet("Repair Shipping Wizard - " TesseractVersion)
-		SN:=Pwb.document.getElementsByTagName("INPUT")[40] .value
-		PC:=Pwb.document.getElementsByTagName("INPUT")[39] .value
-	}
-}
-if (SN = ""){
-	if not pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
-		SN:="Insert Serial Number"
-		PC:="Insert Product Code"
-	}else{
-		frame := pwb.document.all(11).contentWindow
-		SN:=frame.document.getElementById("cboFSRSerNum").value
-		PC:=frame.document.getElementById("cboFSRPartNum").value
-	}
-}
+
 return
