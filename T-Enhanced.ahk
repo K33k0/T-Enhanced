@@ -25,8 +25,8 @@ B:=3
 C:=false
 InitializeDymo()
 setConfigLocation("\Modules\Config.ini")
-global TesseractVersion := ""
-setTesseractVersion("5.40.14")
+global TesseractVersion := "5.40.14"
+;setTesseractVersion("5.40.14")
 LaunchCustomScripts()
 CreateTrayMenu()
 destroySplashScreen()
@@ -119,9 +119,9 @@ Changelog:
 run, https://github.com/k33k00/T-Enhanced--ZULU-/commits/master
 return
 
+
 Create:
-Create:= new TEnhanced.Create(settings)
-Create:= ""
+#include modules/create/create.ahk
 return
 
 Report:
