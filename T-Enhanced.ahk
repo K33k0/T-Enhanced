@@ -16,6 +16,7 @@ showSplashScreen()
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
 settings := new config(A_ScriptDir "\Modules\Config.ini")
+config2 = modules\config.ini
 #Include Modules\BookIn\Logistics.ahk
 #Include OOP.ahk
 installFiles()
@@ -50,12 +51,6 @@ Gui, Master: Add, Button, x5 y85 w80 h45 gPrintFunction vPrint 0x8000, Print Lab
 Gui, Master: Add, Button, x180 y30 w80 h45 gShip vShipOut 0x8000, Ship Current Job
 Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
 Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
-if settings.engineer = 406
-{
-	Gui, Master: add, edit, v406launcher h20 y130 x5 w200,
-	Gui, Master: add, button, h20 y130 x210 w40 g406Launcher, submit
-}
-
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
 Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
@@ -172,7 +167,8 @@ return
 ;{ ----AutoLogin
 MasterGuiContextMenu:
 gui,Master:submit, noHide
-Login := new TEnhanced.AutoLogin(settings,tab)
+#include Modules\Autologin\Login.ahk
+login(config2)
 return
 ;}
 

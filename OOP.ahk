@@ -12,7 +12,7 @@ class TEnhanced {
 				if (Tab = "Engineer") {
 					IniRead,UserHash,%Config%,Login,UserName
 					IniRead,PassHash,%Config%,Login,Password
-					If (UserHash = "" OR UserHash = "Error"){
+					If (UserHash = "" OR UserHash = "Error"){ ;*[T-Enhanced]
 						return
 					}
 					if not PWB:= IEGET("Service Centre 5 Login") {
@@ -329,3 +329,4 @@ class TEnhanced {
 	
 }
 
+ ;*[T-Enhanced]
