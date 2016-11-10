@@ -23,7 +23,6 @@ global settings := {"Engineer":getSetting("Engineer")
 
 #Include Modules\BookIn\Logistics.ahk
 
-;#Include OOP.ahk
 installFiles()
 InitializeDymo()
 setConfigLocation("\Modules\Config.ini")
