@@ -26,7 +26,7 @@
 			<HorizontalAlignment>Center</HorizontalAlignment>
 			<QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" />
 		</BarcodeObject>
-		<Bounds X="331" Y="304.673661951682" Width="4130.5129669076" Height="450.825653076172" />
+		<Bounds X="331" Y="304.673675537109" Width="4130.51318359375" Height="450.825653076172" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<DateTimeObject>
@@ -49,7 +49,7 @@
 			<IncludeTime>False</IncludeTime>
 			<Use24HourFormat>False</Use24HourFormat>
 		</DateTimeObject>
-		<Bounds X="3606.01241084102" Y="62.7741631433423" Width="517.18994140625" Height="157.940002441406" />
+		<Bounds X="3606.01245117188" Y="62.7741622924805" Width="517.18994140625" Height="157.940002441406" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<ImageObject>
@@ -67,7 +67,7 @@
 			<HorizontalAlignment>Center</HorizontalAlignment>
 			<VerticalAlignment>Center</VerticalAlignment>
 		</ImageObject>
-		<Bounds X="331" Y="58" Width="274.584818730124" Height="155.697692984542" />
+		<Bounds X="331" Y="58" Width="274.584808349609" Height="155.697692871094" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -85,7 +85,7 @@
 			<Verticalized>False</Verticalized>
 			<StyledText />
 		</TextObject>
-		<Bounds X="331" Y="799.541768382474" Width="1297.67470956115" Height="184.497980763034" />
+		<Bounds X="331" Y="799.541748046875" Width="1297.67468261719" Height="184.497985839844" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<BarcodeObject>
@@ -107,7 +107,7 @@
 			<HorizontalAlignment>Center</HorizontalAlignment>
 			<QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" />
 		</BarcodeObject>
-		<Bounds X="331" Y="1042.17434692383" Width="4130.5129669076" Height="450.825653076172" />
+		<Bounds X="331" Y="1042.17431640625" Width="4130.51318359375" Height="450.825653076172" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -133,23 +133,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="331" Y="135.822489430027" Width="4073.7725069124" Height="120" />
-	</ObjectInfo>
-	<ObjectInfo>
-		<ShapeObject>
-			<Name>SHAPE</Name>
-			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
-			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName></LinkedObjectName>
-			<Rotation>Rotation0</Rotation>
-			<IsMirrored>False</IsMirrored>
-			<IsVariable>False</IsVariable>
-			<ShapeType>VerticalLine</ShapeType>
-			<LineWidth>15</LineWidth>
-			<LineAlignment>Center</LineAlignment>
-			<FillColor Alpha="0" Red="255" Green="255" Blue="255" />
-		</ShapeObject>
-		<Bounds X="4478.42054232346" Y="57.9999999999999" Width="15" Height="1435" />
+		<Bounds X="331" Y="135.822494506836" Width="4073.7724609375" Height="120" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<TextObject>
@@ -175,7 +159,7 @@
 				</Element>
 			</StyledText>
 		</TextObject>
-		<Bounds X="1214.73149219499" Y="877.165486218761" Width="2381.92291222895" Height="120" />
+		<Bounds X="1214.7314453125" Y="877.165466308594" Width="2381.9228515625" Height="120" />
 	</ObjectInfo>
 	<ObjectInfo>
 		<BarcodeObject>
@@ -197,6 +181,6 @@
 			<HorizontalAlignment>Center</HorizontalAlignment>
 			<QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" />
 		</BarcodeObject>
-		<Bounds X="4549.33851288863" Y="57.9999999999999" Width="403.66148711137" Height="1435" />
+		<Bounds X="4549.33837890625" Y="58" Width="403.661499023438" Height="1435" />
 	</ObjectInfo>
 </DieCutLabel>
