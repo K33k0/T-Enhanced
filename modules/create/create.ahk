@@ -16,6 +16,7 @@ if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
 } else {
 	Gui, Create: Show, X%x% Y%y%
 }
+pwb := create_init()
 return
 
 create_init(){
@@ -34,7 +35,7 @@ create_init(){
 		return False
 	}
 }
-pwb := create_init()
+
 
 
 Create_continue:

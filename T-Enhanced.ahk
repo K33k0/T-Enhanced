@@ -7,13 +7,6 @@ Onexit,Endit
 #singleinstance, force
 #Persistent
 
-;~ RunAsAdmin() 
-;~ if not A_isadmin {
-	;~ OutputDebug, [T-Enhanced] Not running as administrator
-	;~ MsgBox, Unable to get privileges. Check your permissions
-	;~ ExitApp	
-;~ }
-
 showSplashScreen()
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
