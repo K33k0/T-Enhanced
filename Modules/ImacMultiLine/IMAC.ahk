@@ -53,7 +53,7 @@ I:=1
 LineNo-=1
 loop, %LineNo%{
 	StringReplace,PartCode,PartCode,%A_SPACE%,`%,All
-	Pwb := IEGet("FSRL_Create_Wzd - " TesseractVersion)
+	Pwb := IEGet("FSRL_Create_Wzd - " settings.Tesseract)
 	ModalDialogue()
 	Pwb.document.getElementById("cboWZPartNum").value :=PartCode
 	Pwb.document.getElementById("cboWZPartNum_Container").click

@@ -19,9 +19,9 @@ if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
 return
 
 create_init(){
-	if Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion){
+	if Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract){
 		return pwb
-	} else if PWB := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) {
+	} else if PWB := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract) {
 		try {
 			frame := Pwb.document.all(9).contentWindow
 			if (frame.document.getElementsByTagName("LABEL")[1].innertext = "job create wizard") {
@@ -106,7 +106,7 @@ convertJobType(JobType){
 	}
 }
 setPageOne(){
-	if not Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+	if not Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 		return false
 	FormatTime, Times,, HH:mm
 	Pwb.document.getElementsByTagName("INPUT")[4] .value := Times
@@ -119,7 +119,7 @@ setPageOne(){
 	return true
 }
 setPageTwo_Zulu(){
-	if not Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+	if not Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 		return false
 	Pwb.document.getElementById("cboCallSiteNum") .value := "ZULU"
 	ModalDialogue()
@@ -137,7 +137,7 @@ setPageTwo_Zulu(){
 	return true
 }
 setPageTwo_Alt(JobType, SerialNumber, RONumber){
-	if not Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+	if not Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 		return false
 	If (JobType = "VP") {
 		JobType:="ZR1"
@@ -148,7 +148,7 @@ setPageTwo_Alt(JobType, SerialNumber, RONumber){
 	Pwb.document.getElementsByTagName("INPUT")[58] .click
 	ModalDialogue()
 	Pwb.document.getElementsByTagName("IMG")[19] .click
-	Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+	Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 	SerialNumber:= Pwb.document.getElementById("cboCallSerNum").value
 	ProdCode:= Pwb.document.getElementById("cboJobPartNum").value
 	If (ProdCode = ""){
@@ -186,7 +186,7 @@ setPageTwo_Alt(JobType, SerialNumber, RONumber){
 	return True
 }
 setPageThree(JobType, SerialNumber, RONumber){
-	if not this.Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+	if not this.Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 		return false
 	Pwb.document.getElementById("cmdNext") .click
 	IELoad(Pwb)
@@ -194,7 +194,7 @@ setPageThree(JobType, SerialNumber, RONumber){
 	Pwb.document.getElementsByTagName("INPUT")[58] .click
 	ModalDialogue()
 	Pwb.document.getElementsByTagName("IMG")[19] .click
-	Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+	Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 	SerialNumber:= Pwb.document.getElementById("cboCallSerNum").value
 	ProdCode:= Pwb.document.getElementById("cboJobPartNum").value
 	If (ProdCode = ""){
@@ -211,7 +211,7 @@ setPageThree(JobType, SerialNumber, RONumber){
 	return True
 }
 setPageFour(JobType,settings,Probcode){
-if not Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+if not Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 	return false
 pwb := Pwb
 Pwb.document.getElementById("cboCallCalTCode") .value := JobType
@@ -237,7 +237,7 @@ else
 	return false
 }
 confirmed(){
-			if not Pwb := IEGet("Repair Job Creation Wizard - " TesseractVersion )
+			if not Pwb := IEGet("Repair Job Creation Wizard - " settings.Tesseract )
 				return false
 			PageAlert()
 			Pwb.document.getElementById("cmdFinish") .click

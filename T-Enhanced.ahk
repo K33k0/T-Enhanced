@@ -15,18 +15,21 @@ showSplashScreen()
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
-settings := new config(A_ScriptDir "\Modules\Config.ini")
-config2 = modules\config.ini
+global settings := {"Engineer":getSetting("Engineer")
+					,"WorkshopSite":getSetting("WorkshopSite")
+					,"username":getSetting("username")
+					,"password":getSetting("password")
+					,"Benchkit":getSetting("Benchkit")
+					,"Tesseract":"5.40.14"}
+					
+
+;settings := new config(A_ScriptDir "\Modules\Config.ini")
 #Include Modules\BookIn\Logistics.ahk
-#Include OOP.ahk
+
+;#Include OOP.ahk
 installFiles()
-A:=true
-B:=3
-C:=false
 InitializeDymo()
 setConfigLocation("\Modules\Config.ini")
-global TesseractVersion := "5.40.14"
-;setTesseractVersion("5.40.14")
 LaunchCustomScripts()
 CreateTrayMenu()
 destroySplashScreen()
@@ -37,7 +40,10 @@ Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics
 Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
-Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
+if A_IsCompiled
+	Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
+else
+	Gui, Master: Add, text, x40 y30 w150 h50  center ,This just doesn't work!
 Gui, Master: Add, text, x40 y65 w150 h50  center ,By Kieran Wynne
 Gui, Master: Add, picture, x195 y30 w50 h50,icon.png
 Gui, Master: Font, s8 norm
@@ -111,7 +117,14 @@ return
 
 Done:
 gui,Master:submit,nohide
-settings.save(Eng1,mySite,UserNameIn,PasswordIn)
+IniWrite, %Eng1%, % this.ini, Default, Number
+IniWrite, %MySite%, % this.ini, Default, location
+if (userName) {
+	IniWrite, %UserNameIn%, % this.ini, Default, UserName
+}
+if (password) {
+	IniWrite, %PasswordIn% , % this.ini, Default, password 
+}
 reload
 return
 
@@ -168,7 +181,7 @@ return
 MasterGuiContextMenu:
 gui,Master:submit, noHide
 #include Modules\Autologin\Login.ahk
-login(config2)
+login()
 return
 ;}
 
@@ -241,10 +254,7 @@ setConfigLocation(path){
 	;sets the location of the config file
 	global Config:=A_ScriptDir . path
 }
-setTesseractVersion(version){
-	;sets the Tesseract Version
-	TesseractVersion:= version
-}
+
 LaunchCustomScripts(){
 	;loops through custom scripts folder, launching every .ahk file it finds
 	Loop %A_ScriptDir%\Custom Scripts\*.ahk
@@ -273,40 +283,34 @@ CloseProgram(){
 	return
 }
 
-class config {
-	static ini
-	static Engineer
-	static WorkshopSite
-	static HashedUserName
-	static HashedPassword
-	static BenchKit
-	static Firstrun = False
-	
-	
-	__New(ini) {
-		this.ini := ini
-		IniRead, Engineer, %ini%, Default, Number
-		IniRead, user, %ini%, Default, UserName
-		IniRead, pass, %ini%, Default, Password
-		IniRead,wSite, %ini%, Default, location
-		this.HashedUserName := user
-		this.HashedPassword := pass
-		this.BenchKit := Engineer . "BK"
-		this.Engineer := Engineer
-		this.workshopSite := wSite
-	}
-	
-	
-	save(Engineer,WorkshopSite,UserName="",Password="") {
-		IniWrite, %Engineer%, % this.ini, Default, Number
-		this.engineer := Engineer
-		IniWrite, %WorkshopSite%, % this.ini, Default, location
-		if (userName) {
-			IniWrite, %UserName%, % this.ini, Default, UserName
-		}
-		if (password) {
-			IniWrite, %password% , % this.ini, Default, password 
-		}
+getSetting(value){
+	iniFile := "modules\config.ini"
+	if (value = "Engineer"){
+		IniRead, result, %iniFile%, Default, Number
+		return result
+	} else if (value = "WorkshopSite"){
+		IniRead,result, %iniFile%, Default, location
+		return result
+	} else if (value = "username"){
+		IniRead, result, %iniFile%, Default, UserName
+		return result
+	} else if (value = "password"){
+		IniRead, result, %iniFile%, Default, Password
+		return result
+	} else if (value = "Benchkit"){
+		IniRead,result, %iniFile%, Default, Number
+		return result . "BK"
 	}
 }
+
+
+
+;~ class config {
+
+	
+	;~ save(Engineer,WorkshopSite,UserName="",Password="") {
+		
+		;~ }
+	;~ }
+;~ }
 

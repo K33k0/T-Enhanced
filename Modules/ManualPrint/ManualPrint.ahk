@@ -146,7 +146,7 @@ return
 
 DataGrab:
 try {
-	Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion)
+	Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract)
 	frame := Pwb.document.all(10).contentWindow
 	SN:=frame.document.getElementById("cboCallSerNum").value
 	PC:=frame.document.getElementById("cboJobPartNum").value

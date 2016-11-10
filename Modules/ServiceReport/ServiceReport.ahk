@@ -289,7 +289,7 @@ if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
 }
 return
 AddParts:
-If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
+If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract){
 	MsgBox Error accessing page
 	Pwb:=""
 	return
@@ -327,7 +327,7 @@ loop, %LineNo%{
 		}
 	}until (Quantity%I% != 0 AND Quantity%I% != "" )
 	StringReplace,PartDesc%I%,PartDesc%I%,%A_SPACE%,`%,All
-	Pwb := IEGet("FSRL_Create_Wzd - " TesseractVersion)
+	Pwb := IEGet("FSRL_Create_Wzd - " settings.Tesseract)
 	ModalDialogue()
 	sleep,500
 	Pwb.document.getElementById("cboWZPartDesc").value :=PartDesc%I%
@@ -450,7 +450,7 @@ return
 
 ChargeCodes: ; No call to here
 OutputDebug, [T-Enhanced] Begin Charge Code Function
-If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
+If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract){
 	MsgBox Error accessing page
 	Pwb:=""
 	return
@@ -471,7 +471,7 @@ If (ReadyCheck !=""){
 }
 Readycheck:=""
 
-Pwb := IEGet("FSRL_Create_Wzd - " TesseractVersion)
+Pwb := IEGet("FSRL_Create_Wzd - " settings.Tesseract)
 if (A_IsCompiled = 1){
 	run,Modules\TZAltThread.exe
 }else{
@@ -560,7 +560,7 @@ goto, service_cancel
 return
 
 getServiceReportPointer(){
-	If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion){
+	If Not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract){
 		MsgBox Error accessing page
 		return false
 	} else {

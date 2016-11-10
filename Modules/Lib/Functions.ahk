@@ -30,7 +30,7 @@ GetWinPosY(title=""){
 
 GetProductCode() {
 	try{
-		If Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) {
+		If Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract) {
 			frame := Pwb.document.all(10).contentWindow
 			If ProductCode:=frame.document.getElementById("cboJobPartNum").value ;Job Query
 				return ProductCode
@@ -47,7 +47,7 @@ GetProductCode() {
 			If ProductCode:=frame.document.getElementById("cboPartNum").value  ;Stock Movement
 				return ProductCode	
 			
-			If Pwb := IETitle("Repair Shipping Wizard - " TesseractVersion) { ;Job Shipout
+			If Pwb := IETitle("Repair Shipping Wizard - " settings.Tesseract) { ;Job Shipout
 				If ProductCode:=Pwb.document.getElementById("cbaListCallSerNumLineArray").value 
 					return ProductCode
 			}
