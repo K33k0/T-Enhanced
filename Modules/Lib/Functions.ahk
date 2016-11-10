@@ -13,18 +13,18 @@ hModule := DllCall("LoadLibrary","Str",AhkDllPath)
 SaveWinPos(title=""){
 	WinGetPos, Xpos, Ypos,,,%Title%
 	OutputDebug, %Title% - Y position = %Ypos% : X position = %Xpos%
-	IniWrite, %Xpos%, %Config%,%Title%,Xpos
-	IniWrite, %Ypos%, %Config%,%Title%,Ypos
+	IniWrite, %Xpos%, % Settings.iniPath,%Title%,Xpos
+	IniWrite, %Ypos%, % Settings.iniPath,%Title%,Ypos
 	return
 }
 
 GetWinPosX(title=""){
-	IniRead, PosX,%Config%,%Title%,Xpos
+	IniRead, PosX,% Settings.iniPath,%Title%,Xpos
 	Return PosX
 }
 
 GetWinPosY(title=""){
-	IniRead, PosY,%Config%,%Title%,Ypos
+	IniRead, PosY, % Settings.iniPath,%Title%,Ypos
 	Return PosY
 }
 

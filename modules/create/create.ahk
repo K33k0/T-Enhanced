@@ -13,6 +13,7 @@ Gui, Create: +AlwaysOnTop  +Owner%MasterWindow% +ToolWindow
 X:=GetWinPosX("T-Enhanced Create Job Window")
 Y:=GetWinPosY("T-Enhanced Create Job Window")
 if (X = "" OR Y = "" OR X= "Error" OR Y="Error"){
+	Gui, Create: Show
 } else {
 	Gui, Create: Show, X%x% Y%y%
 }
