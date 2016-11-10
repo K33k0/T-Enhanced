@@ -1,15 +1,18 @@
-﻿#NoEnv
+﻿
+
+#NoEnv
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 Onexit,Endit
 #singleinstance, force
 #Persistent
-RunAsAdmin() 
-if not A_isadmin {
-	OutputDebug, [T-Enhanced] Not running as administrator
-	MsgBox, Unable to get privileges. Check your permissions
-	ExitApp	
-}
+
+;~ RunAsAdmin() 
+;~ if not A_isadmin {
+	;~ OutputDebug, [T-Enhanced] Not running as administrator
+	;~ MsgBox, Unable to get privileges. Check your permissions
+	;~ ExitApp	
+;~ }
 
 showSplashScreen()
 #include Modules\Lib\Functions.ahk
@@ -20,10 +23,11 @@ global settings := {"Engineer":getSetting("Engineer")
 					,"username":getSetting("username")
 					,"password":getSetting("password")
 					,"Benchkit":getSetting("Benchkit")
-					,"Tesseract":"5.40.14"}
+					,"Tesseract":"5.40.14"
+					,"iniPath":"modules\config.ini"}
 					
 
-;settings := new config(A_ScriptDir "\Modules\Config.ini")
+
 #Include Modules\BookIn\Logistics.ahk
 
 ;#Include OOP.ahk
@@ -117,13 +121,13 @@ return
 
 Done:
 gui,Master:submit,nohide
-IniWrite, %Eng1%, % this.ini, Default, Number
-IniWrite, %MySite%, % this.ini, Default, location
-if (userName) {
-	IniWrite, %UserNameIn%, % this.ini, Default, UserName
+IniWrite, %Eng1%, % settings.iniPath, Default, Number
+IniWrite, %MySite%, % settings.iniPath, Default, location
+if (UserNameIn) {
+	IniWrite, %UserNameIn%, % settings.iniPath, Default, UserName
 }
-if (password) {
-	IniWrite, %PasswordIn% , % this.ini, Default, password 
+if (PasswordIn) {
+	IniWrite, %PasswordIn% , % settings.iniPath, Default, password 
 }
 reload
 return
@@ -304,13 +308,5 @@ getSetting(value){
 }
 
 
-
-;~ class config {
-
-	
-	;~ save(Engineer,WorkshopSite,UserName="",Password="") {
-		
-		;~ }
-	;~ }
-;~ }
-
+#q::
+ExitApp

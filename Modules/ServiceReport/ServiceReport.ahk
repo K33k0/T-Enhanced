@@ -7,8 +7,8 @@ RO:=SERVICEREPORT_getRoNumber(pwb)
 if not SERVICEREPORT_bIsNewReport(pwb){
 	SERVICEREPORT_openNewReport(pwb)
 }
-SERVICEREPORT_InjectEnhanced(pwb)
-SERVICEREPORT_getTimeSinceLastReport()
+;~ SERVICEREPORT_InjectEnhanced(pwb)
+;SERVICEREPORT_getTimeSinceLastReport()
 SERVICEREPORT_getAverageRepairTime(ProdCode)
 
 Gui,ServiceReportGui:  +AlwaysOnTop +ToolWindow +Owner%MasterWindow%
@@ -17,14 +17,13 @@ Gui,ServiceReportGui: Add, Text, x80 y55 w146 h13, Choose the fault code
 Gui,ServiceReportGui: Add, Text, x95 y100 w146 h13, Enter your solution
 Gui,ServiceReportGui: Add, Text, x250 y205 w50 h13, Next area
 Gui,ServiceReportGui: Add, Text, x10 y205 w140 h15,Time Taken (minutes)
-Gui,ServiceReportGui: Add, Text, x70 y220 w170 h25 Center, % "Time Since last completed job`n" SERVICEREPORT_getTimeSinceLastReport() " minutes"
 Gui,ServiceReportGui: Add, Text, x70 y+10 w170 h25 Center BackgroundTrans,% "Usually these take you`n" SERVICEREPORT_getAverageRepairTime(ProdCode) " minutes"
 Gui,ServiceReportGui: Font, Norm
 Gui,ServiceReportGui: Add, DropDownList, x10 y30 w300 Sort vRep, Repaired|Cleaned|Replaced HDD|Reimaged|Replaced Part|No Fault Found|Flashed Firmware|BER|Awaiting Spares|Warranty Repairs|Datalogic ELF Power Issue|Damaged Due To CLF|CLF Not Attempted|Reconfigured
 Gui,ServiceReportGui: Add, DropDownList, x10 y75 w300 Sort vFault, Epos Fault|Server Fault|Pocket PC Fault|Printer Consumable Fault|Printer Fault|Self Checkout Issue|Software Epos Fault|Software Workstation Fault
 Gui,ServiceReportGui: Add, Edit, x10 y120 w300 h80 vsolution,
 Gui,ServiceReportGui: Add, edit, x10 y220 w50 h20,
-Gui,ServiceReportGui: Add,UpDown,vVarTime Range1-1000, % SERVICEREPORT_getTimeSinceLastReport()
+Gui,ServiceReportGui: Add,UpDown,vVarTime Range1-1000,
 Gui,ServiceReportGui: Add, DropDownList, x240 y220 w70 Sort vNextArea, WREP|WSB|WSF|3RDP|APC1|BW3RP
 Gui,ServiceReportGui: Add, Checkbox, x15 y245 w75 h13 vAddParts gReadPartsInStock, Add Parts?
 Gui,ServiceReportGui: Add, Checkbox, x215 y245 w92 h13 vItemRepaired, Item Repaired?
@@ -130,7 +129,6 @@ if (ItemRepaired = 1){
 	IniWrite,%TotalCompleted%,Modules\ProductsAverage.ini,%Prodcode%,Total
 	iniWrite,%TotalTime%,Modules\ProductsAverage.ini,%ProdCode%,TotalTime
 	IniWrite,%AverageTime%,Modules\ProductsAverage.ini,%ProdCode%,Average
-	RegWrite,REG_SZ,HKEY_CURRENT_USER,Software\TesseractZoanthropy,Last_SP,%A_Now%
 }
 sleep, 500
 frame.document.getElementById("cboCallAreaCode").value := NextArea
@@ -619,12 +617,7 @@ SERVICEREPORT_InjectEnhanced(pwb){
 	f6td1 = <TD width="25`%"><DIV style="Color:RED; height:100`%; text-Align:center; font:20">Powered by <br>T-Enhanced</br></DIV></TD>
 	frame.document.getElementsBytagName("td")[1].innerhtml := f6td1
 }
-SERVICEREPORT_getTimeSinceLastReport(){
-	RegRead,LastSP,HKCU,Software\TesseractZoanthropy,Last_SP
-	TimeSinceSP:=A_now
-	Envsub,TimeSinceSP,LastSP,minits
-	return TimeSinceSP
-}
+
 SERVICEREPORT_getAverageRepairTime(ProdCode){
 	IniRead,AverageTime,modules\ProductsAverage.ini,%ProdCode%,Average
 	if (AverageTime = "error"){

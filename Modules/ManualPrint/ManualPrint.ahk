@@ -1,4 +1,4 @@
-﻿IniRead, CustomVersion,%config%,VersionNumbers,MyVersions
+﻿IniRead, CustomVersion,% settings.iniPath,VersionNumbers,MyVersions
 Notes := ""
 gui:
 gosub, datagrab
