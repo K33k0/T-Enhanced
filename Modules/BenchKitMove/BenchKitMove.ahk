@@ -25,9 +25,10 @@ readManufacturerTypes(selectedManufacturer){
 
 	return Types
 }
-GuiControl, Move2:, vSelectedKey,% "|" . readManufacturerTypes(selectedManufacturer)
+
+GuiControl, Move2:, SelectedType,% "|" . readManufacturerTypes(selectedManufacturer)
 if (errorlevel) {
-	gui,Move2:add,Text,w200,Select Unit Type
+	gui,Move2:add,Text,w200,Select Unit Type ; <--- Error Same variable cant be used in more than one control
 	gui, Move2:add, DDL, w200 vSelectedType gTypeUpdate,% readManufacturerTypes(selectedManufacturer)
 }
 gui, Move2: show, AutoSize
@@ -42,14 +43,16 @@ readFilteredParts(selectedManufacturer,SelectedType){
 	return parts
 }
 
-GuiControl,Move2:, textCheck,Select Parts
+GuiControl,Move2:, SelectPartsText,Select Parts
 if (errorLevel){
-	gui,Move2:add,Text, vtextCheck w200,Select Parts
+	;~ SelectPartsText does not exist. This is creating that section
+	gui,Move2:add,Text, vSelectPartsText w200,Select Parts
 	gui,Move2:add, button, w200 xm vgoButton gPartMoveGo Disabled, Submit
 	gui,Move2:add, button, w200 xm vdescButton gPartMoveDesc, Description Lookup
 	Loop % StrSplit(readFilteredParts(selectedManufacturer,SelectedType), "|").MaxIndex()
 	{
 		gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % readFilteredParts(selectedManufacturer,SelectedType)
+		;~ This drop down works, it successfully changes the list of parts
 		gui, Move2:Add,edit, w40 yp x+2
 		gui, Move2:add,updown, vKeyQuantity%A_Index%
 		gui, Move2:add, text, vstatusText%A_Index% w20 h20 yp0 x+4,
@@ -59,10 +62,12 @@ if (errorLevel){
 	
 	
 } else {
+	;~ SelectPartsText exists already, just edit the values instead
 	Loop % StrSplit(readFilteredParts(selectedManufacturer,SelectedType), "|").MaxIndex()
 	{
-		GuiControl,Move2:, SelectedKey%A_Index% , % "|" . FilteredParts
+		GuiControl,Move2:, SelectedKey%A_Index% , % "|" . readFilteredParts(selectedManufacturer,SelectedType)
 		if (errorlevel){
+			;~ if the a field needs adding this will do it, it also does something with the buttons...
 			GuiControl,Move2:move, goButton,yp
 			GuiControl,Move2:move, descButton,yp
 			gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % readFilteredParts(selectedManufacturer,SelectedType)
