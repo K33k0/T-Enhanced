@@ -1,6 +1,4 @@
-﻿
-
-#NoEnv
+﻿#NoEnv
 SendMode Input
 SetWorkingDir %A_ScriptDir%
 Onexit,Endit
@@ -17,7 +15,9 @@ global settings := {"Engineer":getSetting("Engineer")
 					,"password":getSetting("password")
 					,"Benchkit":getSetting("Benchkit")
 					,"Tesseract":"5.40.14"
-					,"iniPath":"modules\config.ini"}
+					,"iniPath":"modules\config.ini"
+					,"partlist":"modules\database\partList.ini"
+					,"partlistDesc":"modules\database\PartDescriptions.ini"}
 					
 
 

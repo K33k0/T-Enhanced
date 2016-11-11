@@ -1,7 +1,12 @@
 ﻿PartMove.ini := new PartMove.ini("default")
 
+readManufacturers(){
+	IniRead, Sections, % settings.partList
+	StringReplace, Sections, Sections, `n,|, 1
+	return Sections
+}
 gui,Move2:add,Text,,Select Manufacturer
-gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % PartMove.ini.Sections()
+gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % readManufacturers()
 gui, Move2: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 gui, Move2:show,, Parts Movement
 WinActivate, Parts Movement
