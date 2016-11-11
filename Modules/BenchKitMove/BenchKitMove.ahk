@@ -25,10 +25,10 @@ readManufacturerTypes(selectedManufacturer){
 
 	return Types
 }
-GuiControl, Move2:, SelectedKey,% "|" . readManufacturerTypes(selectedManufacturer)
+GuiControl, Move2:, vSelectedKey,% "|" . readManufacturerTypes(selectedManufacturer)
 if (errorlevel) {
 	gui,Move2:add,Text,w200,Select Unit Type
-	gui, Move2:add, DDL, w200 vSelectedKey gTypeUpdate,% readManufacturerTypes(selectedManufacturer)
+	gui, Move2:add, DDL, w200 vSelectedType gTypeUpdate,% readManufacturerTypes(selectedManufacturer)
 }
 gui, Move2: show, AutoSize
 
@@ -36,17 +36,20 @@ return
 
 TypeUpdate:
 gui, Move2:submit, NoHide
-
-selectedKey :=  PartMove.ini.SectionkeyValues(SelectedSection, SelectedKey)
+readFilteredParts(selectedManufacturer,SelectedType){
+	IniRead, parts, % settings.partList, %selectedManufacturer% , %SelectedType%
+	parts := Trim(parts)
+	return parts
+}
 
 GuiControl,Move2:, textCheck,Select Parts
 if (errorLevel){
 	gui,Move2:add,Text, vtextCheck w200,Select Parts
 	gui,Move2:add, button, w200 xm vgoButton gPartMoveGo Disabled, Submit
 	gui,Move2:add, button, w200 xm vdescButton gPartMoveDesc, Description Lookup
-	Loop % PartMove.ini.KeyValues(selectedKey).MaxIndex()
+	Loop % StrSplit(readFilteredParts(selectedManufacturer,SelectedType), "|").MaxIndex()
 	{
-		gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % PartMove.ini.filteredParts
+		gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % readFilteredParts(selectedManufacturer,SelectedType)
 		gui, Move2:Add,edit, w40 yp x+2
 		gui, Move2:add,updown, vKeyQuantity%A_Index%
 		gui, Move2:add, text, vstatusText%A_Index% w20 h20 yp0 x+4,
@@ -56,13 +59,13 @@ if (errorLevel){
 	
 	
 } else {
-	Loop % PartMove.ini.KeyValues(selectedKey).MaxIndex()
+	Loop % StrSplit(readFilteredParts(selectedManufacturer,SelectedType), "|").MaxIndex()
 	{
-		GuiControl,Move2:, SelectedKey%A_Index% , % "|" . PartMove.ini.filteredParts
+		GuiControl,Move2:, SelectedKey%A_Index% , % "|" . FilteredParts
 		if (errorlevel){
 			GuiControl,Move2:move, goButton,yp
 			GuiControl,Move2:move, descButton,yp
-			gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % PartMove.ini.filteredParts
+			gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % readFilteredParts(selectedManufacturer,SelectedType)
 			gui, Move2:Add,edit, w40 yp x+2
 		}
 	}until A_index > 4
