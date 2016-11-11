@@ -6,7 +6,7 @@ readManufacturers(){
 	return Sections
 }
 gui,Move2:add,Text,,Select Manufacturer
-gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % readManufacturers()
+gui,Move2: add, DDL, vselectedManufacturer gManuUpdate w200, % readManufacturers()
 gui, Move2: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 gui, Move2:show,, Parts Movement
 WinActivate, Parts Movement
@@ -14,11 +14,21 @@ return
 
 ManuUpdate:
 gui, Move2:submit,nohide
+readManufacturerTypes(selectedManufacturer){
+	IniRead, data, % settings.partList, % selectedManufacturer
+	data := StrSplit(data, "`n")
+	Loop % data.MaxIndex() {
+		this_line := SubStr(data[a_index], 1, InStr(data[a_index], "=") - 1) 
+		Types .= this_line . "|"
+	}
+	StringTrimRight, Types, Types, 1
 
-GuiControl, Move2:, SelectedKey,% "|" . PartMove.ini.SectionKeys(selectedSection)
+	return Types
+}
+GuiControl, Move2:, SelectedKey,% "|" . readManufacturerTypes(selectedManufacturer)
 if (errorlevel) {
 	gui,Move2:add,Text,w200,Select Unit Type
-	gui, Move2:add, DDL, w200 vSelectedKey gTypeUpdate,% PartMove.ini.SectionKeys(selectedSection)
+	gui, Move2:add, DDL, w200 vSelectedKey gTypeUpdate,% readManufacturerTypes(selectedManufacturer)
 }
 gui, Move2: show, AutoSize
 
