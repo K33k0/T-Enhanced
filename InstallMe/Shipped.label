@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<DieCutLabel Version="8.0" Units="twips">
+	<PaperOrientation>Landscape</PaperOrientation>
+	<Id>ReturnAddressInt</Id>
+	<PaperName>11352 Return Address Int</PaperName>
+	<DrawCommands>
+		<RoundRectangle X="0" Y="0" Width="1440" Height="3060" Rx="180" Ry="180" />
+	</DrawCommands>
+	<ObjectInfo>
+		<ImageObject>
+			<Name>GRAPHIC</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<Image>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</Image>
+			<ScaleMode>Uniform</ScaleMode>
+			<BorderWidth>0</BorderWidth>
+			<BorderColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<HorizontalAlignment>Center</HorizontalAlignment>
+			<VerticalAlignment>Center</VerticalAlignment>
+		</ImageObject>
+		<Bounds X="130" Y="57" Width="345.630235746628" Height="148.07773251243" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<DateTimeObject>
+			<Name>DATE-TIME</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<HorizontalAlignment>Left</HorizontalAlignment>
+			<VerticalAlignment>Top</VerticalAlignment>
+			<TextFitMode>ShrinkToFit</TextFitMode>
+			<UseFullFontHeight>True</UseFullFontHeight>
+			<Verticalized>False</Verticalized>
+			<DateTimeFormat>ShortSystemDate</DateTimeFormat>
+			<Font Family="Arial" Size="12" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+			<PreText></PreText>
+			<PostText></PostText>
+			<IncludeTime>False</IncludeTime>
+			<Use24HourFormat>False</Use24HourFormat>
+		</DateTimeObject>
+		<Bounds X="2560.28373123668" Y="57" Width="415.716268763321" Height="120" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<TextObject>
+			<Name>ShippedText</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<HorizontalAlignment>Center</HorizontalAlignment>
+			<VerticalAlignment>Top</VerticalAlignment>
+			<TextFitMode>ShrinkToFit</TextFitMode>
+			<UseFullFontHeight>True</UseFullFontHeight>
+			<Verticalized>False</Verticalized>
+			<StyledText>
+				<Element>
+					<String>SHIPPED</String>
+					<Attributes>
+						<Font Family="Arial" Size="16" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+					</Attributes>
+				</Element>
+			</StyledText>
+		</TextObject>
+		<Bounds X="130" Y="371.044005509261" Width="2846" Height="336.140081594278" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<BarcodeObject>
+			<Name>ROBarcode</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName>RONumber</LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>True</IsVariable>
+			<Text></Text>
+			<Type>Code39</Type>
+			<Size>Small</Size>
+			<TextPosition>None</TextPosition>
+			<TextFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+			<CheckSumFont Family="Arial" Size="8" Bold="False" Italic="False" Underline="False" Strikeout="False" />
+			<TextEmbedding>None</TextEmbedding>
+			<ECLevel>0</ECLevel>
+			<HorizontalAlignment>Center</HorizontalAlignment>
+			<QuietZonesPadding Left="0" Top="0" Right="0" Bottom="0" />
+		</BarcodeObject>
+		<Bounds X="130" Y="1030.39013881474" Width="2846" Height="327.609861185263" />
+	</ObjectInfo>
+	<ObjectInfo>
+		<TextObject>
+			<Name>RONumber</Name>
+			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
+			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
+			<LinkedObjectName></LinkedObjectName>
+			<Rotation>Rotation0</Rotation>
+			<IsMirrored>False</IsMirrored>
+			<IsVariable>False</IsVariable>
+			<HorizontalAlignment>Center</HorizontalAlignment>
+			<VerticalAlignment>Top</VerticalAlignment>
+			<TextFitMode>ShrinkToFit</TextFitMode>
+			<UseFullFontHeight>True</UseFullFontHeight>
+			<Verticalized>False</Verticalized>
+			<StyledText />
+		</TextObject>
+		<Bounds X="130" Y="743.530296702962" Width="2846" Height="176.909300625979" />
+	</ObjectInfo>
+</DieCutLabel>

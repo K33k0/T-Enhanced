@@ -230,6 +230,7 @@ installFiles(){
 	FileInstall, InstallMe/WorkshopCode_Large.label,Modules/WorkshopCode_Large.label,1
 	FileInstall, InstallMe/WorkshopCode_Small.label,Modules/WorkshopCode_Small.label,1
 	FileInstall, InstallMe/Zulu-book-in.label,Modules/Zulu-book-in.label,1
+	FileInstall, InstallMe/Shipped.label,Modules/Shipped.label,1
 	FileCreateDir, Modules/Lib
 	FileInstall, InstallMe/AutoHotkeyMini.dll,Modules/Lib/AutoHotkeyMini.dll,1
 }
