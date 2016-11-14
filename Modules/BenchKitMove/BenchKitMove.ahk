@@ -172,11 +172,11 @@ MovePart(part,quantity){
 		global DymoLabel
 	
 		PartMovePointer:=IEVget(Title)
-		URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx?T-Enhanced ;set the url
+		URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx ;set the url
 		PartMovePointer.Navigate2(URL,2048) ;navigate the hijacked session to a new tab opening the set url
 		Loop {
 			try {
-				PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx?T-Enhanced")  ;get session by url
+				PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx")  ;get session by url
 				Frame:=PartMovePointer.document.all(9).contentwindow
 				Frame.document.GetElementById("cboPartNum").value := Part ;set the value of the field
 			}
@@ -219,40 +219,40 @@ MovePart(part,quantity){
 		PageAlert()
 		frame := PartMovePointer.document.all(6).contentWindow
 		
-		;frame.document.getElementByID("cmdSubmit").Click ;submit
+		frame.document.getElementByID("cmdSubmit").Click ;submit
 		Frame:=PartMovePointer.document.all(9).contentwindow
 		pageloading(PartMovePointer)
 		while (Frame.document.GetElementById("cboPartNum").value)
 			sleep, 500
 		;WinwaitClose,Message from webpage,,5
 		
-		URL:="http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part ;set the url
-		PartMovePointer.Navigate2(URL) ;navigate the hijacked session to a new tab opening the set url
+		PartMovePointer.Navigate("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part) ;navigate the hijacked session to a new tab opening the set url
 		Loop {
 			try {
 				PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part)  ;get session by url
 				stockCheck := PartMovePointer.document.GetElementById("txtTotalQty").value ;set the value of the field
 			}
 		}Until (stockCheck != "") ;break the loop when the field is set to the correct field
+		OutputDebug, [TE] %stockcheck%
 		StockLocation :=  PartMovePointer.document.GetElementById("txtLocation").value
+		OutputDebug, [TE] %StockLocation% 1
 		if (stockLocation = "") {
 			StockLocation :=  PartMovePointer.document.GetElementById("txtBinLoc").value
 		}
+		OutputDebug, [TE] %StockLocation% 2
 		if  (StockLocation = "") {
 			StockLocation := false
 		}
+		OutputDebug, [TE] %StockLocation% 3
 		PartMovePointer.quit()
 		PartMovePointer := ""
-		msgbox % StockLocation
 		
 		DymoLabel.SetField( "Part1", part) 
 		IniRead,description, % settings.partlistDesc ,PartDescriptions,%part%
 		DymoLabel.SetField( "Description1", description) 
 		DymoLabel.SetField( "Quantity1", quantity) 
 		DymoLabel.SetField( "Engineer", settings.Engineer)
-		if (partLocation[key]) {
-			DymoLabel.SetField( "Location1", StockLocation) 
-		}
+		DymoLabel.SetField( "Location1", StockLocation) 
 		DymoAddIn.Print( 1, TRUE )
 		return true
 	}
