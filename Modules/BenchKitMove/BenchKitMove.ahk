@@ -224,7 +224,7 @@ MovePart(part,quantity){
 		pageloading(PartMovePointer)
 		while (Frame.document.GetElementById("cboPartNum").value)
 			sleep, 500
-		;WinwaitClose,Message from webpage,,5
+		WinwaitClose,Message from webpage,,5
 		
 		PartMovePointer.Navigate("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part) ;navigate the hijacked session to a new tab opening the set url
 		Loop {
