@@ -4,28 +4,28 @@ SetWorkingDir %A_ScriptDir%
 Onexit,Endit
 #singleinstance, force
 #Persistent
-RunAsAdmin() 
-if not A_isadmin {
-	OutputDebug, [T-Enhanced] Not running as administrator
-	MsgBox, Unable to get privileges. Check your permissions
-	ExitApp	
-}
 
 showSplashScreen()
 #include Modules\Lib\Functions.ahk
 #include Modules\Lib\Api.ahk
 #include Modules\Lib\Rini.ahk
-settings := new config(A_ScriptDir "\Modules\Config.ini")
+global settings := {"Engineer":getSetting("Engineer")
+					,"WorkshopSite":getSetting("WorkshopSite")
+					,"username":getSetting("username")
+					,"password":getSetting("password")
+					,"Benchkit":getSetting("Benchkit")
+					,"Tesseract":"5.40.14"
+					,"iniPath":"modules\config.ini"
+					,"partlist":"modules\database\partList.ini"
+					,"partlistDesc":"modules\database\PartDescriptions.ini"}
+					
+
+
 #Include Modules\BookIn\Logistics.ahk
-#Include OOP.ahk
+
 installFiles()
-A:=true
-B:=3
-C:=false
 InitializeDymo()
 setConfigLocation("\Modules\Config.ini")
-global TesseractVersion := ""
-setTesseractVersion("5.40.14")
 LaunchCustomScripts()
 CreateTrayMenu()
 destroySplashScreen()
@@ -36,7 +36,10 @@ Gui, Master: Font, s8
 Gui, Master: Add, Tab2, x0 y0 w265 h150 vTab gTabClick 0x108, Home|Engineer|Logistics
 Gui, Master: Tab, Home
 Gui, Master: Font, s10 Bold
-Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
+if A_IsCompiled
+	Gui, Master: Add, text, x40 y30 w150 h50  center ,T-Enhanced `n[ZULU]
+else
+	Gui, Master: Add, text, x40 y30 w150 h50  center ,This just doesn't work!
 Gui, Master: Add, text, x40 y65 w150 h50  center ,By Kieran Wynne
 Gui, Master: Add, picture, x195 y30 w50 h50,icon.png
 Gui, Master: Font, s8 norm
@@ -50,12 +53,6 @@ Gui, Master: Add, Button, x5 y85 w80 h45 gPrintFunction vPrint 0x8000, Print Lab
 Gui, Master: Add, Button, x180 y30 w80 h45 gShip vShipOut 0x8000, Ship Current Job
 Gui, Master: Add, Button, x92 y30 w80 h45 gReport vReport 0x8000, Service Report
 Gui, Master: Add, Button, x180 y85 w80 h45 gLetsMoveSomeShit 0x8000, Move Parts
-if settings.engineer = 406
-{
-	Gui, Master: add, edit, v406launcher h20 y130 x5 w200,
-	Gui, Master: add, button, h20 y130 x210 w40 g406Launcher, submit
-}
-
 Gui, Master: Tab, Logistics
 Gui, Master: Add, Button, x5 y30 w80 h45 gAssets vAssets 0x8000, Book In
 Gui, Master: Add, Button, x92 y30 w80 h45 gLogShipout 0x8000, Ship Out
@@ -116,7 +113,14 @@ return
 
 Done:
 gui,Master:submit,nohide
-settings.save(Eng1,mySite,UserNameIn,PasswordIn)
+IniWrite, %Eng1%, % settings.iniPath, Default, Number
+IniWrite, %MySite%, % settings.iniPath, Default, location
+if (UserNameIn) {
+	IniWrite, %UserNameIn%, % settings.iniPath, Default, UserName
+}
+if (PasswordIn) {
+	IniWrite, %PasswordIn% , % settings.iniPath, Default, password 
+}
 reload
 return
 
@@ -124,9 +128,9 @@ Changelog:
 run, https://github.com/k33k00/T-Enhanced--ZULU-/commits/master
 return
 
+
 Create:
-Create:= new TEnhanced.Create(settings)
-Create:= ""
+#include modules/create/create.ahk
 return
 
 Report:
@@ -172,7 +176,8 @@ return
 ;{ ----AutoLogin
 MasterGuiContextMenu:
 gui,Master:submit, noHide
-Login := new TEnhanced.AutoLogin(settings,tab)
+#include Modules\Autologin\Login.ahk
+login()
 return
 ;}
 
@@ -245,10 +250,7 @@ setConfigLocation(path){
 	;sets the location of the config file
 	global Config:=A_ScriptDir . path
 }
-setTesseractVersion(version){
-	;sets the Tesseract Version
-	TesseractVersion:= version
-}
+
 LaunchCustomScripts(){
 	;loops through custom scripts folder, launching every .ahk file it finds
 	Loop %A_ScriptDir%\Custom Scripts\*.ahk
@@ -277,62 +279,26 @@ CloseProgram(){
 	return
 }
 
-class config {
-	static ini
-	static Engineer
-	static WorkshopSite
-	static HashedUserName
-	static HashedPassword
-	static BenchKit
-	static Firstrun = False
-	
-	
-	__New(ini) {
-		this.ini := ini
-		IniRead, Engineer, %ini%, Engineer, Number
-		IniRead, user, %ini%, login, UserName
-		IniRead, pass, %ini%, login, Password
-		IniRead,wSite, %ini%, Site, location
-		this.HashedUserName := user
-		this.HashedPassword := pass
-		this.BenchKit := Engineer . "BK"
-		this.Engineer := Engineer
-		this.workshopSite := wSite
-	}
-	
-	decrypt(setting) {
-		keys := this.Engineer
-		if (setting = "password")	{
-			return Crypt.Encrypt.StrDecrypt(this.HashedPassword,keys)	
-		} else if ( setting = "username" )	{
-			return Crypt.Encrypt.StrDecrypt(this.HashedUserName,keys)	
-		} 	else {
-			return "failed to find setting"
-		}
-	}
-	
-	encrypt(setting, value) {
-		keys := this.Engineer
-		if (setting = "password")	{
-			return Crypt.Encrypt.StrEncrypt(value,keys)	
-		} else if ( setting = "username" )	{
-			return Crypt.Encrypt.StrEncrypt(value,keys)	
-		} 	else {
-			return false
-		}
-		return true
-	}
-	
-	save(Engineer,WorkshopSite,UserName="",Password="") {
-		IniWrite, %Engineer%, % this.ini, Engineer, Number
-		this.engineer := Engineer
-		IniWrite, %WorkshopSite%, % this.ini, Site, location
-		if (userName) {
-			IniWrite, % this.encrypt("username",UserName), % this.ini, login, UserName
-		}
-		if (password) {
-			IniWrite, % this.encrypt("password",password), % this.ini, login, password 
-		}
+getSetting(value){
+	iniFile := "modules\config.ini"
+	if (value = "Engineer"){
+		IniRead, result, %iniFile%, Default, Number
+		return result
+	} else if (value = "WorkshopSite"){
+		IniRead,result, %iniFile%, Default, location
+		return result
+	} else if (value = "username"){
+		IniRead, result, %iniFile%, Default, UserName
+		return result
+	} else if (value = "password"){
+		IniRead, result, %iniFile%, Default, Password
+		return result
+	} else if (value = "Benchkit"){
+		IniRead,result, %iniFile%, Default, Number
+		return result . "BK"
 	}
 }
 
+
+#q::
+ExitApp

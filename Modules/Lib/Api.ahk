@@ -15,7 +15,7 @@ getRO(SerialNumber,ProductCode){
 	temp.Navigate2(url, 4096)
 	while (RO = "") {
 		try {
-			temp := IEGet("serprod_modify - " TesseractVersion )
+			temp := IEGet("serprod_modify - " settings.Tesseract )
 			RO:=temp.document.getElementById("txtSerReference2").value
 			SerNum := temp.document.getElementById("txtSerNum").value 
 			OutputDebug, [TE] %RO% - we're are in here you know - %SerNum%
@@ -41,7 +41,7 @@ GetThreshold(ProductCode){
 	temp.Navigate2(url, 4096)
 	while (Charge = "") {
 		try {
-			temp := IEGet("Part_modify - " TesseractVersion )
+			temp := IEGet("Part_modify - " settings.Tesseract)
 			Charge:=temp.document.getElementById("txtPartRepairEnd").value
 			OutputDebug, [TE] %RO% - we're are in here you know - %SerNum%
 		} catch {

@@ -1,8 +1,14 @@
-﻿PartMove := new Movement(settings)
-PartMove.ini := new PartMove.ini("default")
+﻿FileCreateDir, Modules/Database
+FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
+FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
 
+readManufacturers(){
+	IniRead, Sections, % settings.partList
+	StringReplace, Sections, Sections, `n,|, 1
+	return Sections
+}
 gui,Move2:add,Text,,Select Manufacturer
-gui,Move2: add, DDL, vSelectedSection gManuUpdate w200, % PartMove.ini.Sections()
+gui,Move2: add, DDL, vselectedManufacturer gManuUpdate w200, % readManufacturers()
 gui, Move2: +AlwaysOnTop +ToolWindow +OwnDialogs -DPIScale 
 gui, Move2:show,, Parts Movement
 WinActivate, Parts Movement
@@ -10,12 +16,22 @@ return
 
 ManuUpdate:
 gui, Move2:submit,nohide
-;GuiControl,disable,SelectedSection
+readManufacturerTypes(selectedManufacturer){
+	IniRead, data, % settings.partList, % selectedManufacturer
+	data := StrSplit(data, "`n")
+	Loop % data.MaxIndex() {
+		this_line := SubStr(data[a_index], 1, InStr(data[a_index], "=") - 1) 
+		Types .= this_line . "|"
+	}
+	StringTrimRight, Types, Types, 1
 
-GuiControl, Move2:, SelectedKey,% "|" . PartMove.ini.SectionKeys(selectedSection)
+	return Types
+}
+
+GuiControl, Move2:, SelectedType,% "|" . readManufacturerTypes(selectedManufacturer)
 if (errorlevel) {
-	gui,Move2:add,Text,w200,Select Unit Type
-	gui, Move2:add, DDL, w200 vSelectedKey gTypeUpdate,% PartMove.ini.SectionKeys(selectedSection)
+	gui,Move2:add,Text,w200,Select Unit Type ; <--- Error Same variable cant be used in more than one control
+	gui, Move2:add, DDL, w200 vSelectedType gTypeUpdate,% readManufacturerTypes(selectedManufacturer)
 }
 gui, Move2: show, AutoSize
 
@@ -23,17 +39,22 @@ return
 
 TypeUpdate:
 gui, Move2:submit, NoHide
+readFilteredParts(selectedManufacturer,SelectedType){
+	IniRead, parts, % settings.partList, %selectedManufacturer% , %SelectedType%
+	parts := Trim(parts)
+	return parts
+}
 
-selectedKey :=  PartMove.ini.SectionkeyValues(SelectedSection, SelectedKey)
-
-GuiControl,Move2:, textCheck,Select Parts
+GuiControl,Move2:, SelectPartsText,Select Parts
 if (errorLevel){
-	gui,Move2:add,Text, vtextCheck w200,Select Parts
+	;~ SelectPartsText does not exist. This is creating that section
+	gui,Move2:add,Text, vSelectPartsText w200,Select Parts
 	gui,Move2:add, button, w200 xm vgoButton gPartMoveGo Disabled, Submit
 	gui,Move2:add, button, w200 xm vdescButton gPartMoveDesc, Description Lookup
-	Loop % PartMove.ini.KeyValues(selectedKey).MaxIndex()
+	Loop % StrSplit(readFilteredParts(selectedManufacturer,SelectedType), "|").MaxIndex()
 	{
-		gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % PartMove.ini.filteredParts
+		gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % readFilteredParts(selectedManufacturer,SelectedType)
+		;~ This drop down works, it successfully changes the list of parts
 		gui, Move2:Add,edit, w40 yp x+2
 		gui, Move2:add,updown, vKeyQuantity%A_Index%
 		gui, Move2:add, text, vstatusText%A_Index% w20 h20 yp0 x+4,
@@ -43,13 +64,15 @@ if (errorLevel){
 	
 	
 } else {
-	Loop % PartMove.ini.KeyValues(selectedKey).MaxIndex()
+	;~ SelectPartsText exists already, just edit the values instead
+	Loop % StrSplit(readFilteredParts(selectedManufacturer,SelectedType), "|").MaxIndex()
 	{
-		GuiControl,Move2:, SelectedKey%A_Index% , % "|" . PartMove.ini.filteredParts
+		GuiControl,Move2:, SelectedKey%A_Index% , % "|" . readFilteredParts(selectedManufacturer,SelectedType)
 		if (errorlevel){
+			;~ if the a field needs adding this will do it, it also does something with the buttons...
 			GuiControl,Move2:move, goButton,yp
 			GuiControl,Move2:move, descButton,yp
-			gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % PartMove.ini.filteredParts
+			gui, Move2:add, DDL, w140 xm vSelectedKey%A_Index% genableSubmit, % readFilteredParts(selectedManufacturer,SelectedType)
 			gui, Move2:Add,edit, w40 yp x+2
 		}
 	}until A_index > 4
@@ -67,10 +90,10 @@ if (!move2LV){
 	Move2LV := true
 }
 LV_Delete()
-thelist := PartMove.ini.filteredParts
+thelist := readFilteredParts(selectedManufacturer,SelectedType)
 Loop, parse, thelist , |
 {
-	IniRead,tempdescription, Modules/Database/PartDescriptions.ini,PartDescriptions,%A_LoopField%
+	IniRead,tempdescription, % settings.partlistDesc ,PartDescriptions,%A_LoopField%
 	LV_Add("", A_LoopField , tempDescription, "£   -   ")
 	LV_ModifyCol()  
 }
@@ -80,13 +103,35 @@ return
 
 partLookup:
 if (A_guievent = "DoubleClick"){
-	LV_Modify(A_eventinfo,,,,PartMove.priceCheck(A_EventInfo))
+	LV_Modify(A_eventinfo,,,,priceCheck(A_EventInfo))
 	LV_ModifyCol() 
 }
 return
 
+priceCheck(RowNumber){
+		LV_GetText(part, RowNumber)
+		StringReplace,part,part,%A_space%,+
+		bpwb:= ievget()
+		baseUri:= "http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx"
+		uri := "?SiteNo=STOWPARTS&PartNo=" . part
+		bpwb.Navigate2(baseUri . uri, 2048)
+		loop {
+			try{
+                    bpwb := IEGetUrl(baseUri . uri)
+                    Loaded := bpwb.document.GetElementByID("txtCost").value
+			}
+		}until (Loaded != "")
+		value := bpwb.document.GetElementByID("txtCost").value
+		bpwb.quit()
+		
+		return "£" . value
+	}
+return
+
 PartMoveGo:
 gui,Move2:submit, nohide
+DymoAddIn.Open("Modules\Part Order.label")
+DymoAddin.StartPrintJob()
 loop, 5 {
 	if (selectedKey%A_Index%) {
 		currentPart := selectedKey%A_Index%
@@ -98,12 +143,7 @@ loop, 5 {
 		while not selectedQuantity
 			InputBox, selectedQuantity,Select Quantity, Input correct quantity - current set to %selectedQuantity%
 		
-		if (PartMove.MovePart(currentPart,selectedQuantity)) {
-			sleep, 150
-			PartMove.queuePrint(currentPart,selectedQuantity)
-			sleep, 150
-			partMove.GetPartLocation(currentPart)
-			sleep, 150
+		if (MovePart(currentPart,selectedQuantity)) {
 			Gui Font, cGreen
 			GuiControl, Move2:Font, statusText%A_Index%
 			GuiControl,Move2:text ,statusText%A_Index%, % chr(0x002714)
@@ -114,9 +154,7 @@ loop, 5 {
 		}
 	}
 }
-
-partmove.print()
-
+DymoAddin.EndPrintJob()
 
 Move2GuiEscape:
 Move2GuiClose:
@@ -126,78 +164,13 @@ gui,Move2:destroy
 return
 
 
-class Movement
-{
-	requestedPart := {}
-	partLocation := {}
+
+
+
+MovePart(part,quantity){
+		global DymoAddin
+		global DymoLabel
 	
-	__New(settings)
-	{
-		FileCreateDir, Modules/Database
-		FileInstall, InstallMe/PartDescriptions.ini,Modules/Database/PartDescriptions.ini, 1
-		FileInstall, InstallMe/partList.ini,Modules/Database/partList.ini,1
-		FileInstall, InstallMe/Parts-Request.msg,Modules/Parts-Request.msg,1
-		this.settings := settings
-	}
-	
-	__Delete()
-	{
-		RIni_Shutdown(1)
-		loop, 5 {
-			selectedKey%A_Index% := ""
-			KeyQuantity%A_Index% := ""
-		}
-	}
-	class ini
-	{
-		databasePath := A_ScriptDir . "/modules/Database/partList.ini"
-		static filteredParts
-		
-		Sections()
-		{
-			partList := this.databasePath
-			IniRead, iniContents, %partList%
-			StringReplace, iniContents, iniContents, `n,|, 1 
-			;StringTrimRight, iniContents, iniContents, 1
-			return iniContents
-		}
-		
-		SectionKeys(Manufacturer)
-		{
-			partList := this.databasePath
-			IniRead, iniContents, %partList%, %manufacturer%
-			
-			iniContents := StrSplit(iniContents, "`n")
-			Loop % iniContents.MaxIndex()
-			{
-				this_line := SubStr(iniContents[a_index], 1, InStr(iniContents[a_index], "=") - 1) 
-				Types .= this_line . "|"
-			}
-			StringTrimRight, Types, Types, 1
-			
-			return Types
-		}
-		
-		SectionkeyValues(Manufacturer, UnitType)
-		{
-			partList := this.databasePath
-			IniRead, parts, %partlist%, %Manufacturer%, %UnitType%
-			parts := Trim(parts)
-			this.filteredParts := parts
-			return parts
-		}
-		
-		KeyValues(FilteredParts)
-		{
-			return  StrSplit(FilteredParts, "|")
-		}
-	}
-	
-	
-	MovePart(part,quantity)
-	{
-    ;preMoveStock := this.partVerify(part, this.settings.Benchkit)    
-		sleep 250
 		PartMovePointer:=IEVget(Title)
 		URL=http://hypappbs005/SC5/SC_StockMove/aspx/stockmove_frameset.aspx ;set the url
 		PartMovePointer.Navigate2(URL,2048) ;navigate the hijacked session to a new tab opening the set url
@@ -229,7 +202,7 @@ class Movement
 				return false
 			}
 		} 
-		frame.document.getelementbyID("cboDestSiteNum").value := this.settings.Benchkit ;input engineer number
+		frame.document.getelementbyID("cboDestSiteNum").value := settings.Benchkit ;input engineer number
 		ModalDialogue() 
 		frame.document.getElementsByTagName("IMG")[6] .click 
 		
@@ -251,113 +224,35 @@ class Movement
 		pageloading(PartMovePointer)
 		while (Frame.document.GetElementById("cboPartNum").value)
 			sleep, 500
-		;WinwaitClose,Message from webpage,,5
-		PartMovePointer.quit()
-		PartMovePointer := ""
-		sleep, 100
+		WinwaitClose,Message from webpage,,5
 		
-    ;postMoveStock := this.partVerify(part, this.settings.Benchkit)
-		return true
-	}
-	
-	queuePrint(part,quantity) 
-	{
-		this.requestedPart[part] := quantity
-		return true
-	}
-	
-	GetpartLocation(part)
-	{
-		SecondaryPointer:=IEVget(Title)
-		URL:="http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part ;set the url
-		SecondaryPointer.Navigate2(URL,4096) ;navigate the hijacked session to a new tab opening the set url
+		PartMovePointer.Navigate("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part) ;navigate the hijacked session to a new tab opening the set url
 		Loop {
 			try {
-				SecondaryPointer:=IEGetURL("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part)  ;get session by url
-				stockCheck := SecondaryPointer.document.GetElementById("txtTotalQty").value ;set the value of the field
+				PartMovePointer:=IEGetURL("http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx?SiteNo=STOWPARTS&PartNo=" . part)  ;get session by url
+				stockCheck := PartMovePointer.document.GetElementById("txtTotalQty").value ;set the value of the field
 			}
 		}Until (stockCheck != "") ;break the loop when the field is set to the correct field
-		StockLocation :=  SecondaryPointer.document.GetElementById("txtLocation").value
+		OutputDebug, [TE] %stockcheck%
+		StockLocation :=  PartMovePointer.document.GetElementById("txtLocation").value
+		OutputDebug, [TE] %StockLocation% 1
 		if (stockLocation = "") {
-			StockLocation :=  SecondaryPointer.document.GetElementById("txtBinLoc").value
+			StockLocation :=  PartMovePointer.document.GetElementById("txtBinLoc").value
 		}
+		OutputDebug, [TE] %StockLocation% 2
 		if  (StockLocation = "") {
 			StockLocation := false
 		}
-		this.partLocation[part] := StockLocation
-		Sleep 100
-		SecondaryPointer.quit()
-		SecondaryPointer := ""
-		Sleep 100
+		OutputDebug, [TE] %StockLocation% 3
+		PartMovePointer.quit()
+		PartMovePointer := ""
+		
+		DymoLabel.SetField( "Part1", part) 
+		IniRead,description, % settings.partlistDesc ,PartDescriptions,%part%
+		DymoLabel.SetField( "Description1", description) 
+		DymoLabel.SetField( "Quantity1", quantity) 
+		DymoLabel.SetField( "Engineer", settings.Engineer)
+		DymoLabel.SetField( "Location1", StockLocation) 
+		DymoAddIn.Print( 1, TRUE )
 		return true
 	}
-	
-	print()
-	{
-		global DymoAddin
-		global DymoLabel
-		DymoAddIn.Open("Modules\Part Order.label")
-		DymoAddin.StartPrintJob()
-		
-		For key, value in this.requestedPart
-		{
-			OutputDebug % key . " = " value
-			DymoLabel.SetField( "Part1", key) 
-			IniRead,description, Modules/Database/PartDescriptions.ini,PartDescriptions,%key%
-			DymoLabel.SetField( "Description1", description) 
-			DymoLabel.SetField( "Quantity1", value) 
-			DymoLabel.SetField( "Engineer", this.settings.Engineer)
-			if (this.partLocation[key]) {
-				DymoLabel.SetField( "Location1", this.partLocation[key]) 
-			}
-			DymoAddIn.Print( 1, TRUE )
-		}
-		DymoAddin.EndPrintJob()
-	}
-	
-	partVerify(PartNo, StockLocation)
-	{       
-		bpwb:= ievget(Title)
-		baseUri:= "http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx"
-		uri := "?SiteNo=" . StockLocation . "&PartNo=" . PartNo
-		bpwb.Navigate2(baseUri . uri, 2048)
-		loop {
-			try{
-                    bpwb.Navigate("javascript: alert = function(){};")
-                    bpwb := IEGetUrl(baseUri . uri)
-                    Loaded := bpwb.document.GetElementByID("lblTotalQuantity").innerText
-			}
-		}until (Loaded != "")
-		value := bpwb.document.GetElementByID("txtTotalQty").value
-		if (Value = ""){
-			Value := 0
-		}
-		IfWinExist,Message from webpage
-		{
-			WinWaitClose, Message from webpage
-		}
-		bpwb.quit()
-		return Value
-	}
-	
-	priceCheck(RowNumber){
-		LV_GetText(part, RowNumber)
-		StringReplace,part,part,%A_space%,+
-		bpwb:= ievget()
-		baseUri:= "http://hypappbs005/SC5/SC_StockControl/aspx/StockControl_modify.aspx"
-		uri := "?SiteNo=STOWPARTS&PartNo=" . part
-		bpwb.Navigate2(baseUri . uri, 2048)
-		loop {
-			try{
-                    bpwb := IEGetUrl(baseUri . uri)
-                    Loaded := bpwb.document.GetElementByID("txtCost").value
-			}
-		}until (Loaded != "")
-		value := bpwb.document.GetElementByID("txtCost").value
-		bpwb.quit()
-		
-		return "£" . value
-	}
-}
-
-

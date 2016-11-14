@@ -1,5 +1,5 @@
 ﻿shipout := new Shipout()
-if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " TesseractVersion " / Page Ver: " TesseractVersion) { ;*[T-Enhanced]
+if not Pwb := IETitle("ESOLBRANCH LIVE DB / \w+ / DLL Ver: " settings.Tesseract " / Page Ver: " settings.Tesseract) { ;*[T-Enhanced]
 	msgbox,4144,,Failed to connect to Page
 	return
 }
