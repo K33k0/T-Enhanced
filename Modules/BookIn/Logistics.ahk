@@ -349,6 +349,7 @@ class Logistics{
 			if (!this.shipOut(CallNumber,RONumber,Manifest)){
 				return False
 			} else {
+				
 				return True
 			}
 		}
@@ -405,6 +406,7 @@ class Logistics{
 					return false
 				}
 				wb.Navigate2("http://hypappbs005/SC5/SC_Menu/aspx/Menu_Frameset.aspx")
+				this.print(RONumber)
 				return true
 			}
 			
@@ -446,6 +448,14 @@ class Logistics{
 			frame.document.getElementById("cmdsubmit").click ;click submit
 			WinWaitClose,Message from Webpage, The Serialized Product record was successfully updated
 			return true
+		}
+		
+		print(RONumber){
+			global DymoAddIn
+			global DymoLabel
+			DymoAddIn.Open("Modules/Shipped.label")
+			DymoLabel.SetField( "RONumber", RONumber)
+			DymoAddIn.Print( 1, TRUE )
 		}
 	}
 }
