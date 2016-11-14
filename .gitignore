@@ -1,8 +1,13 @@
 *.bak
-AutoHotkey112301_Install.exe
-update/
-Temp/
 Modules/Database/*
+**/backup/**/*
+icon.png
+Modules/BerForm.docx
+Modules/Part Order.label
+Modules/WorkshopCode_Large.label
+Modules/WorkshopCode_Small.label
+Modules/Zulu-book-in.label
+Modules/Shipped.label
+Modules/Lib/AutoHotkeyMini.dll
 Modules/Config.ini
 Modules/ProductsAverage.ini
-**/backup/**/*
