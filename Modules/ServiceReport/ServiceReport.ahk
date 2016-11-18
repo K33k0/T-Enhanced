@@ -143,10 +143,20 @@ WinWaitClose, message from webpage,,5
 sleep,1500
 frame := Pwb.document.all(11).contentWindow
 
-/* if (ItemRepaired = 1 && JobType != "FRN" OR Rep = "BER" ) {
-	* 	gosub, ChargeCodes
-	* }
-*/
+while not fsrNumber {
+	try{
+		fsrNumber := frame.document.getElementByID("txtFSRNum").value
+	}
+	sleep, 100
+	if A_index = 50
+		break
+}
+
+if not fsrNumber {
+	msgbox, Service report failed. FSR Number is still blank
+	return
+}
+
 If (AddParts = 1){
 	Gosub, AddParts
 	goto,EndServiceReport
@@ -331,6 +341,10 @@ loop, %LineNo%{
 	Pwb.document.getElementById("cboWZPartDesc").value :=PartDesc%I%
 	Pwb.document.getElementById("cboWZPartDesc_Container").click
 	check:=Pwb.document.getElementById("cboWZPartNum").value
+	try {
+		if not Pwb.document.getElementById("cboFSRLFSRNum").value
+			Pwb.document.getElementById("cboFSRLFSRNum").value := FSRNumber
+	}
 	if(check = ""){
 		MsgBox,Part not found. Input Manually
 		IEload(Pwb)
