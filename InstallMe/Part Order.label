@@ -211,20 +211,4 @@
 		</TextObject>
 		<Bounds X="969.205322265625" Y="1159.32446289062" Width="506.397338867188" Height="198.675491333008" />
 	</ObjectInfo>
-	<ObjectInfo>
-		<ShapeObject>
-			<Name>SHAPE</Name>
-			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
-			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName></LinkedObjectName>
-			<Rotation>Rotation0</Rotation>
-			<IsMirrored>False</IsMirrored>
-			<IsVariable>False</IsVariable>
-			<ShapeType>HorizontalLine</ShapeType>
-			<LineWidth>15</LineWidth>
-			<LineAlignment>Center</LineAlignment>
-			<FillColor Alpha="0" Red="255" Green="255" Blue="255" />
-		</ShapeObject>
-		<Bounds X="130" Y="1136.82116699219" Width="2846" Height="15" />
-	</ObjectInfo>
 </DieCutLabel>
