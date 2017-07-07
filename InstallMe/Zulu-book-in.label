@@ -2,7 +2,6 @@
 <DieCutLabel Version="8.0" Units="twips">
 	<PaperOrientation>Landscape</PaperOrientation>
 	<Id>ReturnAddressInt</Id>
-	<IsOutlined>false</IsOutlined>
 	<PaperName>11352 Return Address Int</PaperName>
 	<DrawCommands>
 		<RoundRectangle X="0" Y="0" Width="1440" Height="3060" Rx="180" Ry="180" />
@@ -12,12 +11,10 @@
 			<Name>Call-Number</Name>
 			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName />
+			<LinkedObjectName></LinkedObjectName>
 			<Rotation>Rotation0</Rotation>
 			<IsMirrored>False</IsMirrored>
 			<IsVariable>True</IsVariable>
-			<GroupID>-1</GroupID>
-			<IsOutlined>False</IsOutlined>
 			<Text>CALL NUMBER</Text>
 			<Type>Code128Auto</Type>
 			<Size>Small</Size>
@@ -36,12 +33,10 @@
 			<Name>TEXT</Name>
 			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName />
+			<LinkedObjectName></LinkedObjectName>
 			<Rotation>Rotation0</Rotation>
 			<IsMirrored>False</IsMirrored>
 			<IsVariable>False</IsVariable>
-			<GroupID>-1</GroupID>
-			<IsOutlined>False</IsOutlined>
 			<HorizontalAlignment>Center</HorizontalAlignment>
 			<VerticalAlignment>Top</VerticalAlignment>
 			<TextFitMode>ShrinkToFit</TextFitMode>
@@ -49,10 +44,10 @@
 			<Verticalized>False</Verticalized>
 			<StyledText>
 				<Element>
-					<String xml:space="preserve">Call</String>
+					<String>Call</String>
 					<Attributes>
 						<Font Family="Open Sans" Size="11" Bold="False" Italic="False" Underline="False" Strikeout="False" />
-						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 					</Attributes>
 				</Element>
 			</StyledText>
@@ -64,12 +59,10 @@
 			<Name>RO-Number</Name>
 			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName />
+			<LinkedObjectName></LinkedObjectName>
 			<Rotation>Rotation0</Rotation>
 			<IsMirrored>False</IsMirrored>
 			<IsVariable>True</IsVariable>
-			<GroupID>-1</GroupID>
-			<IsOutlined>False</IsOutlined>
 			<Text>RO-NUMBER</Text>
 			<Type>Code128Auto</Type>
 			<Size>Small</Size>
@@ -88,12 +81,10 @@
 			<Name>TEXT_1</Name>
 			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName />
+			<LinkedObjectName></LinkedObjectName>
 			<Rotation>Rotation0</Rotation>
 			<IsMirrored>False</IsMirrored>
 			<IsVariable>False</IsVariable>
-			<GroupID>-1</GroupID>
-			<IsOutlined>False</IsOutlined>
 			<HorizontalAlignment>Center</HorizontalAlignment>
 			<VerticalAlignment>Top</VerticalAlignment>
 			<TextFitMode>ShrinkToFit</TextFitMode>
@@ -101,10 +92,10 @@
 			<Verticalized>False</Verticalized>
 			<StyledText>
 				<Element>
-					<String xml:space="preserve">RO</String>
+					<String>RO</String>
 					<Attributes>
 						<Font Family="Open Sans" Size="11" Bold="False" Italic="False" Underline="False" Strikeout="False" />
-						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" HueScale="100" />
+						<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 					</Attributes>
 				</Element>
 			</StyledText>
@@ -116,12 +107,10 @@
 			<Name>DATE-TIME</Name>
 			<ForeColor Alpha="255" Red="0" Green="0" Blue="0" />
 			<BackColor Alpha="0" Red="255" Green="255" Blue="255" />
-			<LinkedObjectName />
+			<LinkedObjectName></LinkedObjectName>
 			<Rotation>Rotation0</Rotation>
 			<IsMirrored>False</IsMirrored>
 			<IsVariable>False</IsVariable>
-			<GroupID>-1</GroupID>
-			<IsOutlined>False</IsOutlined>
 			<HorizontalAlignment>Left</HorizontalAlignment>
 			<VerticalAlignment>Top</VerticalAlignment>
 			<TextFitMode>ShrinkToFit</TextFitMode>
@@ -129,8 +118,8 @@
 			<Verticalized>False</Verticalized>
 			<DateTimeFormat>LongSystemDate</DateTimeFormat>
 			<Font Family="Open Sans" Size="11" Bold="False" Italic="False" Underline="False" Strikeout="False" />
-			<PreText />
-			<PostText />
+			<PreText></PreText>
+			<PostText></PostText>
 			<IncludeTime>False</IncludeTime>
 			<Use24HourFormat>False</Use24HourFormat>
 		</DateTimeObject>
